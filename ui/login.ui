@@ -17,7 +17,7 @@
    <string/>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(20, 35, 58);</string>
+   <string notr="true">background-color: #242424;</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">

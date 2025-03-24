@@ -14,7 +14,7 @@
    <string>Automated Attendance Tracking</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(20, 35, 58);
+   <string notr="true">background-color: #242424;
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -80,33 +80,18 @@
       <x>67</x>
       <y>157</y>
       <width>566</width>
-      <height>355</height>
+      <height>326</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9</string>
+     <string notr="true">background-color: #D9D9D9;
+border: 7px solid black;</string>
     </property>
     <property name="text">
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>71</x>
-      <y>572</y>
-      <width>566</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="image">
     <property name="geometry">
      <rect>
       <x>787</x>
@@ -116,7 +101,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9</string>
+     <string notr="true">background-color: #D9D9D9;
+border: 7px solid black;</string>
     </property>
     <property name="text">
      <string/>
@@ -147,9 +133,9 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>71</x>
-      <y>538</y>
-      <width>152</width>
+      <x>67</x>
+      <y>503</y>
+      <width>161</width>
       <height>25</height>
      </rect>
     </property>
@@ -279,8 +265,8 @@
    <widget class="QPushButton" name="loginButton">
     <property name="geometry">
      <rect>
-      <x>1152</x>
-      <y>675</y>
+      <x>971</x>
+      <y>608</y>
       <width>158</width>
       <height>61</height>
      </rect>
@@ -292,11 +278,91 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9</string>
+     <string notr="true">background-color: #D9D9D9;
+border-radius: 30px;</string>
     </property>
     <property name="text">
      <string>Login</string>
     </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>67</x>
+      <y>538</y>
+      <width>600</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> border: none;
+
+</string>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
+    <property name="gridStyle">
+     <enum>Qt::NoPen</enum>
+    </property>
+    <property name="cornerButtonEnabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderMinimumSectionSize">
+     <number>50</number>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderStretchLastSection">
+     <bool>false</bool>
+    </attribute>
+    <column>
+     <property name="text">
+      <string>Name</string>
+     </property>
+     <property name="textAlignment">
+      <set>AlignCenter</set>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Grade</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Strand</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Time</string>
+     </property>
+    </column>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
