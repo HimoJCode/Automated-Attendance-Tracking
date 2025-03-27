@@ -3,22 +3,29 @@ import os
 import cv2
 import datetime
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QTimer, QDateTime
+from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation
 from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox
+import resources.res_rc
 
 # Paths to UI files
 MAIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "automated.ui")
 LOGIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "login.ui")
 ADMIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "admin.ui")
+SUPERADMIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "superAdmin.ui")
 
 
 class LoginDialog(QtWidgets.QDialog):
     """Login Window Class"""
-    def __init__(self):
+    def __init__(self, super_admin_mode=False):
         super(LoginDialog, self).__init__()
 
         # Load Login UI
         uic.loadUi(LOGIN_UI_PATH, self)
+
+        self.super_admin_mode = super_admin_mode 
+        self.logged_in_role = None  # 'admin' or 'superadmin'
+
 
         # Connect login button
         self.loginButton.clicked.connect(self.login_action)
@@ -38,10 +45,15 @@ class LoginDialog(QtWidgets.QDialog):
 
         # Simulated authentication (Replace with database check)
         if username == "admin" and password == "1234":
-            QtWidgets.QMessageBox.information(self, "Success", "Login successful!")
-            self.accept()  # Close login window
+           self.logged_in_role = "admin"
+           QtWidgets.QMessageBox.information(self, "Success", "Logged in as Admin!")
+           self.accept()
+        elif username == "superadmin" and password == "4321":
+           self.logged_in_role = "superadmin"
+           QtWidgets.QMessageBox.information(self, "Success", "Logged in as Super Admin!")
+           self.accept()    
         else:
-            QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
+           QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """Admin Dashboard UI (After Successful Login)"""
@@ -50,6 +62,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         # Load Admin UI
         uic.loadUi(ADMIN_UI_PATH, self)
+
+        image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "resources/Bg_aci.jpg"))
+
 
         # Debugging: Print available UI elements
         #print("Available UI elements in Admin:", self.__dict__)
@@ -62,10 +77,23 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Update time on startup
         self.update_time()
 
+        menu = QtWidgets.QMenu()
+
+        logout_action = menu.addAction("Logout")
+        switch_admin_action = menu.addAction("Change to Super admin")
+
+        # Optional: connect to real functions
+        logout_action.triggered.connect(self.logout)
+        switch_admin_action.triggered.connect(self.switch_to_super_admin)
+
+        # Attach menu to tool button
+        self.toolButtonMenu.setMenu(menu)
+        self.toolButtonMenu.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+
     def update_time(self):
         """Update Date and Time dynamically."""
         current_datetime = QDateTime.currentDateTime()
-        current_date = current_datetime.toString("MMMM, dd, yyyy")
+        current_date = current_datetime.toString("MMMM dd, yyyy")
         current_time = current_datetime.toString("hh:mm:ss AP")
 
         # Ensure date_label exists
@@ -79,6 +107,58 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.time_label.setText(f"{current_time}")
         else:
             print("Error: 'time_label' not found in Admin UI!")
+        
+    def logout(self):
+        # Show confirmation dialog
+        reply = QMessageBox.question(
+            self,
+            "Logout Confirmation",
+            "Are you sure you want to logout?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            # Start fade-out animation before logging out
+            self.start_fade_out()
+    
+    def start_fade_out(self):
+        # Set up the opacity effect
+        self.effect = QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(self.effect)
+    
+        # Create the animation to fade out
+        self.animation = QPropertyAnimation(self.effect, b"opacity")
+        self.animation.setDuration(800)  # Duration in milliseconds (adjust as needed)
+        self.animation.setStartValue(1.0)
+        self.animation.setEndValue(0.0)
+        self.animation.finished.connect(self.finish_logout)
+        self.animation.start()
+
+    def finish_logout(self):
+        # Optionally, reset the opacity back to 1 for future use
+        self.setGraphicsEffect(None)
+         # Show a logout message (optional)
+        QMessageBox.information(self, "Logout", "You have been logged out.")
+         # Close the current Admin Dashboard window
+        self.close()
+        # Open the AttendanceApp window (automated.ui)
+        self.attendance_window = AttendanceApp()
+        self.attendance_window.show()
+
+    def switch_to_super_admin(self):
+        # Open login dialog as a popup
+        login_dialog = LoginDialog(super_admin_mode=True)
+        if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
+             # If login is successful, open Super Admin window
+            self.super_admin_window = SuperAdminDashboard()
+            self.super_admin_window.show()
+
+
+class SuperAdminDashboard(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(SuperAdminDashboard, self).__init__()
+        uic.loadUi(SUPERADMIN_UI_PATH, self)
+        self.setWindowTitle("Super Admin Dashboard")
 
 class AttendanceApp(QtWidgets.QMainWindow):
     """Main Attendance System UI"""
@@ -114,15 +194,19 @@ class AttendanceApp(QtWidgets.QMainWindow):
             self.liveVideoLabel.setPixmap(QPixmap.fromImage(q_img))  # Update QLabel with camera feed
 
     def show_login(self):
-        """Show Login Dialog when Login button is clicked"""
         login_dialog = LoginDialog()
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
-            print("User logged in successfully!")
-
-            # Close the main window and open Admin UI after login
             self.close()
-            self.admin_window = AdminDashboard()
-            self.admin_window.show()
+
+            if login_dialog.logged_in_role == "superadmin":
+                self.super_admin_window = SuperAdminDashboard()
+                self.super_admin_window.show()
+            elif login_dialog.logged_in_role == "admin":
+                self.admin_window = AdminDashboard()
+                self.admin_window.show()
+            else:
+                QtWidgets.QMessageBox.critical(self, "Error", "Unknown role!")
+
 
     def closeEvent(self, event):
         """Stop the camera when closing the application."""

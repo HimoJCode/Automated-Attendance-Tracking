@@ -10,11 +10,14 @@
     <height>768</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Admin</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/Bg_aci.jpg);
+   <string notr="true">background-image: url(:/resources/Bg_aci.png);
 background-repeat: no-repeat;
 
 </string>
@@ -45,18 +48,27 @@ background: transparent;
    <widget class="QLineEdit" name="searchBar">
     <property name="geometry">
      <rect>
-      <x>253</x>
+      <x>333</x>
       <y>109</y>
-      <width>981</width>
+      <width>901</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(255, 255, 255);
 font: 30pt &quot;MS Shell Dlg 2&quot;;
-border: 1px solid #ccc;
 background: transparent;
-background-color: rgb(133, 133, 133);</string>
+background-color: rgb(133, 133, 133);
+
+
+border-top: 1px solid white;
+border-right: 1px solid white;
+border-bottom: 1px solid white;
+border-left: none;
+
+border-top-right-radius: 24px;
+border-bottom-right-radius: 24px;
+</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -68,14 +80,22 @@ background-color: rgb(133, 133, 133);</string>
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>110</y>
+      <x>253</x>
+      <y>109</y>
       <width>81</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(133, 133, 133);</string>
+     <string notr="true">background-color: rgb(133, 133, 133);
+
+border-top: 1px solid white;
+border-left: 1px solid white;
+border-bottom: 1px solid white;
+border-right: none;
+
+border-top-left-radius: 24px;
+border-bottom-left-radius: 24px;</string>
     </property>
     <property name="text">
      <string/>
@@ -143,7 +163,127 @@ background: transparent;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="logout_button">
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>269</y>
+      <width>1171</width>
+      <height>448</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTableWidget {
+    background: transparent;
+    color: white;
+    font: 12pt &quot;Segoe UI&quot;;
+    gridline-color: rgba(255, 255, 255, 50);
+    border: none;
+}
+
+QHeaderView::section {
+    
+    background: transparent;
+    color: white;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    padding: 8px;
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+}
+</string>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
+    </property>
+    <property name="tabKeyNavigation">
+     <bool>true</bool>
+    </property>
+    <property name="showDropIndicator" stdset="0">
+     <bool>true</bool>
+    </property>
+    <property name="dragDropOverwriteMode">
+     <bool>true</bool>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+    <property name="rowCount">
+     <number>15</number>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderHighlightSections">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <column>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Grade</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Strand</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Time</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QToolButton" name="toolButtonMenu">
     <property name="geometry">
      <rect>
       <x>1260</x>
@@ -153,14 +293,29 @@ background: transparent;</string>
      </rect>
     </property>
     <property name="contextMenuPolicy">
-     <enum>Qt::DefaultContextMenu</enum>
+     <enum>Qt::ActionsContextMenu</enum>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
     </property>
     <property name="styleSheet">
      <string notr="true"> background: transparent;
- border: none;</string>
+ border: none;
+
+
+QMenu {
+    background-color: #444;
+    color: white;
+    font: bold 10pt &quot;Segoe UI&quot;;
+    padding: 8px;
+}
+QMenu::item:selected {
+    background-color: #666;
+}
+</string>
     </property>
     <property name="text">
-     <string/>
+     <string>...</string>
     </property>
     <property name="icon">
      <iconset>
@@ -171,6 +326,9 @@ background: transparent;</string>
       <width>30</width>
       <height>40</height>
      </size>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::InstantPopup</enum>
     </property>
    </widget>
   </widget>
