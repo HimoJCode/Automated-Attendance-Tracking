@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>297</height>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,8 +22,8 @@
   <widget class="QLineEdit" name="usernameInput">
    <property name="geometry">
     <rect>
-     <x>28</x>
-     <y>61</y>
+     <x>29</x>
+     <y>114</y>
      <width>388</width>
      <height>41</height>
     </rect>
@@ -31,7 +31,6 @@
    <property name="styleSheet">
     <string notr="true">color: rgb(255, 255, 255);
 font: 10pt &quot;MS Shell Dlg 2&quot;;
-
 border-radius: 18px;
 border: 1px solid white;
 </string>
@@ -46,8 +45,8 @@ border: 1px solid white;
   <widget class="QLineEdit" name="passwordInput">
    <property name="geometry">
     <rect>
-     <x>26</x>
-     <y>116</y>
+     <x>27</x>
+     <y>169</y>
      <width>388</width>
      <height>41</height>
     </rect>
@@ -69,7 +68,7 @@ border: 1px solid white;</string>
    <property name="geometry">
     <rect>
      <x>178</x>
-     <y>171</y>
+     <y>225</y>
      <width>98</width>
      <height>25</height>
     </rect>
@@ -77,6 +76,7 @@ border: 1px solid white;</string>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(255, 255, 255);
 font: 14pt &quot;MS Shell Dlg 2&quot;;
+
 border-radius: 12px;</string>
    </property>
    <property name="text">
@@ -86,21 +86,36 @@ border-radius: 12px;</string>
   <widget class="QLabel" name="noteLabel">
    <property name="geometry">
     <rect>
-     <x>26</x>
-     <y>227</y>
+     <x>35</x>
+     <y>60</y>
      <width>391</width>
-     <height>58</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">color: rgb(255, 255, 255);
-font: 8pt &quot;Lucida Sans Typewriter&quot;;</string>
+font: 10pt;</string>
    </property>
    <property name="text">
-    <string>This login page is only for Admin and Super Admin users. 
-Students cannot log in here. If you are a student, 
-please use the attendance system instead.
-</string>
+    <string>This system requires admin access to run and save attendance logs.
+Please have the admin login to enable attendance recording.</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="noteLabel_2">
+   <property name="geometry">
+    <rect>
+     <x>138</x>
+     <y>31</y>
+     <width>165</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+font: 75 13pt;</string>
+   </property>
+   <property name="text">
+    <string>Admin Login Required</string>
    </property>
   </widget>
  </widget>

@@ -11,21 +11,46 @@ import resources.res_rc
 # Paths to UI files
 MAIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "automated.ui")
 LOGIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "login.ui")
+ADMIN_LOGIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "loginPermission.ui")
 ADMIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "admin.ui")
 SUPERADMIN_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "superAdmin.ui")
 
+class LoginPermissionDialog(QtWidgets.QDialog):
+    """Admin Login for Automated Attendance Logging."""
+    def __init__(self):
+        super(LoginPermissionDialog, self).__init__()
+        uic.loadUi(ADMIN_LOGIN_UI_PATH, self)
 
+        # Connect the login button of this dialog
+        self.loginButton.clicked.connect(self.login_action)
+
+    def login_action(self):
+        username = self.usernameInput.text().strip()
+        password = self.passwordInput.text().strip()
+
+        # Example validation logic (replace with your own validation)
+        if not username:
+            QMessageBox.warning(self, "Login Error", "Username cannot be empty!")
+            return
+        if not password:
+            QMessageBox.warning(self, "Login Error", "Password cannot be empty!")
+            return
+
+        if username == "admin" and password == "1234":
+            self.logged_in = True
+            QMessageBox.information(self, "Success", "Admin logged in for attendance logging!")
+            self.accept()
+        else:
+            QMessageBox.critical(self, "Login Failed", "Invalid admin credentials!")
 class LoginDialog(QtWidgets.QDialog):
-    """Login Window Class"""
+    """Dashboard Login Dialog"""
     def __init__(self, super_admin_mode=False):
         super(LoginDialog, self).__init__()
 
         # Load Login UI
         uic.loadUi(LOGIN_UI_PATH, self)
-
         self.super_admin_mode = super_admin_mode 
         self.logged_in_role = None  # 'admin' or 'superadmin'
-
 
         # Connect login button
         self.loginButton.clicked.connect(self.login_action)
@@ -63,11 +88,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Load Admin UI
         uic.loadUi(ADMIN_UI_PATH, self)
 
-        image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "resources/Bg_aci.jpg"))
-
-
-        # Debugging: Print available UI elements
-        #print("Available UI elements in Admin:", self.__dict__)
+        #image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "resources/Bg_aci.jpg"))
 
         # Set up QTimer to update the time every second
         self.timer_clock = QTimer(self)
@@ -99,15 +120,10 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Ensure date_label exists
         if hasattr(self, "date_label"):
             self.date_label.setText(f"{current_date}")
-        else:
-            print("Error: 'date_label' not found in Admin UI!")
-
         # Ensure time_label exists
         if hasattr(self, "time_label"):
             self.time_label.setText(f"{current_time}")
-        else:
-            print("Error: 'time_label' not found in Admin UI!")
-        
+
     def logout(self):
         # Show confirmation dialog
         reply = QMessageBox.question(
@@ -137,10 +153,13 @@ class AdminDashboard(QtWidgets.QMainWindow):
     def finish_logout(self):
         # Optionally, reset the opacity back to 1 for future use
         self.setGraphicsEffect(None)
-         # Show a logout message (optional)
+
+         # Show a logout message
         QMessageBox.information(self, "Logout", "You have been logged out.")
+
          # Close the current Admin Dashboard window
         self.close()
+
         # Open the AttendanceApp window (automated.ui)
         self.attendance_window = AttendanceApp()
         self.attendance_window.show()
@@ -149,6 +168,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Open login dialog as a popup
         login_dialog = LoginDialog(super_admin_mode=True)
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
+
              # If login is successful, open Super Admin window
             self.super_admin_window = SuperAdminDashboard()
             self.super_admin_window.show()
@@ -168,8 +188,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
         # Load the Main UI
         uic.loadUi(MAIN_UI_PATH, self)
 
-        # Debugging: Print available UI elements
-        #print("Available UI elements in Main:", self.__dict__)
 
         # Set up webcam feed
         self.camera = cv2.VideoCapture(0)  # Open default webcam
@@ -193,6 +211,14 @@ class AttendanceApp(QtWidgets.QMainWindow):
             q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888)
             self.liveVideoLabel.setPixmap(QPixmap.fromImage(q_img))  # Update QLabel with camera feed
 
+            # (Your face detection logic here)
+
+            self.save_attendance_log(frame)
+
+    def save_attendance_log(self, frame):
+        """Replace this with your logic to save attendance data."""
+        print("Attendance log saved at", datetime.datetime.now())
+
     def show_login(self):
         login_dialog = LoginDialog()
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -207,7 +233,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
             else:
                 QtWidgets.QMessageBox.critical(self, "Error", "Unknown role!")
 
-
     def closeEvent(self, event):
         """Stop the camera when closing the application."""
         self.camera.release()
@@ -215,6 +240,11 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    window = AttendanceApp()
-    window.show()
-    sys.exit(app.exec_())
+    admin_permission_dialog = LoginPermissionDialog()
+
+    if admin_permission_dialog.exec_() == QtWidgets.QDialog.Accepted and admin_permission_dialog.logged_in:
+        window = AttendanceApp()
+        window.show()
+        sys.exit(app.exec_())
+    else:
+        sys.exit(0)

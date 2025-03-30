@@ -96,8 +96,8 @@ border: 7px solid black;</string>
      <rect>
       <x>787</x>
       <y>157</y>
-      <width>270</width>
-      <height>355</height>
+      <width>246</width>
+      <height>326</height>
      </rect>
     </property>
     <property name="styleSheet">
