@@ -11,361 +11,422 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Automated Attendance Tracking</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: #242424;
-</string>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>-4</x>
-      <y>101</y>
-      <width>1370</width>
-      <height>3</height>
-     </rect>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #858585</string>
+    <property name="leftMargin">
+     <number>0</number>
     </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+    <property name="topMargin">
+     <number>0</number>
     </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>445</x>
-      <y>20</y>
-      <width>476</width>
-      <height>69</height>
-     </rect>
+    <property name="rightMargin">
+     <number>0</number>
     </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>30</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
+    <property name="bottomMargin">
+     <number>0</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Attendance tracking System</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>713</x>
-      <y>101</y>
-      <width>3</width>
-      <height>670</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #858585</string>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="liveVideoLabel">
-    <property name="geometry">
-     <rect>
-      <x>67</x>
-      <y>157</y>
-      <width>566</width>
-      <height>326</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9;
-border: 7px solid black;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="image">
-    <property name="geometry">
-     <rect>
-      <x>787</x>
-      <y>157</y>
-      <width>246</width>
-      <height>326</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9;
-border: 7px solid black;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>71</x>
-      <y>126</y>
-      <width>94</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Live Video</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>67</x>
-      <y>503</y>
-      <width>161</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Attendance Log</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>1081</x>
-      <y>180</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Name:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>1081</x>
-      <y>240</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Grade:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>1081</x>
-      <y>370</y>
-      <width>62</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Date:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>1081</x>
-      <y>310</y>
-      <width>62</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Time:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>1081</x>
-      <y>430</y>
-      <width>94</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: #ffffff</string>
-    </property>
-    <property name="text">
-     <string>Strand:</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="loginButton">
-    <property name="geometry">
-     <rect>
-      <x>971</x>
-      <y>608</y>
-      <width>158</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Forte</family>
-      <pointsize>17</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #D9D9D9;
-border-radius: 30px;</string>
-    </property>
-    <property name="text">
-     <string>Login</string>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="tableWidget">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>67</x>
-      <y>538</y>
-      <width>600</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"> border: none;
+    <item>
+     <widget class="QFrame" name="background">
+      <property name="styleSheet">
+       <string notr="true">background-color: #242424;
 
 </string>
-    </property>
-    <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="showGrid">
-     <bool>false</bool>
-    </property>
-    <property name="gridStyle">
-     <enum>Qt::NoPen</enum>
-    </property>
-    <property name="cornerButtonEnabled">
-     <bool>true</bool>
-    </property>
-    <attribute name="horizontalHeaderVisible">
-     <bool>true</bool>
-    </attribute>
-    <attribute name="horizontalHeaderCascadingSectionResizes">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderMinimumSectionSize">
-     <number>50</number>
-    </attribute>
-    <attribute name="horizontalHeaderHighlightSections">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderVisible">
-     <bool>true</bool>
-    </attribute>
-    <attribute name="verticalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <column>
-     <property name="text">
-      <string>Name</string>
-     </property>
-     <property name="textAlignment">
-      <set>AlignCenter</set>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Grade</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Strand</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Date</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Time</string>
-     </property>
-    </column>
-   </widget>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QTableWidget" name="tableWidget">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>550</y>
+         <width>600</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"> border: none;
+
+</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="showGrid">
+        <bool>false</bool>
+       </property>
+       <property name="gridStyle">
+        <enum>Qt::NoPen</enum>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>50</number>
+       </attribute>
+       <attribute name="horizontalHeaderHighlightSections">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Name</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Grade</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Strand</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Time</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>515</y>
+         <width>161</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Forte</family>
+         <pointsize>17</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff</string>
+       </property>
+       <property name="text">
+        <string>Attendance Log</string>
+       </property>
+      </widget>
+      <widget class="Line" name="line_2">
+       <property name="geometry">
+        <rect>
+         <x>716</x>
+         <y>113</y>
+         <width>3</width>
+         <height>670</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #858585</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="liveVideoLabel">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>169</y>
+         <width>566</width>
+         <height>326</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #D9D9D9;
+border: 7px solid black;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>448</x>
+         <y>32</y>
+         <width>476</width>
+         <height>69</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Forte</family>
+         <pointsize>30</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff</string>
+       </property>
+       <property name="text">
+        <string>Attendance tracking System</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="image">
+       <property name="geometry">
+        <rect>
+         <x>790</x>
+         <y>169</y>
+         <width>246</width>
+         <height>326</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #D9D9D9;
+border: 7px solid black;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="login_btn">
+       <property name="geometry">
+        <rect>
+         <x>974</x>
+         <y>620</y>
+         <width>158</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Forte</family>
+         <pointsize>17</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #D9D9D9;
+border-radius: 30px;</string>
+       </property>
+       <property name="text">
+        <string>Login</string>
+       </property>
+      </widget>
+      <widget class="Line" name="line">
+       <property name="geometry">
+        <rect>
+         <x>-1</x>
+         <y>113</y>
+         <width>1370</width>
+         <height>3</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #858585</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>74</x>
+         <y>138</y>
+         <width>94</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Forte</family>
+         <pointsize>17</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff</string>
+       </property>
+       <property name="text">
+        <string>Live Video</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="exit_btn">
+       <property name="geometry">
+        <rect>
+         <x>1330</x>
+         <y>10</y>
+         <width>28</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../../../Downloads/cancel.png</normaloff>../../../../Downloads/cancel.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="minimize_btn">
+       <property name="geometry">
+        <rect>
+         <x>1300</x>
+         <y>10</y>
+         <width>28</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../../../Downloads/minus (2).png</normaloff>../../../../Downloads/minus (2).png</iconset>
+       </property>
+      </widget>
+      <widget class="QFrame" name="frame">
+       <property name="geometry">
+        <rect>
+         <x>1060</x>
+         <y>240</y>
+         <width>92</width>
+         <height>169</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="font">
+           <font>
+            <family>Forte</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #ffffff</string>
+          </property>
+          <property name="text">
+           <string>Date:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <family>Forte</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #ffffff</string>
+          </property>
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="font">
+           <font>
+            <family>Forte</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #ffffff</string>
+          </property>
+          <property name="text">
+           <string>Strand:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="font">
+           <font>
+            <family>Forte</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #ffffff</string>
+          </property>
+          <property name="text">
+           <string>Time:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <family>Forte</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #ffffff</string>
+          </property>
+          <property name="text">
+           <string>Grade:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

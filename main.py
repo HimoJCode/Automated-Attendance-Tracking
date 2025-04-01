@@ -2,7 +2,7 @@ import sys
 import os
 import cv2
 import datetime
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox
@@ -20,9 +20,12 @@ class LoginPermissionDialog(QtWidgets.QDialog):
     def __init__(self):
         super(LoginPermissionDialog, self).__init__()
         uic.loadUi(ADMIN_LOGIN_UI_PATH, self)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.exit_btn.clicked.connect(self.close)
+        self.minimize_btn.clicked.connect(self.showMinimized)
 
         # Connect the login button of this dialog
-        self.loginButton.clicked.connect(self.login_action)
+        self.login_btn.clicked.connect(self.login_action)
 
     def login_action(self):
         username = self.usernameInput.text().strip()
@@ -49,11 +52,14 @@ class LoginDialog(QtWidgets.QDialog):
 
         # Load Login UI
         uic.loadUi(LOGIN_UI_PATH, self)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.exit_btn.clicked.connect(self.close)
+        self.minimize_btn.clicked.connect(self.showMinimized)
         self.super_admin_mode = super_admin_mode 
         self.logged_in_role = None  # 'admin' or 'superadmin'
 
         # Connect login button
-        self.loginButton.clicked.connect(self.login_action)
+        self.login_btn.clicked.connect(self.login_action)
 
     def login_action(self):
         """Handle login process with error messages"""
@@ -87,7 +93,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         # Load Admin UI
         uic.loadUi(ADMIN_UI_PATH, self)
-
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         #image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "resources/Bg_aci.jpg"))
 
         # Set up QTimer to update the time every second
@@ -98,19 +104,46 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Update time on startup
         self.update_time()
 
-        menu = QtWidgets.QMenu()
+        self.Down_Menu_Num = 0
 
-        logout_action = menu.addAction("Logout")
-        switch_admin_action = menu.addAction("Change to Super admin")
+        self.toolButtonMenu.clicked.connect(lambda: self.Down_Menu_Num_0())
+        self.logout_btn.clicked.connect(self.logout)
+        self.superAdmin_btn.clicked.connect(self.superAdmin)
 
-        # Optional: connect to real functions
-        logout_action.triggered.connect(self.logout)
-        switch_admin_action.triggered.connect(self.switch_to_super_admin)
+    def Down_Menu_Num_0(self):
+        if self.Down_Menu_Num == 0:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(51)
+            self.animation1.setEndValue(121)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
 
-        # Attach menu to tool button
-        self.toolButtonMenu.setMenu(menu)
-        self.toolButtonMenu.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(51)
+            self.animation2.setEndValue(121)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
 
+            self.animation2.start()
+            self.Down_Menu_Num = 1
+
+        else:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(121)
+            self.animation1.setEndValue(51)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
+
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(121)
+            self.animation2.setEndValue(51)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation2.start()
+
+            self.Down_Menu_Num = 0
     def update_time(self):
         """Update Date and Time dynamically."""
         current_datetime = QDateTime.currentDateTime()
@@ -164,7 +197,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.attendance_window = AttendanceApp()
         self.attendance_window.show()
 
-    def switch_to_super_admin(self):
+    def superAdmin(self):
         # Open login dialog as a popup
         login_dialog = LoginDialog(super_admin_mode=True)
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -178,7 +211,117 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
     def __init__(self):
         super(SuperAdminDashboard, self).__init__()
         uic.loadUi(SUPERADMIN_UI_PATH, self)
-        self.setWindowTitle("Super Admin Dashboard")
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        
+        # Set up QTimer to update the time every second
+        self.timer_clock = QTimer(self)
+        self.timer_clock.timeout.connect(self.update_time)
+        self.timer_clock.start(1000)  # Update every 1 second
+
+        # Update time on startup
+        self.update_time()
+
+        self.Down_Menu_Num = 0
+
+        self.toolButtonMenu.clicked.connect(lambda: self.Down_Menu_Num_0())
+        self.logout_btn.clicked.connect(self.logout)
+        self.superAdmin_btn.clicked.connect(self.superAdmin)
+
+    def Down_Menu_Num_0(self):
+        if self.Down_Menu_Num == 0:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(51)
+            self.animation1.setEndValue(121)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
+
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(51)
+            self.animation2.setEndValue(121)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+
+            self.animation2.start()
+            self.Down_Menu_Num = 1
+
+        else:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(121)
+            self.animation1.setEndValue(51)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
+
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(121)
+            self.animation2.setEndValue(51)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation2.start()
+
+            self.Down_Menu_Num = 0
+    def update_time(self):
+        """Update Date and Time dynamically."""
+        current_datetime = QDateTime.currentDateTime()
+        current_date = current_datetime.toString("MMMM dd, yyyy")
+        current_time = current_datetime.toString("hh:mm:ss AP")
+
+        # Ensure date_label exists
+        if hasattr(self, "date_label"):
+            self.date_label.setText(f"{current_date}")
+        # Ensure time_label exists
+        if hasattr(self, "time_label"):
+            self.time_label.setText(f"{current_time}")
+
+    def logout(self):
+        # Show confirmation dialog
+        reply = QMessageBox.question(
+            self,
+            "Logout Confirmation",
+            "Are you sure you want to logout?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            # Start fade-out animation before logging out
+            self.start_fade_out()
+    
+    def start_fade_out(self):
+        # Set up the opacity effect
+        self.effect = QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(self.effect)
+    
+        # Create the animation to fade out
+        self.animation = QPropertyAnimation(self.effect, b"opacity")
+        self.animation.setDuration(800)  # Duration in milliseconds (adjust as needed)
+        self.animation.setStartValue(1.0)
+        self.animation.setEndValue(0.0)
+        self.animation.finished.connect(self.finish_logout)
+        self.animation.start()
+
+    def finish_logout(self):
+        # Optionally, reset the opacity back to 1 for future use
+        self.setGraphicsEffect(None)
+
+         # Show a logout message
+        QMessageBox.information(self, "Logout", "You have been logged out.")
+
+         # Close the current Admin Dashboard window
+        self.close()
+
+        # Open the AttendanceApp window (automated.ui)
+        self.attendance_window = AttendanceApp()
+        self.attendance_window.show()
+
+    def superAdmin(self):
+        # Open login dialog as a popup
+        login_dialog = LoginDialog(super_admin_mode=True)
+        if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
+
+             # If login is successful, open Super Admin window
+            self.super_admin_window = SuperAdminDashboard()
+            self.super_admin_window.show()
 
 class AttendanceApp(QtWidgets.QMainWindow):
     """Main Attendance System UI"""
@@ -187,7 +330,9 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
         # Load the Main UI
         uic.loadUi(MAIN_UI_PATH, self)
-
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.exit_btn.clicked.connect(self.close)
+        self.minimize_btn.clicked.connect(self.showMinimized)
 
         # Set up webcam feed
         self.camera = cv2.VideoCapture(0)  # Open default webcam
@@ -196,8 +341,8 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.timer.start(30)  # Update every 30ms
 
         # Connect login button
-        if hasattr(self, "loginButton"):
-            self.loginButton.clicked.connect(self.show_login)
+        if hasattr(self, "login_btn"):
+            self.login_btn.clicked.connect(self.show_login)
         else:
             print("Error: 'loginButton' not found in UI!")
 
