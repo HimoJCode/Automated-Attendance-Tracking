@@ -2,7 +2,7 @@ import sys
 import os
 import cv2
 import datetime
-from PyQt5 import QtWidgets, uic, QtCore
+from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox
@@ -110,6 +110,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.logout_btn.clicked.connect(self.logout)
         self.superAdmin_btn.clicked.connect(self.superAdmin)
 
+        self.populate_attendance_data()
+
     def Down_Menu_Num_0(self):
         if self.Down_Menu_Num == 0:
             self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
@@ -156,6 +158,49 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Ensure time_label exists
         if hasattr(self, "time_label"):
             self.time_label.setText(f"{current_time}")
+    
+    def populate_attendance_data(self):
+        data = [
+            ["Jeramel Himo", "12", "HUMSS", "March 20, 2025", "12:35PM"],
+            ["Aubrey Caruz", "12", "STEM", "March 20, 2025", "11:35AM"],
+            ["Roland Hontalba", "12", "GAS", "March 20, 2025", "10:32AM"],
+            ["Jose Luwenko", "12", "TVET", "March 20, 2025", "09:45AM"],
+            ["Joselito Famor", "11", "ABM", "March 20, 2025", "08:20AM"],
+            ["Janice Jofell Villamil", "11", "HUMSS", "March 20, 2025", "08:15AM"],
+            ["Ezraed Himo", "12", "STEM", "March 20, 2025", "07:35AM"],
+            ["Jericho Zandy Arante", "11", "ABM", "November 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+        ]
+
+        table = self.adminTableWidget
+        table.setRowCount(len(data))
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+
+        for row_index, row_data in enumerate(data):
+            for col_index, col_data in enumerate(row_data):
+                item = QtWidgets.QTableWidgetItem(col_data)
+                item.setForeground(QtGui.QColor("white"))
+                item.setTextAlignment(QtCore.Qt.AlignLeft)
+                table.setItem(row_index, col_index, item)
+
+        # Adjust columns to fit neatly
+        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+
+        # Set a fixed width for each column
+        table.setColumnWidth(0, 210)  # NAME
+        table.setColumnWidth(1, 90)   # GRADE
+        table.setColumnWidth(2, 170)  # STRAND
+        table.setColumnWidth(3, 150)  # DATE
+        table.setColumnWidth(4, 140)   # TIME
+
+        # Set a fixed height for each row
+        table.verticalHeader().setDefaultSectionSize(40)
 
     def logout(self):
         # Show confirmation dialog
@@ -340,11 +385,14 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(30)  # Update every 30ms
 
+        self.populate_attendance_data()
+
         # Connect login button
         if hasattr(self, "login_btn"):
             self.login_btn.clicked.connect(self.show_login)
         else:
             print("Error: 'loginButton' not found in UI!")
+
 
     def update_frame(self):
         """Capture frames from the webcam and display in Live Video."""
@@ -359,6 +407,49 @@ class AttendanceApp(QtWidgets.QMainWindow):
             # (Your face detection logic here)
 
             self.save_attendance_log(frame)
+
+    def populate_attendance_data(self):
+        data = [
+            ["Jeramel Himo", "12", "HUMSS", "March 20, 2025", "12:35PM"],
+            ["Aubrey Caruz", "12", "STEM", "March 20, 2025", "11:35AM"],
+            ["Roland Hontalba", "12", "GAS", "March 20, 2025", "10:32AM"],
+            ["Jose Luwenko", "12", "TVET", "March 20, 2025", "09:45AM"],
+            ["Joselito Famor", "11", "ABM", "March 20, 2025", "08:20AM"],
+            ["Janice Jofell Villamil", "11", "HUMSS", "March 20, 2025", "08:15AM"],
+            ["Ezraed Himo", "12", "STEM", "March 20, 2025", "07:35AM"],
+            ["Jericho Zandy Arante", "11", "ABM", "November 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+            ["Arante Aoo", "11", "ABM", "December 20, 2025", "06:35AM"],
+        ]
+
+        table = self.attendanceTableWidget
+        table.setRowCount(len(data))
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+
+        for row_index, row_data in enumerate(data):
+            for col_index, col_data in enumerate(row_data):
+                item = QtWidgets.QTableWidgetItem(col_data)
+                item.setForeground(QtGui.QColor("white"))
+                item.setTextAlignment(QtCore.Qt.AlignLeft)
+                table.setItem(row_index, col_index, item)
+
+        # Adjust columns to fit neatly
+        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+
+        # Set a fixed width for each column
+        table.setColumnWidth(0, 163)  # NAME
+        table.setColumnWidth(1, 110)   # GRADE
+        table.setColumnWidth(2, 95)  # STRAND
+        table.setColumnWidth(3, 140)  # DATE
+        table.setColumnWidth(4, 70)   # TIME
+
+        # Set a fixed height for each row
+        table.verticalHeader().setDefaultSectionSize(30)
 
     def save_attendance_log(self, frame):
         """Replace this with your logic to save attendance data."""
