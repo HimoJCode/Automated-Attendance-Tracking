@@ -193,14 +193,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
         # Set a fixed width for each column
-        table.setColumnWidth(0, 210)  # NAME
-        table.setColumnWidth(1, 90)   # GRADE
-        table.setColumnWidth(2, 170)  # STRAND
-        table.setColumnWidth(3, 150)  # DATE
-        table.setColumnWidth(4, 140)   # TIME
+        table.setColumnWidth(0, 320)  # NAME
+        table.setColumnWidth(1, 180)   # GRADE
+        table.setColumnWidth(2, 160)  # STRAND
+        table.setColumnWidth(3, 280)  # DATE
+        table.setColumnWidth(4, 130)   # TIME
 
         # Set a fixed height for each row
-        table.verticalHeader().setDefaultSectionSize(40)
+        table.verticalHeader().setDefaultSectionSize(50)
 
     def logout(self):
         # Show confirmation dialog
@@ -380,7 +380,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.minimize_btn.clicked.connect(self.showMinimized)
 
         # Set up webcam feed
-        self.camera = cv2.VideoCapture(0)  # Open default webcam
+        self.camera = cv2.VideoCapture(1)  # Open default webcam
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(30)  # Update every 30ms

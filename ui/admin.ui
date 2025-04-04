@@ -33,8 +33,10 @@
     <item>
      <widget class="QFrame" name="background">
       <property name="styleSheet">
-       <string notr="true">background-image: url(:/resources/Bg_aci.png);
-background-repeat: no-repeat;</string>
+       <string notr="true">background-repeat: no-repeat;
+background-color: #242424;
+
+</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -324,14 +326,15 @@ border: none;</string>
       <widget class="QLabel" name="nameLogs">
        <property name="geometry">
         <rect>
-         <x>150</x>
+         <x>210</x>
          <y>250</y>
-         <width>71</width>
+         <width>101</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;
+        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
+font-family: bold;
 color: white;
 background: transparent;</string>
        </property>
@@ -342,14 +345,15 @@ background: transparent;</string>
       <widget class="QLabel" name="gradeLogs">
        <property name="geometry">
         <rect>
-         <x>360</x>
+         <x>440</x>
          <y>250</y>
-         <width>91</width>
+         <width>121</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;
+        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
+font-family: bold;
 color: white;
 background: transparent;</string>
        </property>
@@ -360,16 +364,17 @@ background: transparent;</string>
       <widget class="QLabel" name="strandLogs">
        <property name="geometry">
         <rect>
-         <x>560</x>
+         <x>640</x>
          <y>250</y>
-         <width>101</width>
+         <width>141</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;
+        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
 color: white;
-background: transparent;</string>
+background: transparent;
+font-family: bold;</string>
        </property>
        <property name="text">
         <string>STRAND</string>
@@ -378,16 +383,17 @@ background: transparent;</string>
       <widget class="QLabel" name="dateLogs">
        <property name="geometry">
         <rect>
-         <x>770</x>
+         <x>880</x>
          <y>250</y>
-         <width>71</width>
+         <width>91</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;
+        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
 color: white;
-background: transparent;</string>
+background: transparent;
+font-family: bold;</string>
        </property>
        <property name="text">
         <string>DATE</string>
@@ -396,16 +402,17 @@ background: transparent;</string>
       <widget class="QLabel" name="timeLogs">
        <property name="geometry">
         <rect>
-         <x>1000</x>
+         <x>1115</x>
          <y>250</y>
-         <width>71</width>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;
+        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
 color: white;
-background: transparent;</string>
+background: transparent;
+font-family: bold;</string>
        </property>
        <property name="text">
         <string>TIME</string>
@@ -414,10 +421,10 @@ background: transparent;</string>
       <widget class="QTableWidget" name="adminTableWidget">
        <property name="geometry">
         <rect>
-         <x>110</x>
+         <x>100</x>
          <y>300</y>
-         <width>961</width>
-         <height>291</height>
+         <width>1151</width>
+         <height>401</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -428,13 +435,12 @@ background: transparent;</string>
     gridline-color: transparent;
     outline: none;
     padding: 5px;
-    font-size: 20px;
+    font-size: 30px;
 }
-
 QHeaderView::section {
-    background: transparent;
+    background-color: transparent;
     color: #FFFFFF;
-    font-size: 15px;
+    font-size: 20px;
     border: none;
     padding: 5px;
     text-align: left;  /* Align header titles consistently */
@@ -454,21 +460,6 @@ QTableWidget::item:selected {
 QTableWidget::item {
     selection-background-color: transparent;
     selection-color: #FFFFFF;
-}
-
-QScrollBar:vertical {
-    width: 8px;
-    background: transparent;
-}
-
-QScrollBar::handle:vertical {
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 4px;
-}
-
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:vertical {
-    height: 0px;
 }
 
 QHeaderView::section:horizontal {
