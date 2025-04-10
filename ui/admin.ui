@@ -33,10 +33,9 @@
     <item>
      <widget class="QFrame" name="background">
       <property name="styleSheet">
-       <string notr="true">background-repeat: no-repeat;
-background-color: #242424;
-
-</string>
+       <string notr="true">QFrame#background{
+border-image:url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
+}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -47,22 +46,22 @@ background-color: #242424;
       <widget class="QPushButton" name="searchButton">
        <property name="geometry">
         <rect>
-         <x>250</x>
-         <y>110</y>
+         <x>1120</x>
+         <y>150</y>
          <width>81</width>
          <height>61</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(133, 133, 133);
+        <string notr="true">background-color: #dadada;
 
-border-top: 1px solid white;
-border-left: 1px solid white;
-border-bottom: 1px solid white;
-border-right: none;
+border-top: 1px solid black;
+border-left: 1px solid black;
+border-bottom: 1px solid black;
+border-right: 1px solid black;
 
-border-top-left-radius: 24px;
-border-bottom-left-radius: 24px;</string>
+border-top-right-radius: 15px;
+border-bottom-right-radius: 15px;</string>
        </property>
        <property name="text">
         <string/>
@@ -81,15 +80,15 @@ border-bottom-left-radius: 24px;</string>
       <widget class="QLabel" name="time_label">
        <property name="geometry">
         <rect>
-         <x>1060</x>
+         <x>1020</x>
          <y>33</y>
          <width>161</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: rgb(255, 255, 255);
-font: 20pt &quot;Forte&quot;;
+        <string notr="true">color: #000000;
+font: 63 20pt &quot;Segoe UI Semibold&quot;;
 background: transparent;</string>
        </property>
        <property name="text">
@@ -115,33 +114,34 @@ background: transparent;</string>
       <widget class="QLineEdit" name="searchBar">
        <property name="geometry">
         <rect>
-         <x>330</x>
-         <y>110</y>
-         <width>901</width>
+         <x>187</x>
+         <y>150</y>
+         <width>1015</width>
          <height>61</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: rgb(255, 255, 255);
+        <string notr="true">color: #000000;
 font: 30pt &quot;MS Shell Dlg 2&quot;;
 background: transparent;
-background-color: rgb(133, 133, 133);
+background-color: #dadada;
 
+border-top: 1px solid black;
+border-right: 1px solid black;
+border-bottom: 1px solid black;
+border-left: 1px solid black;
 
-border-top: 1px solid white;
-border-right: 1px solid white;
-border-bottom: 1px solid white;
-border-left: none;
-
-border-top-right-radius: 24px;
-border-bottom-right-radius: 24px;
+border-top-right-radius: 15px;
+border-bottom-right-radius: 15px;
+border-top-left-radius: 15px;
+border-bottom-left-radius: 15px;
 </string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <property name="placeholderText">
-        <string>Search Name</string>
+        <string>Search Name, Grade, Strand, or Month</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -150,16 +150,16 @@ border-bottom-right-radius: 24px;
        </property>
        <property name="geometry">
         <rect>
-         <x>429</x>
-         <y>31</y>
-         <width>531</width>
+         <x>205</x>
+         <y>70</y>
+         <width>991</width>
          <height>69</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: white;
-font: 25pt &quot;Forte&quot;;
+        <string notr="true">color: #000000;
 background: transparent;
+font: 63 48pt &quot;Segoe UI Semibold&quot;;
 </string>
        </property>
        <property name="text">
@@ -169,15 +169,15 @@ background: transparent;
       <widget class="QLabel" name="date_label">
        <property name="geometry">
         <rect>
-         <x>43</x>
+         <x>220</x>
          <y>33</y>
          <width>201</width>
-         <height>28</height>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: rgb(255, 255, 255);
-font: 20pt &quot;Forte&quot;;
+        <string notr="true">color: #000000;
+font: 63 20pt &quot;Segoe UI Semibold&quot;;
 background: transparent;</string>
        </property>
        <property name="text">
@@ -333,10 +333,9 @@ border: none;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
-font-family: bold;
-color: white;
-background: transparent;</string>
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+background: transparent;
+color: #000000;</string>
        </property>
        <property name="text">
         <string>NAME</string>
@@ -352,10 +351,9 @@ background: transparent;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
-font-family: bold;
-color: white;
-background: transparent;</string>
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+background: transparent;
+color: #000000;</string>
        </property>
        <property name="text">
         <string>GRADE</string>
@@ -366,15 +364,14 @@ background: transparent;</string>
         <rect>
          <x>640</x>
          <y>250</y>
-         <width>141</width>
+         <width>121</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
-color: white;
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
 background: transparent;
-font-family: bold;</string>
+color: #000000;</string>
        </property>
        <property name="text">
         <string>STRAND</string>
@@ -390,10 +387,9 @@ font-family: bold;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
-color: white;
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
 background: transparent;
-font-family: bold;</string>
+color: #000000;</string>
        </property>
        <property name="text">
         <string>DATE</string>
@@ -409,28 +405,27 @@ font-family: bold;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 25pt &quot;MS Shell Dlg 2&quot;;
-color: white;
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
 background: transparent;
-font-family: bold;</string>
+color: #000000;</string>
        </property>
        <property name="text">
         <string>TIME</string>
        </property>
       </widget>
-      <widget class="QTableWidget" name="adminTableWidget">
+      <widget class="QTableWidget" name="attendanceTableWidget">
        <property name="geometry">
         <rect>
          <x>100</x>
          <y>300</y>
-         <width>1151</width>
+         <width>1181</width>
          <height>401</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QTableWidget {
     background: transparent;
-    color: #FFFFFF;
+    color: #000000;
     border: none;
     gridline-color: transparent;
     outline: none;
@@ -439,7 +434,7 @@ font-family: bold;</string>
 }
 QHeaderView::section {
     background-color: transparent;
-    color: #FFFFFF;
+    color: #000000;
     font-size: 20px;
     border: none;
     padding: 5px;
@@ -454,17 +449,17 @@ QTableWidget::item {
 
 QTableWidget::item:selected {
     background-color: transparent;
-    color: #FFFFFF;
+    color: #000000;
 }
 
 QTableWidget::item {
     selection-background-color: transparent;
-    selection-color: #FFFFFF;
+    selection-color: #000000;
 }
 
 QHeaderView::section:horizontal {
     background-color: transparent;
-    color: white;
+    color: 000000;
     border: none;
     font-size: 15px;
 }
@@ -547,6 +542,38 @@ QHeaderView::section:horizontal {
         </property>
        </column>
       </widget>
+      <widget class="QLabel" name="noDataLabel">
+       <property name="geometry">
+        <rect>
+         <x>460</x>
+         <y>320</y>
+         <width>561</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+background: transparent;
+color: #000000;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <zorder>time_label</zorder>
+      <zorder>line</zorder>
+      <zorder>searchBar</zorder>
+      <zorder>label</zorder>
+      <zorder>date_label</zorder>
+      <zorder>frame_1</zorder>
+      <zorder>nameLogs</zorder>
+      <zorder>gradeLogs</zorder>
+      <zorder>strandLogs</zorder>
+      <zorder>dateLogs</zorder>
+      <zorder>timeLogs</zorder>
+      <zorder>attendanceTableWidget</zorder>
+      <zorder>noDataLabel</zorder>
+      <zorder>searchButton</zorder>
      </widget>
     </item>
    </layout>

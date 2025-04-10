@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="resources">
-    <file>Bg_aci.png</file>
+    <file>download-removebg-preview.png</file>
+    <file>adminIcon.png</file>
+    <file>AClogo.png</file>
+    <file>moduleBG.png</file>
+    <file>whiteBG.png</file>
   </qresource>
 </RCC>

@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>unrecognizeModule</class>
+ <widget class="QDialog" name="unrecognizeModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1083</width>
+    <height>526</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Unrecognize Module</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="mainBackground">
+     <property name="styleSheet">
+      <string notr="true">QFrame#mainBackground{
+border-image: url(:/resources/moduleBG.png) 0 0 0 0 stretch stretch;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QFrame" name="registerFrame">
+      <property name="geometry">
+       <rect>
+        <x>218</x>
+        <y>42</y>
+        <width>865</width>
+        <height>442</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QFrame#registerFrame {
+border-image: url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
+border: 1px solid #aaaaaa;
+    border-top-left-radius: 17px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 17px;
+    border-bottom-right-radius: 0px;
+}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>10</y>
+         <width>161</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 63 24pt &quot;Segoe UI Semibold&quot;;
+color: #000000;
+background: transparent;
+border:none;</string>
+       </property>
+       <property name="text">
+        <string>REGISTER</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>321</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 30 11pt &quot;Segoe UI Light&quot;;
+color: #000000;
+background: transparent;
+border:none;</string>
+       </property>
+       <property name="text">
+        <string>Get recognized and start logging attendance.</string>
+       </property>
+      </widget>
+      <widget class="QFrame" name="frame_3">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>90</y>
+         <width>370</width>
+         <height>307</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+border:none;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLineEdit" name="firstNameInput">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>370</width>
+          <height>43</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+    background-color: #dddddd;        /* Light gray background */
+    border: none;                     /* Remove default border */
+    border-radius: 20px;              /* Rounded corners */
+    padding-left: 10px;               /* Space between text and left edge */
+    color: #333333;                   /* Text color */
+    font-size: 14px;                  /* Adjust font size as desired */
+}
+</string>
+        </property>
+        <property name="placeholderText">
+         <string>First Name</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="middleNameInput">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>65</y>
+          <width>370</width>
+          <height>43</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+    background-color: #dddddd;        /* Light gray background */
+    border: none;                     /* Remove default border */
+    border-radius: 20px;              /* Rounded corners */
+    padding-left: 10px;               /* Space between text and left edge */
+    color: #333333;                   /* Text color */
+    font-size: 14px;                  /* Adjust font size as desired */
+}
+</string>
+        </property>
+        <property name="placeholderText">
+         <string>Middle Name</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lastNameInput">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>120</y>
+          <width>370</width>
+          <height>43</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+    background-color: #dddddd;        /* Light gray background */
+    border: none;                     /* Remove default border */
+    border-radius: 20px;              /* Rounded corners */
+    padding-left: 10px;               /* Space between text and left edge */
+    color: #333333;                   /* Text color */
+    font-size: 14px;                  /* Adjust font size as desired */
+}
+</string>
+        </property>
+        <property name="placeholderText">
+         <string>Last Name</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="roleComboBox">
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>170</y>
+          <width>151</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+QComboBox {
+    /* Main combo box styling */
+    background-color: #f0f0f0;
+    border: 1px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;         /* The drop-down's background */
+    selection-background-color: #0078d7;  
+    selection-color: #ffffff;
+}
+</string>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>STUDENT</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>STAFF</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QComboBox" name="gradeComboBox">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>200</y>
+          <width>151</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+QComboBox {
+    /* Main combo box styling */
+    background-color: #f0f0f0;
+    border: 1px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;         /* The drop-down's background */
+    selection-background-color: #0078d7;  
+    selection-color: #ffffff;
+}
+</string>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="strandComboBox">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>200</y>
+          <width>151</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+QComboBox {
+    /* Main combo box styling */
+    background-color: #f0f0f0;
+    border: 1px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;         /* The drop-down's background */
+    selection-background-color: #0078d7;  
+    selection-color: #ffffff;
+}
+</string>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QFrame" name="myCornerFrame2">
+       <property name="geometry">
+        <rect>
+         <x>797</x>
+         <y>360</y>
+         <width>16</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QFrame#myCornerFrame2 {
+	background:transparent;
+    /* Show only top and left borders, each 3px thick and black */
+    border-top: none;
+    border-left: none;
+
+    /* Hide the right and bottom borders */
+    border-right:  4px solid black;
+    border-bottom:  4px solid black;
+
+    /* Optional: set a minimum or fixed size in Designer so you can see it clearly */
+    /* min-width: 200px;
+       min-height: 100px; */
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QFrame" name="myCornerFrame3">
+       <property name="geometry">
+        <rect>
+         <x>797</x>
+         <y>76</y>
+         <width>16</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QFrame#myCornerFrame3 {
+	background:transparent;
+    /* Show only top and left borders, each 3px thick and black */
+    border-top: 4px solid black;
+    border-left: none;
+
+    /* Hide the right and bottom borders */
+    border-right:  4px solid black;
+    border-bottom:  none;
+
+    /* Optional: set a minimum or fixed size in Designer so you can see it clearly */
+    /* min-width: 200px;
+       min-height: 100px; */
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QFrame" name="myCornerFrame4">
+       <property name="geometry">
+        <rect>
+         <x>505</x>
+         <y>360</y>
+         <width>16</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QFrame#myCornerFrame4 {
+	background:transparent;
+    /* Show only top and left borders, each 3px thick and black */
+    border-top: none;
+    border-left: 4px solid black;
+
+    /* Hide the right and bottom borders */
+    border-right:  none;
+    border-bottom:  4px solid black;
+
+    /* Optional: set a minimum or fixed size in Designer so you can see it clearly */
+    /* min-width: 200px;
+       min-height: 100px; */
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QFrame" name="myCornerFrame1">
+       <property name="geometry">
+        <rect>
+         <x>507</x>
+         <y>76</y>
+         <width>16</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QFrame#myCornerFrame1 {
+	background:transparent;
+    /* Show only top and left borders, each 3px thick and black */
+    border-top: 4px solid black;
+    border-left: 4px solid black;
+
+    /* Hide the right and bottom borders */
+    border-right:  none;
+    border-bottom:  none;
+
+    /* Optional: set a minimum or fixed size in Designer so you can see it clearly */
+    /* min-width: 200px;
+       min-height: 100px; */
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="scanFace">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>80</y>
+         <width>299</width>
+         <height>292</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: none;
+background: transparent;
+background-color: #D9D9D9;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="startScan_btn">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>320</y>
+         <width>107</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI Semibold</family>
+         <pointsize>17</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: #ffffff;
+border-radius: 15px;
+color: #000000;
+border:  2px solid black;</string>
+       </property>
+       <property name="text">
+        <string>START</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="importantRemindersHead">
+       <property name="geometry">
+        <rect>
+         <x>560</x>
+         <y>100</y>
+         <width>201</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 63 13pt &quot;Segoe UI Semibold&quot;;
+color: red;
+background: transparent;
+border:none;</string>
+       </property>
+       <property name="text">
+        <string>IMPORTANT REMINDERS</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="importantReminders">
+       <property name="geometry">
+        <rect>
+         <x>550</x>
+         <y>120</y>
+         <width>241</width>
+         <height>201</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 30 12pt &quot;Segoe UI Light&quot;;
+color: #000000;
+background: transparent;
+border:none;</string>
+       </property>
+       <property name="text">
+        <string>1. Make sure your entire face is
+ visible and not covered
+2. Look straight at the camera
+3. Turn your face slowly to the right
+4. Turn your face slowly to the left
+5. Look upward
+6. Look downward</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="cancelScan_btn">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>390</y>
+         <width>107</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI Semibold</family>
+         <pointsize>17</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: red;
+border-radius: 15px;
+color: #ffffff;
+border:  2px solid black;</string>
+       </property>
+       <property name="text">
+        <string>CANCEL</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>60</y>
+         <width>111</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 30 11pt &quot;Segoe UI Light&quot;;
+color: #000000;
+background: transparent;
+border:none;</string>
+       </property>
+       <property name="text">
+        <string>Enter Your Details</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>224</y>
+        <width>181</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #ffffff;
+background: transparent;
+border:none;
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+      </property>
+      <property name="text">
+       <string>  AGUSAN
+ COLLEGES
+      INC.</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="frame_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>380</y>
+        <width>197</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-image: url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
+border-top-left-radius: 0px;
+border-top-right-radius: 17px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 17px;
+
+ background-repeat: no-repeat; 
+ background-position: top center; </string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="circleLogo">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>130</y>
+        <width>99</width>
+        <height>99</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel#circleLogo {
+	border-image: url(:/resources/AClogo.png) 0 0 0 0 stretch stretch;
+    /* Creates a circular shape if the label is square (e.g., 100 x 100). 
+       If the label is 100 x 100, use a 50px radius. */
+    border-radius: 48px;  
+    
+    /* Optional border around the circle */
+    border: 2px solid white;
+
+    /* Display the image; no tiling; center the image inside the circle */
+  
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* Background color behind the image (showing through if the image has transparency) */
+    background: #ffffff;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>
