@@ -1,5 +1,29 @@
 <RCC>
   <qresource prefix="resources">
+    <file>image-.png</file>
+    <file>upload.png</file>
+    <file>down-arrow (2).png</file>
+    <file>male-and-female-signs.png</file>
+    <file>sort.png</file>
+    <file>images-removebg-preview (1).png</file>
+    <file>pen.png</file>
+    <file>add (1).png</file>
+    <file>add.png</file>
+    <file>printer.png</file>
+    <file>teamwork.png</file>
+    <file>profile.png</file>
+    <file>calendar.png</file>
+    <file>education.png</file>
+    <file>crowd-of-users.png</file>
+    <file>phone-book.png</file>
+    <file>phone-book (1).png</file>
+    <file>cross.png</file>
+    <file>arrow.png</file>
+    <file>down-arrow.png</file>
+    <file>burger-bar.png</file>
+    <file>logout.png</file>
+    <file>change_admin.png</file>
+    <file>download-removebg-preview (1).png</file>
     <file>download-removebg-preview.png</file>
     <file>adminIcon.png</file>
     <file>AClogo.png</file>

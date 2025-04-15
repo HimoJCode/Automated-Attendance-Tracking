@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>509</width>
+    <height>374</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="background">
+     <property name="styleSheet">
+      <string notr="true">QFrame#background{
+border-image:url(:/resources/whiteBG.png) 0 0 0 0 stratch stretch;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>20</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 87 12pt &quot;Segoe UI Black&quot;;
+color: green;</string>
+      </property>
+      <property name="text">
+       <string>ADD STUDENT</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="updateFormFrame">
+      <property name="geometry">
+       <rect>
+        <x>45</x>
+        <y>50</y>
+        <width>421</width>
+        <height>291</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QFrame#updateFormFrame{
+background-color: #DADADA;
+border-radius: 20px;
+}
+QLineEdit{
+border: 1px solid black;
+border-radius: 10px;
+color: #000000;
+font: 63 15pt &quot;Segoe UI Semibold&quot;;
+}
+QLabel{
+background: transparent;
+color: #000000;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLineEdit" name="firstNameLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>301</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lastNameLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>120</y>
+         <width>211</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="firstName_label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>First Name</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="middleName_label">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>30</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Middle Name</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lastNmae_label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>100</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Last Name</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="gradeLevel_label">
+       <property name="geometry">
+        <rect>
+         <x>335</x>
+         <y>100</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Grade Level</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="middleNameLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>50</y>
+         <width>26</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="genderComboBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    background-color: #ffffff ;
+	border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    font: 63 12pt &quot;Segoe UI Semibold&quot;;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    selection-background-color: #0078d7;
+    selection-color: #ffffff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px;
+	height: 30px;
+	padding-right: 3px;
+	background: transparent;
+}
+
+QComboBox::down-arrow {
+ 	image: url(:/resources/male-and-female-signs.png);
+    width: 30px;
+    height: 30px;
+}
+</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="strand_label">
+       <property name="geometry">
+        <rect>
+         <x>265</x>
+         <y>100</y>
+         <width>47</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Strand</string>
+       </property>
+      </widget>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>250</y>
+         <width>156</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="strandComboBox">
+       <property name="geometry">
+        <rect>
+         <x>245</x>
+         <y>120</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    background: #ffffff;	
+	border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    font: 63 11pt &quot;Segoe UI Semibold&quot;;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    selection-background-color: #0078d7;
+    selection-color: #ffffff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+	height: 15px;
+	padding-right: 5px;
+	padding-top: 8px;
+	background: transparent;
+}
+
+QComboBox::drop-down {
+	image: url(:/resources/down-arrow (2).png);
+    width: 12px;
+	height: 12px
+}
+
+</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="gradeComboBox">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>120</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    background-color: #ffffff ;
+	border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    font: 63 14pt &quot;Segoe UI Semibold&quot;;
+}
+
+/* Drop-down list styling */
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    selection-background-color: #0078d7;
+    selection-color: #ffffff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+	height: 15px;
+	padding-right: 5px;
+	padding-top: 8px;
+	background: transparent;
+}
+
+QComboBox::drop-down {
+	image: url(:/resources/down-arrow (2).png);
+    width: 12px;
+	height: 12px
+}
+
+</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lastNmae_label_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Gender</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="imagesUpload_">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>190</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Upload</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="imagesUpload_btn">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>190</y>
+         <width>31</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #ffffff;
+
+border: 1px solid black;
+
+
+border-top-right-radius: 15px;
+border-bottom-right-radius: 15px;
+border-left:none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/upload.png</normaloff>:/resources/upload.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="profileImage_upload">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>190</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Upload</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="profileImageUpload_btn">
+       <property name="geometry">
+        <rect>
+         <x>350</x>
+         <y>190</y>
+         <width>31</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #ffffff;
+
+border: 1px solid black;
+
+
+border-top-right-radius: 15px;
+border-bottom-right-radius: 15px;
+border-left:none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/image-.png</normaloff>:/resources/image-.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lastNmae_label_3">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>165</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Upload Images</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lastNmae_label_4">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>165</y>
+         <width>131</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Upload Profile Image</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

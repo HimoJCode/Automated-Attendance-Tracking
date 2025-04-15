@@ -67,8 +67,8 @@ border-bottom-right-radius: 15px;</string>
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>../../../../Downloads/download-removebg-preview.png</normaloff>../../../../Downloads/download-removebg-preview.png</iconset>
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/download-removebg-preview.png</normaloff>:/resources/download-removebg-preview.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -187,9 +187,9 @@ background: transparent;</string>
       <widget class="QFrame" name="frame_1">
        <property name="geometry">
         <rect>
-         <x>1242</x>
+         <x>1232</x>
          <y>10</y>
-         <width>111</width>
+         <width>121</width>
          <height>51</height>
         </rect>
        </property>
@@ -203,7 +203,8 @@ background: transparent;</string>
         <enum>Qt::RightToLeft</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">background:transparent;</string>
+        <string notr="true">background:transparent;
+color: white;</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -211,7 +212,7 @@ background: transparent;</string>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <widget class="QToolButton" name="toolButtonMenu">
+       <widget class="QToolButton" name="toolMenu_btn">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -232,16 +233,16 @@ background: transparent;</string>
         <property name="styleSheet">
          <string notr="true"> background: transparent;
  border: none;
-color:white;
-font: 75 10pt;
+color: #000000;
+font: 87 10pt &quot;Segoe UI Black&quot;;
 </string>
         </property>
         <property name="text">
          <string>ADMIN</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>../../../../Downloads/user.png</normaloff>../../../../Downloads/user.png</iconset>
+         <iconset resource="../resources/res.qrc">
+          <normaloff>:/resources/adminIcon.png</normaloff>:/resources/adminIcon.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -262,17 +263,18 @@ font: 75 10pt;
        <widget class="QPushButton" name="logout_btn">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>75</width>
-          <height>23</height>
+          <x>15</x>
+          <y>80</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: white;
+         <string notr="true">color: #000000;
+font: 87 7pt &quot;Segoe UI Black&quot;;
 background: transparent;
 border: none;</string>
         </property>
@@ -280,8 +282,8 @@ border: none;</string>
          <string>LOGOUT</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>../../../../Downloads/images-removebg-preview.png</normaloff>../../../../Downloads/images-removebg-preview.png</iconset>
+         <iconset resource="../resources/res.qrc">
+          <normaloff>:/resources/logout.png</normaloff>:/resources/logout.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -293,18 +295,18 @@ border: none;</string>
        <widget class="QPushButton" name="superAdmin_btn">
         <property name="geometry">
          <rect>
-          <x>8</x>
-          <y>100</y>
-          <width>101</width>
-          <height>23</height>
+          <x>10</x>
+          <y>60</y>
+          <width>111</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: white;
-font: 8pt &quot;MS Shell Dlg 2&quot;;
+         <string notr="true">color: #000000;
+font: 87 7pt &quot;Segoe UI Black&quot;;
 background: transparent;
 border: none;</string>
         </property>
@@ -312,8 +314,8 @@ border: none;</string>
          <string>SUPER ADMIN</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>../../../../Downloads/setting.png</normaloff>../../../../Downloads/setting.png</iconset>
+         <iconset resource="../resources/res.qrc">
+          <normaloff>:/resources/change_admin.png</normaloff>:/resources/change_admin.png</iconset>
         </property>
         <property name="iconSize">
          <size>
