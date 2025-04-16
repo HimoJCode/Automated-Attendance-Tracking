@@ -8,6 +8,7 @@ import sqlite3
 import ast
 import shutil
 import resources.res_rc
+import hashlib
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation
 from PyQt5.QtGui import QImage, QPixmap
@@ -45,20 +46,35 @@ class LoginPermissionDialog(QtWidgets.QDialog):
         username = self.usernameInput.text().strip()
         password = self.passwordInput.text().strip()
 
-        # Example validation logic (replace with your own validation)
-        if not username:
-            QMessageBox.warning(self, "Login Error", "Username cannot be empty!")
-            return
-        if not password:
-            QMessageBox.warning(self, "Login Error", "Password cannot be empty!")
+        if not username or not password:
+            QtWidgets.QMessageBox.warning(self, "Missing Fields", "Username and password must not be empty.")
             return
 
-        if username == "admin" and password == "1234":
-            self.logged_in = True
-            QMessageBox.information(self, "Success", "Admin logged in for attendance logging!")
-            self.accept()
-        else:
-            QMessageBox.critical(self, "Login Failed", "Invalid admin credentials!")
+        try:
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            conn = sqlite3.connect("recognition.db")
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT admin_id, admin_role 
+                FROM Admin 
+                WHERE username = ? AND password_hash = ?
+            """, (username, hashed_password))
+            result = cursor.fetchone()
+            conn.close()
+
+            if result:
+                self.admin_id, self.logged_in_role = result
+                self.logged_in = True  
+                self.accept()
+            else:
+                QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
+
+        except sqlite3.Error as e:
+            QtWidgets.QMessageBox.critical(self, "Database Error", f"An error occurred while connecting to the database:\n{e}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred:\n{e}")
+
 class LoginDialog(QtWidgets.QDialog):
     """Dashboard Login Dialog"""
     def __init__(self, super_admin_mode=False):
@@ -76,29 +92,37 @@ class LoginDialog(QtWidgets.QDialog):
         self.login_btn.clicked.connect(self.login_action)
 
     def login_action(self):
-        """Handle login process with error messages"""
         username = self.usernameInput.text().strip()
         password = self.passwordInput.text().strip()
 
-        # Error handling
-        if not username:
-            QtWidgets.QMessageBox.warning(self, "Login Error", "Username cannot be empty!")
-            return
-        if not password:
-            QtWidgets.QMessageBox.warning(self, "Login Error", "Password cannot be empty!")
+        if not username or not password:
+            QtWidgets.QMessageBox.warning(self, "Missing Fields", "Username and password must not be empty.")
             return
 
-        # Simulated authentication (Replace with database check)
-        if username == "admin" and password == "1234":
-           self.logged_in_role = "admin"
-           QtWidgets.QMessageBox.information(self, "Success", "Logged in as Admin!")
-           self.accept()
-        elif username == "superadmin" and password == "4321":
-           self.logged_in_role = "superadmin"
-           QtWidgets.QMessageBox.information(self, "Success", "Logged in as Super Admin!")
-           self.accept()    
-        else:
-           QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
+        try:
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            conn = sqlite3.connect("recognition.db")
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT admin_id, admin_role 
+                FROM Admin 
+                WHERE username = ? AND password_hash = ?
+            """, (username, hashed_password))
+            result = cursor.fetchone()
+            conn.close()
+
+            if result:
+                self.admin_id, self.logged_in_role = result
+                self.logged_in = True 
+                self.accept()
+            else:
+                QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
+
+        except sqlite3.Error as e:
+            QtWidgets.QMessageBox.critical(self, "Database Error", f"An error occurred while connecting to the database:\n{e}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred:\n{e}")
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """Admin Dashboard UI (After Successful Login)"""
@@ -354,27 +378,27 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
 class SuperAdminDashboard(QtWidgets.QMainWindow):
     """Super Admin Dashboard UI (After Successful Login)"""
-    def __init__(self):
+    def __init__(self, current_admin_id):
         super(SuperAdminDashboard, self).__init__()
-
+        self.current_admin_id = current_admin_id
         uic.loadUi(SUPERADMIN_UI_PATH, self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.initUI_btn()
+        self.setup_timers()
+        self.populate_initial_data()
+        self.selected_student_row = None
 
-        # Set up QTimer to update the time every second
+    def setup_timers(self):
         self.timer_clock = QTimer(self)
         self.timer_clock.timeout.connect(self.update_time)
-        self.timer_clock.start(1000)  # Update every 1 second
-
-        # Update time on startup
+        self.timer_clock.start(1000)
         self.update_time()
-
+    def initUI_btn(self):
         self.Down_Menu_Num = 0
         self.Side_Menu_Num = 0
-
-        #buttons
-        self.burgerMenu_btn.clicked.connect(lambda: self.Side_Menu_Num_0())
-        self.close_btn.clicked.connect(lambda: self.Side_Menu_Num_0())
-        self.toolMenu_btn.clicked.connect(lambda: self.Down_Menu_Num_0())
+        self.burgerMenu_btn.clicked.connect(self.Side_Menu_Num_0)
+        self.close_btn.clicked.connect(self.Side_Menu_Num_0)
+        self.toolMenu_btn.clicked.connect(self.Down_Menu_Num_0)
         self.logout_btn.clicked.connect(self.logout)
         self.superAdmin_btn.clicked.connect(self.superAdmin)
         self.updateStudent_btn.clicked.connect(self.update_selected_student)
@@ -383,25 +407,18 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.addAdmin_btn.clicked.connect(self.open_add_admin_dialog)
         self.changePassword_btn.clicked.connect(self.change_password)
         self.removeAdmin_btn.clicked.connect(self.remove_admin)
+        self.searchBar.returnPressed.connect(self.search_attendance)
+        self.studentList_searchBar.textChanged.connect(self.search_student_list)
+        self.studentList_table.itemSelectionChanged.connect(self.get_selected_student_row)
 
-        conn = sqlite3.connect("recognition.db")
-        cursor = conn.cursor()
-
-        self.populate_attendance_data()
-
-        #filters
+    def populate_initial_data(self):
         self.setup_strand_filter()
         self.setup_grade_filter()
-        self.studentList_searchBar.textChanged.connect(self.search_student_list)
-
         self.strandFilter.setCurrentText("Select All")
         self.gradeFilter.setCurrentText("Select All")
-
         self.populate_studentList_data()
-
-        self.searchBar.returnPressed.connect(self.search_attendance)
-        self.selected_student_row = None
-        self.studentList_table.itemSelectionChanged.connect(self.get_selected_student_row)
+        self.populate_attendance_data()
+        self.populate_admin_table()
 
     def Down_Menu_Num_0(self):
         if self.Down_Menu_Num == 0:
@@ -417,10 +434,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.animation2.setStartValue(51)
             self.animation2.setEndValue(121)
             self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
-
             self.animation2.start()
-            self.Down_Menu_Num = 1
 
+            self.Down_Menu_Num = 1
         else:
             self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
             self.animation1.setDuration(500)
@@ -452,10 +468,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.animation2.setStartValue(0)
             self.animation2.setEndValue(221)
             self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
-
             self.animation2.start()
-            self.Side_Menu_Num = 1
 
+            self.Side_Menu_Num = 1
         else:
             self.animation1 = QtCore.QPropertyAnimation(self.leftMenu, b"minimumWidth")
             self.animation1.setDuration(500)
@@ -472,17 +487,14 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.animation2.start()
 
             self.Side_Menu_Num = 0
+
+
     def update_time(self):
-        """Update Date and Time dynamically."""
-        current_datetime = QDateTime.currentDateTime()
-        current_date = current_datetime.toString("MMMM dd, yyyy")
-        current_time = current_datetime.toString("hh:mm:ss AP")
-
+        now = QDateTime.currentDateTime()
         if hasattr(self, "date_label"):
-            self.date_label.setText(f"{current_date}")
+            self.date_label.setText(now.toString("MMMM dd, yyyy"))
         if hasattr(self, "time_label"):
-            self.time_label.setText(f"{current_time}")
-
+            self.time_label.setText(now.toString("hh:mm:ss AP"))
 
     def populate_studentList_data(self):
         selected_strand = self.strandFilter.currentText()
@@ -522,8 +534,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         data = cursor.fetchall()
         conn.close()
 
-        #Store in memory so it can be searched later
-        self.all_data = data
+        self.student_list_data = data
 
         table = self.studentList_table
         table.setRowCount(len(data))
@@ -540,13 +551,14 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
+            table.setRowHeight(row_index, 30)
 
          # Adjust columns to fit neatly
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
         # Set a fixed width for each column
-        table.setColumnWidth(0, 10)   # ID
+        table.setColumnWidth(0, 80)   # ID
         table.setColumnWidth(1, 270)  # NAME
         table.setColumnWidth(2, 130)  # GRADE
         table.setColumnWidth(3, 160)  # STRAND
@@ -556,17 +568,12 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
         # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(30)
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
-
     def search_student_list(self):
         search_text = self.studentList_searchBar.text().strip().lower()
-
         searched_data = []
-        for row in self.all_data:
-            name = str(row[1]).lower()  # ⬅️ Use index 1 for the full_name
+
+        for row in self.student_list_data:
+            name = str(row[1]).lower()
             if search_text in name:
                 searched_data.append(row)
 
@@ -761,8 +768,6 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn.close()
         print(f"✅ {inserted} new embeddings added.")
 
-
-
     def get_selected_student_row(self):
         selected_items = self.studentList_table.selectedItems()
         if selected_items:
@@ -920,7 +925,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn.close()
 
         #Store in memory so it can be searched later
-        self.all_data = data
+        self.attendance_data = data
 
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
@@ -936,10 +941,6 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
-        
-         # Adjust columns to fit neatly
-        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
         # Set a fixed width for each column
         table.setColumnWidth(0, 320)  # NAME
@@ -950,6 +951,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
         # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(50)
+        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+
         for row_index in range(len(data)):
             self.attendanceTableWidget.setVerticalHeaderItem(
                 row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
@@ -990,7 +994,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         search_text = self.searchBar.text().strip().lower()
         filtered_data = []
 
-        for row in self.all_data:
+        for row in self.attendance_data:
             name = str(row[0]).lower()
             grade = str(row[1]).lower()
             strand = str(row[2]).lower()
@@ -1024,39 +1028,63 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
     def populate_admin_table(self):
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
+
         cursor.execute("""
-            SELECT admin_id, username, admin_role FROM Admin
+            SELECT a.admin_id, a.username, a.admin_role, COALESCE(c.username, 'Super Admin') AS created_by
+            FROM Admin a
+            LEFT JOIN Admin c ON a.created_by_admin_id = c.admin_id
+            WHERE a.admin_role = 'admin'
         """)
         rows = cursor.fetchall()
         conn.close()
 
         table = self.adminTable
         table.setRowCount(len(rows))
-        table.setColumnCount(3)
-        table.setHorizontalHeaderLabels(["Username", "Password", "Admin Role"])
+        table.setColumnCount(5)
+        table.setHorizontalHeaderLabels(["#", "Username", "Password", "Role", "Created By"])
+        self.admin_ids = []
 
-        for row_index, (admin_id, username, role) in enumerate(rows):
-            table.setItem(row_index, 0, QtWidgets.QTableWidgetItem(username))
-            table.setItem(row_index, 1, QtWidgets.QTableWidgetItem("••••••••"))  # Masked password
-            table.setItem(row_index, 2, QtWidgets.QTableWidgetItem(role))
+        for row_index, (admin_id, username, role, created_by) in enumerate(rows):
+            self.admin_ids.append(admin_id)
 
+            values = [str(row_index + 1), username, "••••••", role, created_by]
+            for col_index, value in enumerate(values):
+                item = QtWidgets.QTableWidgetItem(value)
+                item.setTextAlignment(QtCore.Qt.AlignLeft)
+                item.setForeground(QtGui.QColor("black"))
+                table.setItem(row_index, col_index, item)
+
+            # Optional row numbers in vertical headers
+            row_number = QtWidgets.QTableWidgetItem(str(row_index + 1))
+            row_number.setTextAlignment(QtCore.Qt.AlignCenter)
+            table.setVerticalHeaderItem(row_index, row_number)
+
+            # Optional: row numbers on the left
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
-        # Track admin IDs separately (not shown in UI)
-        self.admin_ids = [row[0] for row in rows]
+        # Consistent Column Widths (adjust these as needed)
+        table.setColumnWidth(0, 40)
+        table.setColumnWidth(1, 200)  #USERNAME
+        table.setColumnWidth(2, 155)  #PASSWORD
+        table.setColumnWidth(3, 145)  #ROLE
+        table.setColumnWidth(4, 130)  #CREATED BY
 
-        # Adjust layout
-        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        # Styling
+        table.verticalHeader().setDefaultSectionSize(40)
+        table.verticalHeader().setVisible(False)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        table.setWordWrap(False)
+        table.setTextElideMode(QtCore.Qt.ElideNone)
+        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        table.verticalHeader().setDefaultSectionSize(30)
+
 
     def open_add_admin_dialog(self):
         dialog = AddAdminDialog(self)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.populate_admin_table()
-
 
     def change_password(self):
         selected_row = self.adminTable.currentRow()
@@ -1064,7 +1092,12 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.warning(self, "Warning", "Please select an admin.")
             return
 
-        new_pass, ok = QtWidgets.QInputDialog.getText(self, "Change Password", "Enter new password:", QtWidgets.QLineEdit.Password)
+        username_item = self.adminTable.item(selected_row, 1)
+        username = username_item.text() if username_item else "selected admin"
+
+        new_pass, ok = QtWidgets.QInputDialog.getText(
+            self, "Change Password", f"Enter new password for '{username}':", QtWidgets.QLineEdit.Password
+        )
         if not ok or not new_pass.strip():
             return
 
@@ -1077,7 +1110,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn.commit()
         conn.close()
 
-        QMessageBox.information(self, "Success", "Password changed.")
+        QMessageBox.information(self, "Success", f"Password for '{username}' changed successfully.")
+
 
     def remove_admin(self):
         selected_row = self.adminTable.currentRow()
@@ -1085,8 +1119,15 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.warning(self, "Warning", "Please select an admin to remove.")
             return
 
-        confirm = QMessageBox.question(self, "Confirm", "Are you sure you want to delete this admin?",
-                                    QMessageBox.Yes | QMessageBox.No)
+        username_item = self.adminTable.item(selected_row, 1)
+        username = username_item.text() if username_item else "this admin"
+
+        confirm = QMessageBox.question(
+            self,
+            "Confirm",
+            f"Are you sure you want to delete '{username}'?",
+            QMessageBox.Yes | QMessageBox.No
+        )
         if confirm != QMessageBox.Yes:
             return
 
@@ -1099,55 +1140,44 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn.close()
 
         self.populate_admin_table()
-        QMessageBox.information(self, "Removed", "Admin removed successfully.")
+        QMessageBox.information(self, "Removed", f"Admin '{username}' removed successfully.")
 
     def logout(self):
-        # Show confirmation dialog
-        reply = QMessageBox.question(
-            self,
-            "Logout Confirmation",
-            "Are you sure you want to logout?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-        if reply == QMessageBox.Yes:
-            # Start fade-out animation before logging out
-            self.start_fade_out()
+            # Show confirmation dialog
+            reply = QMessageBox.question(
+                self,
+                "Logout Confirmation",
+                "Are you sure you want to logout?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                # Start fade-out animation before logging out
+                self.start_fade_out()
 
     def start_fade_out(self):
-        # Set up the opacity effect
-        self.effect = QGraphicsOpacityEffect(self)
-        self.setGraphicsEffect(self.effect)
+            # Set up the opacity effect
+            self.effect = QGraphicsOpacityEffect(self)
+            self.setGraphicsEffect(self.effect)
 
-        # Create the animation to fade out
-        self.animation = QPropertyAnimation(self.effect, b"opacity")
-        self.animation.setDuration(800)  # Duration in milliseconds (adjust as needed)
-        self.animation.setStartValue(1.0)
-        self.animation.setEndValue(0.0)
-        self.animation.finished.connect(self.finish_logout)
-        self.animation.start()
-
+            # Create the animation to fade out
+            self.animation = QPropertyAnimation(self.effect, b"opacity")
+            self.animation.setDuration(800)  # Duration in milliseconds (adjust as needed)
+            self.animation.setStartValue(1.0)
+            self.animation.setEndValue(0.0)
+            self.animation.finished.connect(self.finish_logout)
+            self.animation.start()
     def finish_logout(self):
-        #Reset the opacity back to 1 for future use
         self.setGraphicsEffect(None)
-
-         # Show a logout message
         QMessageBox.information(self, "Logout", "You have been logged out.")
-
-         # Close the current Admin Dashboard window
         self.close()
-
-        # Open the AttendanceApp window (automated.ui)
         self.attendance_window = AttendanceApp()
         self.attendance_window.show()
 
     def superAdmin(self):
-        # Open login dialog as a popup
         login_dialog = LoginDialog(super_admin_mode=True)
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
-
-             # If login is successful, open Super Admin window
-            self.super_admin_window = SuperAdminDashboard()
+            self.super_admin_window = SuperAdminDashboard(self.current_admin_id)
             self.super_admin_window.show()
 
 class AddStudentDialog(QtWidgets.QDialog):
@@ -1299,14 +1329,15 @@ class UpdateStudentDialog(QtWidgets.QDialog):
 
     def reject(self):
         self.fade_and_close(QtWidgets.QDialog.Rejected)
-
+                              
 class AddAdminDialog(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, creator_admin_id=None):
         super(AddAdminDialog, self).__init__(parent)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setModal(True)
+        self.creator_admin_id = creator_admin_id 
 
-        uic.loadUi(ADD_ADMIN_UI_PATH, self)  # Your .ui file
+        uic.loadUi(ADD_ADMIN_UI_PATH, self)  # Load UI
 
         self.effect = QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(self.effect)
@@ -1316,16 +1347,16 @@ class AddAdminDialog(QtWidgets.QDialog):
         self.animation.setEndValue(1.0)
         self.animation.start()
 
-        self.buttonBox.clicked.connect(self.reject)
-        self.buttonBox.clicked.connect(self.validate_and_submit)
+        self.buttonBox.accepted.connect(self.validate_and_submit)
+        self.buttonBox.rejected.connect(self.reject)
 
-        self.roleComboBox.addItems(["admin", "superadmin"])
+        self.role = "admin"  
 
     def validate_and_submit(self):
         username = self.usernameLineEdit.text().strip()
         password = self.passwordLineEdit.text()
         confirm = self.confirmPasswordLineEdit.text()
-        role = self.roleComboBox.currentText()
+        role = self.role
 
         if not username or not password or not confirm:
             QMessageBox.warning(self, "Missing Fields", "Please complete all fields.")
@@ -1337,7 +1368,6 @@ class AddAdminDialog(QtWidgets.QDialog):
             QMessageBox.warning(self, "Weak Password", "Password must be at least 5 characters.")
             return
 
-        # Check if username already exists
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
         cursor.execute("SELECT 1 FROM Admin WHERE username = ?", (username,))
@@ -1346,22 +1376,19 @@ class AddAdminDialog(QtWidgets.QDialog):
             conn.close()
             return
 
-        # Hash and insert
         import hashlib
         password_hash = hashlib.sha256(password.encode()).hexdigest()
 
         cursor.execute("""
-            INSERT INTO Admin (username, password_hash, admin_role)
-            VALUES (?, ?, ?)
-        """, (username, password_hash, role))
+            INSERT INTO Admin (username, password_hash, admin_role, created_by_admin_id)
+            VALUES (?, ?, ?, ?)
+        """, (username, password_hash, role, self.creator_admin_id))
 
         conn.commit()
         conn.close()
 
         QMessageBox.information(self, "Success", f"Admin '{username}' added.")
         self.accept()
-
-
 
 class UnrecognizeModule(QtWidgets.QDialog):
     def __init__(self, parent=None, frame=None):
@@ -1507,7 +1534,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
         # Keep track of recognized people
         self.recognized_ids = set()
-        self.dialog_shown = False  # 🚨 Add this line here
+        self.dialog_shown = False
 
         self.dialog_shown = False
         self.unrecognized_detected = False
@@ -1617,7 +1644,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             self.dialog_shown = True
 
             self.timer.stop()
-            self.camera.release()  # ✅ Also release main camera
+            self.camera.release()  
 
             dialog = UnrecognizeModule(parent=self, frame=self.last_frame)
             dialog.exec_()
@@ -1630,7 +1657,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             self.unrecognized_timer.stop()
 
     def restart_main_camera(self):
-        self.camera = cv2.VideoCapture(0)  # ✅ Re-initialize safely
+        self.camera = cv2.VideoCapture(0)  # Re-initialize safely
         self.timer.start(30)
 
 
@@ -1892,8 +1919,8 @@ class AttendanceApp(QtWidgets.QMainWindow):
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.close()
 
-            if login_dialog.logged_in_role == "superadmin":
-                self.super_admin_window = SuperAdminDashboard()
+            if login_dialog.logged_in_role == "super_admin":
+                self.super_admin_window = SuperAdminDashboard(current_admin_id=login_dialog.admin_id)
                 self.super_admin_window.show()
             elif login_dialog.logged_in_role == "admin":
                 self.admin_window = AdminDashboard()
