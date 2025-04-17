@@ -201,7 +201,7 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
         <enum>Qt::NoArrow</enum>
        </property>
       </widget>
-      <widget class="QToolButton" name="attendanceLogin_btn_2">
+      <widget class="QToolButton" name="loginAdmin_btn">
        <property name="geometry">
         <rect>
          <x>400</x>
@@ -255,7 +255,53 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
       <zorder>agusanCollge_label</zorder>
       <zorder>agusanCollge_label_3</zorder>
       <zorder>attendanceLogin_btn</zorder>
-      <zorder>attendanceLogin_btn_2</zorder>
+      <zorder>loginAdmin_btn</zorder>
+     </widget>
+     <widget class="QPushButton" name="exit_btn">
+      <property name="geometry">
+       <rect>
+        <x>855</x>
+        <y>10</y>
+        <width>28</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../../../Downloads/cancel.png</normaloff>../../../../Downloads/cancel.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="minimize_btn">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>10</y>
+        <width>28</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../../../Downloads/minus (2).png</normaloff>../../../../Downloads/minus (2).png</iconset>
+      </property>
      </widget>
     </widget>
    </item>

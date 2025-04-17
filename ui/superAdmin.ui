@@ -92,9 +92,9 @@ background: transparent;</string>
       <widget class="QFrame" name="frame_1">
        <property name="geometry">
         <rect>
-         <x>1210</x>
+         <x>1200</x>
          <y>10</y>
-         <width>151</width>
+         <width>161</width>
          <height>51</height>
         </rect>
        </property>
@@ -167,8 +167,8 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
        <widget class="QPushButton" name="logout_btn">
         <property name="geometry">
          <rect>
-          <x>15</x>
-          <y>90</y>
+          <x>-5</x>
+          <y>110</y>
           <width>91</width>
           <height>23</height>
          </rect>
@@ -199,8 +199,8 @@ border: none;</string>
        <widget class="QPushButton" name="superAdmin_btn">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>60</y>
+          <x>-10</x>
+          <y>80</y>
           <width>131</width>
           <height>23</height>
          </rect>
@@ -216,6 +216,38 @@ border: none;</string>
         </property>
         <property name="text">
          <string>CHANGE ADMIN</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/res.qrc">
+          <normaloff>:/resources/change_admin.png</normaloff>:/resources/change_admin.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>25</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="changeCredentials_btn">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>50</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: #000000;
+font: 87 7pt &quot;Segoe UI Black&quot;;
+background: transparent;
+border: none;</string>
+        </property>
+        <property name="text">
+         <string>CHANGE CREDENTIALS</string>
         </property>
         <property name="icon">
          <iconset resource="../resources/res.qrc">
