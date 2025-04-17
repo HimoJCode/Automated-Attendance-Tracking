@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>905</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="background">
+     <property name="styleSheet">
+      <string notr="true">
+QFrame#background{
+border-image: url(:/resources/ACI_BG.png) 0 0 0 0 stretch stretch;
+}
+QFrame#boxFrame{
+background: transparent;
+border: 6px solid #5A5958;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QFrame" name="boxFrame">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>50</y>
+        <width>741</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="circleLogo">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>175</y>
+         <width>81</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel#circleLogo {
+	border-image: url(:/resources/AClogo.png) 0 0 0 0 stretch stretch;
+    /* Creates a circular shape if the label is square (e.g., 100 x 100). 
+       If the label is 100 x 100, use a 50px radius. */
+    border-radius: 40px;  
+    
+    /* Optional border around the circle */
+    border: 2px solid white;
+
+    /* Display the image; no tiling; center the image inside the circle */
+  
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* Background color behind the image (showing through if the image has transparency) */
+    background: #ffffff;
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="agusanCollge_label">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>80</y>
+         <width>501</width>
+         <height>101</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff;
+background: transparent;
+border:none;
+font: 87 70pt &quot;Segoe UI Black&quot;;</string>
+       </property>
+       <property name="text">
+        <string>  AGUSAN</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="agusanCollge_label_2">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>170</y>
+         <width>501</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff;
+background: transparent;
+border:none;
+font: 87 75pt &quot;Segoe UI Black&quot;;</string>
+       </property>
+       <property name="text">
+        <string>COLLEGES</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="agusanCollge_label_3">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>30</y>
+         <width>541</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #ffffff;
+background: transparent;
+border:none;
+font: 87 20pt &quot;Segoe UI Black&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Automated Attendance Tracking System</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="attendanceLogin_btn">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>320</y>
+         <width>181</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::ActionsContextMenu</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+border: 4px solid #5A5958 ;
+border-radius: 15px;
+color: #ffffff;
+font: 87 10pt &quot;Segoe UI Black&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>Track Attendance</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/face-detection (1).png</normaloff>:/resources/face-detection (1).png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>60</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="attendanceLogin_btn_2">
+       <property name="geometry">
+        <rect>
+         <x>400</x>
+         <y>320</y>
+         <width>171</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::ActionsContextMenu</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+border: 4px solid #5A5958 ;
+border-radius: 15px;
+color: #ffffff;
+font: 87 10pt &quot;Segoe UI Black&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>Login as Admin</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/profile.png</normaloff>:/resources/profile.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>55</width>
+         <height>55</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+      <zorder>agusanCollge_label_2</zorder>
+      <zorder>circleLogo</zorder>
+      <zorder>agusanCollge_label</zorder>
+      <zorder>agusanCollge_label_3</zorder>
+      <zorder>attendanceLogin_btn</zorder>
+      <zorder>attendanceLogin_btn_2</zorder>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

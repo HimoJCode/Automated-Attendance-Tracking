@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="resources">
+    <file>face-detection (1).png</file>
+    <file>face-detection.png</file>
+    <file>ACI_BG.png</file>
     <file>image-.png</file>
     <file>upload.png</file>
     <file>down-arrow (2).png</file>

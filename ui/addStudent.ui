@@ -33,8 +33,9 @@
     <widget class="QFrame" name="background">
      <property name="styleSheet">
       <string notr="true">QFrame#background{
-border-image:url(:/resources/whiteBG.png) 0 0 0 0 stratch stretch;
-}</string>
+border-image:url(:/resources/moduleBG.png) 0 0 0 0 stratch stretch;
+}
+</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -53,7 +54,7 @@ border-image:url(:/resources/whiteBG.png) 0 0 0 0 stratch stretch;
       </property>
       <property name="styleSheet">
        <string notr="true">font: 87 12pt &quot;Segoe UI Black&quot;;
-color: green;</string>
+color: #ffffff;</string>
       </property>
       <property name="text">
        <string>ADD STUDENT</string>
@@ -375,28 +376,12 @@ QComboBox::drop-down {
         <string>Gender</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="imagesUpload_">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>190</y>
-         <width>91</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>Upload</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="imagesUpload_btn">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>150</x>
          <y>190</y>
-         <width>31</width>
+         <width>111</width>
          <height>31</height>
         </rect>
        </property>
@@ -404,11 +389,10 @@ QComboBox::drop-down {
         <string notr="true">background-color: #ffffff;
 
 border: 1px solid black;
+border-radius: 10px;
 
 
-border-top-right-radius: 15px;
-border-bottom-right-radius: 15px;
-border-left:none;</string>
+</string>
        </property>
        <property name="text">
         <string/>
@@ -424,28 +408,12 @@ border-left:none;</string>
         </size>
        </property>
       </widget>
-      <widget class="QLineEdit" name="profileImage_upload">
+      <widget class="QPushButton" name="profileImageUpload_btn">
        <property name="geometry">
         <rect>
          <x>280</x>
          <y>190</y>
-         <width>91</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>Upload</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="profileImageUpload_btn">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>190</y>
-         <width>31</width>
+         <width>111</width>
          <height>31</height>
         </rect>
        </property>
@@ -453,11 +421,10 @@ border-left:none;</string>
         <string notr="true">background-color: #ffffff;
 
 border: 1px solid black;
+border-radius: 10px;
 
 
-border-top-right-radius: 15px;
-border-bottom-right-radius: 15px;
-border-left:none;</string>
+</string>
        </property>
        <property name="text">
         <string/>
@@ -476,7 +443,7 @@ border-left:none;</string>
       <widget class="QLabel" name="lastNmae_label_3">
        <property name="geometry">
         <rect>
-         <x>165</x>
+         <x>160</x>
          <y>165</y>
          <width>101</width>
          <height>21</height>

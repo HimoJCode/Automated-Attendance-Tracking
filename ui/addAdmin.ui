@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
-    <height>432</height>
+    <width>374</width>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
     <widget class="QFrame" name="background">
      <property name="styleSheet">
       <string notr="true">QFrame#background{
-border-image:url(:/resources/whiteBG.png) 0 0 0 0 stratch stretch;
+border-image:url(:/resources/moduleBG.png) 0 0 0 0 stratch stretch;
 }</string>
      </property>
      <property name="frameShape">
@@ -53,7 +53,7 @@ border-image:url(:/resources/whiteBG.png) 0 0 0 0 stratch stretch;
       </property>
       <property name="styleSheet">
        <string notr="true">font: 87 12pt &quot;Segoe UI Black&quot;;
-color: green;</string>
+color: #ffffff;</string>
       </property>
       <property name="text">
        <string>ADD ADMIN</string>
@@ -62,10 +62,10 @@ color: green;</string>
      <widget class="QFrame" name="updateFormFrame">
       <property name="geometry">
        <rect>
-        <x>35</x>
+        <x>40</x>
         <y>60</y>
         <width>301</width>
-        <height>341</height>
+        <height>301</height>
        </rect>
       </property>
       <property name="styleSheet">
