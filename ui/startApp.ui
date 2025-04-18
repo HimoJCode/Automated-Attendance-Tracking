@@ -171,12 +171,18 @@ font: 87 20pt &quot;Segoe UI Black&quot;;</string>
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">background: transparent;
+        <string notr="true">QToolButton#attendanceLogin_btn{
+background: transparent;
 border: 4px solid #5A5958 ;
 border-radius: 15px;
 color: #ffffff;
 font: 87 10pt &quot;Segoe UI Black&quot;;
-</string>
+}
+
+QToolButton#attendanceLogin_btn:hover {
+background-color: #000000; 
+border: 4px solid #ffffff; 
+}</string>
        </property>
        <property name="text">
         <string>Track Attendance</string>
@@ -220,12 +226,17 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">background: transparent;
+        <string notr="true">QToolButton#loginAdmin_btn{
+background: transparent;
 border: 4px solid #5A5958 ;
 border-radius: 15px;
 color: #ffffff;
 font: 87 10pt &quot;Segoe UI Black&quot;;
-</string>
+}
+QToolButton#loginAdmin_btn:hover {
+background-color: #000000; 
+border: 4px solid #ffffff; 
+}</string>
        </property>
        <property name="text">
         <string>Login as Admin</string>

@@ -407,15 +407,8 @@ color: white;</string>
          <string notr="true">QFrame#btnFrame{
 background: transparent;
 }
-QPushButton {
-	color: #ffffff;
-	font: 87 11pt &quot;Segoe UI Black&quot;;
-    background-color: #5A5958;
-    border: 2px solid #ffffff;
-}
-QPushButton:hover {
-    border: 2px solid #000000;
-}
+
+
 </string>
         </property>
         <widget class="QPushButton" name="students_btn">
@@ -428,7 +421,17 @@ QPushButton:hover {
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: #5A5958;</string>
+          <string notr="true">QPushButton#students_btn {
+	color: #ffffff;
+	font: 87 11pt &quot;Segoe UI Black&quot;;
+    background-color: #5A5958;
+    border: 2px solid #ffffff;
+}
+QPushButton#students_btn:hover {
+    border: 2px solid #ffffff;
+	background-color: #000000;
+}
+</string>
          </property>
          <property name="text">
           <string>STUDENTS               </string>
@@ -460,7 +463,17 @@ QPushButton:hover {
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: #5A5958;</string>
+          <string notr="true">QPushButton#admin_btn {
+	color: #ffffff;
+	font: 87 11pt &quot;Segoe UI Black&quot;;
+    background-color: #5A5958;
+    border: 2px solid #ffffff;
+}
+QPushButton#admin_btn:hover {
+    border: 2px solid #ffffff;
+	background-color: #000000;
+}
+</string>
          </property>
          <property name="text">
           <string>ADMIN                      </string>
@@ -486,7 +499,17 @@ QPushButton:hover {
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: #5A5958;</string>
+          <string notr="true">QPushButton#staffs_btn {
+	color: #ffffff;
+	font: 87 11pt &quot;Segoe UI Black&quot;;
+    background-color: #5A5958;
+    border: 2px solid #ffffff;
+}
+QPushButton#staffs_btn:hover {
+    border: 2px solid #ffffff;
+	background-color: #000000;
+}
+</string>
          </property>
          <property name="text">
           <string>STAFFS                     </string>
@@ -512,7 +535,17 @@ QPushButton:hover {
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: #5A5958;</string>
+          <string notr="true">QPushButton#attendanceLogs_btn {
+	color: #ffffff;
+	font: 87 11pt &quot;Segoe UI Black&quot;;
+    background-color: #5A5958;
+    border: 2px solid #ffffff;
+}
+QPushButton#attendanceLogs_btn:hover {
+    border: 2px solid #ffffff;
+	background-color: #000000;
+}
+</string>
          </property>
          <property name="text">
           <string>ATTENDANCE LOGS</string>
@@ -571,7 +604,7 @@ font-size: 16px;
         <string notr="true">background-color: #DADADA;</string>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="attendanceLogs_page">
         <widget class="QFrame" name="frame">
@@ -898,7 +931,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
           <string>Attendance Logs</string>
          </property>
         </widget>
-        <widget class="QToolButton" name="print_btn">
+        <widget class="QPushButton" name="printAttendance_btn">
          <property name="geometry">
           <rect>
            <x>1050</x>
@@ -929,8 +962,37 @@ font: 63 9pt &quot;Segoe UI Semibold&quot;;
            <height>40</height>
           </size>
          </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </widget>
+        <widget class="QPushButton" name="exportPDFAttendance_btn">
+         <property name="geometry">
+          <rect>
+           <x>1150</x>
+           <y>50</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/download-pdf (1).png</normaloff>:/resources/download-pdf (1).png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>
@@ -1392,12 +1454,12 @@ QComboBox::down-arrow {
           <bool>false</bool>
          </property>
         </widget>
-        <widget class="QToolButton" name="print_btn_2">
+        <widget class="QPushButton" name="printStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1070</x>
+           <x>1030</x>
            <y>100</y>
-           <width>91</width>
+           <width>111</width>
            <height>51</height>
           </rect>
          </property>
@@ -1423,9 +1485,6 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
            <height>40</height>
           </size>
          </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
         </widget>
         <widget class="QLabel" name="studentNoDataLabel">
          <property name="geometry">
@@ -1443,6 +1502,38 @@ color: #000000;</string>
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="exportPDFStudent_btn">
+         <property name="geometry">
+          <rect>
+           <x>1140</x>
+           <y>100</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/download-pdf (1).png</normaloff>:/resources/download-pdf (1).png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>
@@ -1757,7 +1848,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
           <rect>
            <x>350</x>
            <y>100</y>
-           <width>611</width>
+           <width>651</width>
            <height>41</height>
           </rect>
          </property>
@@ -1780,7 +1871,7 @@ color: #000000;
          <widget class="QLabel" name="label_31">
           <property name="geometry">
            <rect>
-            <x>70</x>
+            <x>100</x>
             <y>10</y>
             <width>101</width>
             <height>21</height>
@@ -1793,7 +1884,7 @@ color: #000000;
          <widget class="QLabel" name="label_32">
           <property name="geometry">
            <rect>
-            <x>290</x>
+            <x>320</x>
             <y>10</y>
             <width>91</width>
             <height>21</height>
@@ -1806,7 +1897,7 @@ color: #000000;
          <widget class="QLabel" name="label_33">
           <property name="geometry">
            <rect>
-            <x>470</x>
+            <x>530</x>
             <y>5</y>
             <width>111</width>
             <height>31</height>
@@ -1820,7 +1911,7 @@ color: #000000;
         <widget class="QPushButton" name="addStaff_btn">
          <property name="geometry">
           <rect>
-           <x>980</x>
+           <x>1100</x>
            <y>110</y>
            <width>121</width>
            <height>23</height>
@@ -1843,7 +1934,7 @@ color: white;</string>
         <widget class="QPushButton" name="updateStaff_btn">
          <property name="geometry">
           <rect>
-           <x>980</x>
+           <x>1100</x>
            <y>140</y>
            <width>121</width>
            <height>23</height>
@@ -1866,7 +1957,7 @@ color: white;</string>
         <widget class="QPushButton" name="removeStaff_btn">
          <property name="geometry">
           <rect>
-           <x>980</x>
+           <x>1100</x>
            <y>170</y>
            <width>121</width>
            <height>23</height>
@@ -2011,7 +2102,7 @@ QComboBox::down-arrow {
           <rect>
            <x>370</x>
            <y>140</y>
-           <width>601</width>
+           <width>731</width>
            <height>391</height>
           </rect>
          </property>

@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="resources">
+    <file>download-pdf (1).png</file>
+    <file>download-pdf.png</file>
     <file>face-detection (1).png</file>
     <file>face-detection.png</file>
     <file>ACI_BG.png</file>

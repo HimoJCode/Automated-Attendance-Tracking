@@ -10,12 +10,14 @@ import shutil
 import resources.res_rc
 import hashlib
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
-from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation
+from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation, Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox, QFileDialog, QDialog
 from facenet_pytorch import MTCNN
 from facenet_pytorch import InceptionResnetV1
 from PIL import Image
+from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog, QPrintDialog
+from PyQt5.QtGui import QTextDocument, QTextCursor
 
 # Paths to UI files
 STARTAPP_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "startApp.ui")
@@ -504,6 +506,10 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.addStaff_btn.clicked.connect(self.open_add_staff_dialog)
         self.updateStaff_btn.clicked.connect(self.update_selected_staff)
         self.removeStaff_btn.clicked.connect(self.remove_selected_staff)
+        self.printStudent_btn.clicked.connect(lambda: self.print_table_widget(self.studentList_table, "Student List"))
+        self.exportPDFStudent_btn.clicked.connect(lambda: self.print_table_widget(self.studentList_table, "Student List", export_to_pdf=True))
+        self.printAttendance_btn.clicked.connect(lambda: self.print_table_widget(self.attendanceTableWidget, "Attendance Records"))
+        self.exportPDFAttendance_btn.clicked.connect(lambda: self.print_table_widget(self.attendanceTableWidget, "Attendance Records", export_to_pdf=True))
         self.changePassword_btn.clicked.connect(self.change_password)
         self.removeAdmin_btn.clicked.connect(self.remove_admin)
         self.searchBar.returnPressed.connect(self.search_attendance)
@@ -528,26 +534,36 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
     def switch_page(self, index, active_button):
         self.stackedWidget.setCurrentIndex(index)
 
-        # Reset all buttons to default (white border)
-        for btn in self.nav_buttons:
-            btn.setStyleSheet("""
-                QPushButton {
-                    color: #ffffff;
-                    font: 87 11pt "Segoe UI Black";
-                    background-color: #5A5958;
-                    border: 2px solid #ffffff;
-                }
-            """)
+        default_style = """
+            QPushButton {
+                color: #ffffff;
+                font: 87 11pt "Segoe UI Black";
+                background-color: #5A5958;
+                border: 2px solid #ffffff;
+            }
+            QPushButton:hover {
+                background-color: #000000;
+                border: 2px solid #ffffff;
+            }
+        """
 
-        # Set active button to black border
-        active_button.setStyleSheet("""
+        active_style = """
             QPushButton {
                 color: #ffffff;
                 font: 87 11pt "Segoe UI Black";
                 background-color: #5A5958;
                 border: 2px solid #000000;
             }
-        """)
+            QPushButton:hover {
+                background-color: #000000;
+                border: 2px solid #ffffff;
+            }
+        """
+
+        for btn in self.nav_buttons:
+            btn.setStyleSheet(default_style)
+
+        active_button.setStyleSheet(active_style)
 
 
     def populate_initial_data(self):
@@ -760,8 +776,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         # Set a fixed width for each column
         table.setColumnWidth(0, 80)   # ID
         table.setColumnWidth(1, 270)  # NAME
-        table.setColumnWidth(2, 130)  # GENDER
-        table.setColumnWidth(3, 160)  # DEPARTMENT
+        table.setColumnWidth(2, 170)  # GENDER
+        table.setColumnWidth(3, 180)  # DEPARTMENT
 
         table.setColumnHidden(0, True)# Hide the ID column
 
@@ -905,7 +921,6 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
         table.setColumnWidth(0, 0)
 
-
     def open_add_student_dialog(self):
         dialog = AddStudentDialog(self)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -1038,6 +1053,94 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.information(self, "Added", "Staff added successfully.")
 
             self.generate_embeddings_from_face_images("recognition.db")
+
+    def print_table_widget(self, table_widget, title, export_to_pdf=False):
+        printer = QPrinter(QPrinter.HighResolution)
+
+        if export_to_pdf:
+            save_path, _ = QFileDialog.getSaveFileName(self, "Export to PDF", "", "PDF Files (*.pdf)")
+            if not save_path:
+                return  # User canceled
+            if not save_path.endswith(".pdf"):
+                save_path += ".pdf"
+            printer.setOutputFormat(QPrinter.PdfFormat)
+            printer.setOutputFileName(save_path)
+            self.render_document(table_widget, title, printer)
+            QtWidgets.QMessageBox.information(self, "Exported", f"PDF exported to:\n{save_path}")
+        else:
+            preview = QPrintPreviewDialog(printer, self)
+            preview.setWindowTitle("Print Preview")
+            preview.paintRequested.connect(lambda p: self.render_document(table_widget, title, p))
+            preview.exec_()
+
+    def render_document(self, table_widget, title, printer, include_all_rows=False):
+        document = QTextDocument()
+        cursor = QTextCursor(document)
+
+        # Centered title block
+        title_format = QtGui.QTextBlockFormat()
+        title_format.setAlignment(Qt.AlignCenter)
+
+        title_char_format = QtGui.QTextCharFormat()
+        title_char_format.setFontPointSize(16)
+        title_char_format.setFontWeight(QtGui.QFont.Bold)
+
+        cursor.insertBlock(title_format, title_char_format)
+        cursor.insertText(title, title_char_format)
+        cursor.insertBlock()
+
+        cols = table_widget.columnCount()
+
+        table_format = QtGui.QTextTableFormat()
+        table_format.setBorder(1)
+        table_format.setCellPadding(4)
+        table_format.setCellSpacing(0)
+
+        column_widths = [1.0 / cols] * cols
+        table_format.setColumnWidthConstraints([
+            QtGui.QTextLength(QtGui.QTextLength.PercentageLength, w * 100) for w in column_widths
+        ])
+
+        # Collect visible rows or all rows
+        row_indices = range(table_widget.rowCount()) if include_all_rows else [
+            i for i in range(table_widget.rowCount()) if not table_widget.isRowHidden(i)
+        ]
+
+        # Insert table with header + visible rows
+        table = cursor.insertTable(len(row_indices) + 1, cols, table_format)
+
+        # Headers (bold)
+        bold_format = QtGui.QTextCharFormat()
+        bold_format.setFontWeight(QtGui.QFont.Bold)
+
+        for col in range(cols):
+            header = table_widget.horizontalHeaderItem(col)
+            text = header.text() if header else f"Col {col}"
+            table.cellAt(0, col).firstCursorPosition().insertText(text, bold_format)
+
+        # Insert content
+        for r_idx, row in enumerate(row_indices, start=1):
+            for col in range(cols):
+                item = table_widget.item(row, col)
+                text = item.text() if item else ""
+                table.cellAt(r_idx, col).firstCursorPosition().insertText(text)
+
+        document.print_(printer)
+
+
+    def print_attendance_records(self):
+        self.print_table_widget(self.attendanceTableWidget, "Attendance Records")
+
+    def print_attendance_as_pdf(self):
+        self.print_table_widget(self.attendanceTableWidget, "Attendance Records", export_to_pdf=True)
+
+    def print_student_list(self):
+        choice = QMessageBox.question(self, "Print Option", "Do you want to export to PDF instead of printing?",
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        self.print_table_widget(self.studentList_table, "Student List", export_to_pdf=(choice == QMessageBox.Yes))
+
+    def print_student_list_as_pdf(self):
+        self.print_table_widget(self.studentList_table, "Student List", export_to_pdf=True)
 
     def generate_embeddings_from_face_images(self, db_path="recognition.db"):
         print("🔄 Embedding generation started...")
