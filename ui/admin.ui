@@ -141,7 +141,7 @@ border-bottom-left-radius: 15px;
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <property name="placeholderText">
-        <string>Search Name, Grade, Strand, or Month</string>
+        <string>Search by name, grade, strand, department, month</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -263,8 +263,8 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
        <widget class="QPushButton" name="logout_btn">
         <property name="geometry">
          <rect>
-          <x>15</x>
-          <y>80</y>
+          <x>5</x>
+          <y>60</y>
           <width>81</width>
           <height>31</height>
          </rect>
@@ -292,50 +292,18 @@ border: none;</string>
          </size>
         </property>
        </widget>
-       <widget class="QPushButton" name="superAdmin_btn">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>111</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: #000000;
-font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
-border: none;</string>
-        </property>
-        <property name="text">
-         <string>SUPER ADMIN</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../resources/res.qrc">
-          <normaloff>:/resources/change_admin.png</normaloff>:/resources/change_admin.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>30</width>
-          <height>25</height>
-         </size>
-        </property>
-       </widget>
       </widget>
       <widget class="QLabel" name="nameLogs">
        <property name="geometry">
         <rect>
-         <x>210</x>
+         <x>130</x>
          <y>250</y>
          <width>101</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;</string>
        </property>
@@ -346,14 +314,14 @@ color: #000000;</string>
       <widget class="QLabel" name="gradeLogs">
        <property name="geometry">
         <rect>
-         <x>440</x>
+         <x>380</x>
          <y>250</y>
          <width>121</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;</string>
        </property>
@@ -364,14 +332,14 @@ color: #000000;</string>
       <widget class="QLabel" name="strandLogs">
        <property name="geometry">
         <rect>
-         <x>640</x>
+         <x>540</x>
          <y>250</y>
          <width>121</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;</string>
        </property>
@@ -382,14 +350,14 @@ color: #000000;</string>
       <widget class="QLabel" name="dateLogs">
        <property name="geometry">
         <rect>
-         <x>880</x>
+         <x>1040</x>
          <y>250</y>
          <width>91</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;</string>
        </property>
@@ -400,14 +368,14 @@ color: #000000;</string>
       <widget class="QLabel" name="timeLogs">
        <property name="geometry">
         <rect>
-         <x>1115</x>
+         <x>1195</x>
          <y>250</y>
          <width>81</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 87 20pt &quot;Segoe UI Black&quot;;
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;</string>
        </property>
@@ -418,9 +386,9 @@ color: #000000;</string>
       <widget class="QTableWidget" name="attendanceTableWidget">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>300</y>
-         <width>1181</width>
+         <x>55</x>
+         <y>280</y>
+         <width>1251</width>
          <height>401</height>
         </rect>
        </property>
@@ -432,12 +400,12 @@ color: #000000;</string>
     gridline-color: transparent;
     outline: none;
     padding: 5px;
-    font-size: 30px;
+    font-size: 20px;
 }
 QHeaderView::section {
     background-color: transparent;
     color: #000000;
-    font-size: 20px;
+    font-size: 15px;
     border: none;
     padding: 5px;
     text-align: left;  /* Align header titles consistently */
@@ -461,7 +429,7 @@ QTableWidget::item {
 
 QHeaderView::section:horizontal {
     background-color: transparent;
-    color: 000000;
+    color: #000000;
     border: none;
     font-size: 15px;
 }
@@ -529,6 +497,11 @@ QHeaderView::section:horizontal {
        </column>
        <column>
         <property name="text">
+         <string>Department</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>Date</string>
         </property>
         <property name="textAlignment">
@@ -547,8 +520,8 @@ QHeaderView::section:horizontal {
       <widget class="QLabel" name="noDataLabel">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>320</y>
+         <x>455</x>
+         <y>330</y>
          <width>561</width>
          <height>41</height>
         </rect>
@@ -560,6 +533,24 @@ color: #000000;</string>
        </property>
        <property name="text">
         <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="strandLogs_2">
+       <property name="geometry">
+        <rect>
+         <x>755</x>
+         <y>250</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 87 15pt &quot;Segoe UI Black&quot;;
+background: transparent;
+color: #000000;</string>
+       </property>
+       <property name="text">
+        <string>DEPARTMENT</string>
        </property>
       </widget>
       <zorder>time_label</zorder>
@@ -576,6 +567,7 @@ color: #000000;</string>
       <zorder>attendanceTableWidget</zorder>
       <zorder>noDataLabel</zorder>
       <zorder>searchButton</zorder>
+      <zorder>strandLogs_2</zorder>
      </widget>
     </item>
    </layout>

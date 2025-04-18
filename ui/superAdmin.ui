@@ -610,10 +610,10 @@ font-size: 16px;
         <widget class="QFrame" name="frame">
          <property name="geometry">
           <rect>
-           <x>180</x>
+           <x>100</x>
            <y>100</y>
-           <width>1061</width>
-           <height>71</height>
+           <width>1211</width>
+           <height>48</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -621,7 +621,7 @@ font-size: 16px;
 background: transparent;
 }
 QLabel{
-font: 87 20pt &quot;Segoe UI Black&quot;;
+font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;
 }</string>
@@ -635,10 +635,10 @@ color: #000000;
          <widget class="QLabel" name="label_4">
           <property name="geometry">
            <rect>
-            <x>710</x>
+            <x>890</x>
             <y>10</y>
-            <width>72</width>
-            <height>37</height>
+            <width>54</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="text">
@@ -648,10 +648,10 @@ color: #000000;
          <widget class="QLabel" name="label_5">
           <property name="geometry">
            <rect>
-            <x>960</x>
+            <x>1050</x>
             <y>10</y>
-            <width>68</width>
-            <height>37</height>
+            <width>51</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="text">
@@ -661,10 +661,10 @@ color: #000000;
          <widget class="QLabel" name="label_6">
           <property name="geometry">
            <rect>
-            <x>290</x>
+            <x>270</x>
             <y>10</y>
-            <width>93</width>
-            <height>37</height>
+            <width>70</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="text">
@@ -674,10 +674,10 @@ color: #000000;
          <widget class="QLabel" name="label_7">
           <property name="geometry">
            <rect>
-            <x>470</x>
+            <x>440</x>
             <y>10</y>
-            <width>112</width>
-            <height>37</height>
+            <width>84</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="text">
@@ -687,14 +687,27 @@ color: #000000;
          <widget class="QLabel" name="label_2">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>70</x>
             <y>10</y>
-            <width>84</width>
-            <height>37</height>
+            <width>62</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="text">
            <string>NAME</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_15">
+          <property name="geometry">
+           <rect>
+            <x>630</x>
+            <y>10</y>
+            <width>141</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>DEPARTMENT</string>
           </property>
          </widget>
         </widget>
@@ -728,137 +741,8 @@ border-bottom-left-radius: 15px;
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
          <property name="placeholderText">
-          <string>Search Name, Grade, Strand, or Month</string>
+          <string>Search</string>
          </property>
-        </widget>
-        <widget class="QTableWidget" name="attendanceTableWidget">
-         <property name="geometry">
-          <rect>
-           <x>130</x>
-           <y>140</y>
-           <width>1161</width>
-           <height>421</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QTableWidget {
-    background: transparent;
-    color: #000000;
-    border: none;
-    gridline-color: transparent;
-    outline: none;
-    padding: 5px;
-    font-size: 30px;
-}
-QHeaderView::section {
-    background-color: transparent;
-    color: #000000;
-    font-size: 20px;
-    border: none;
-    padding: 5px;
-    text-align: left;  /* Align header titles consistently */
-}
-
-QTableWidget::item {
-    padding: 3px;
-    border: none;
-    text-align: left;  /* Important for item alignment */
-}
-
-QTableWidget::item:selected {
-    background-color: transparent;
-    color: #000000;
-}
-
-QTableWidget::item {
-    selection-background-color: transparent;
-    selection-color: #000000;
-}
-
-QHeaderView::section:horizontal {
-    background-color: transparent;
-    color: 000000;
-    border: none;
-    font-size: 15px;
-}
-</string>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="showGrid">
-          <bool>false</bool>
-         </property>
-         <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="horizontalHeaderCascadingSectionResizes">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderCascadingSectionResizes">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderMinimumSectionSize">
-          <number>25</number>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>60</number>
-         </attribute>
-         <attribute name="verticalHeaderHighlightSections">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Grade</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Strand</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Date</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Time</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
-          </property>
-         </column>
         </widget>
         <widget class="QLabel" name="noDataLabel">
          <property name="geometry">
@@ -994,6 +878,140 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
            <height>40</height>
           </size>
          </property>
+        </widget>
+        <widget class="QTableWidget" name="attendanceTableWidget">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>140</y>
+           <width>1261</width>
+           <height>411</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QTableWidget {
+    background: transparent;
+    color: #000000;
+    border: none;
+    gridline-color: transparent;
+    outline: none;
+    padding: 5px;
+    font-size: 20px;
+}
+QHeaderView::section {
+    background-color: transparent;
+    color: #000000;
+    font-size: 15px;
+    border: none;
+    padding: 5px;
+    text-align: left;  /* Align header titles consistently */
+}
+
+QTableWidget::item {
+    padding: 3px;
+    border: none;
+    text-align: left;  /* Important for item alignment */
+}
+
+QTableWidget::item:selected {
+    background-color: transparent;
+    color: #000000;
+}
+
+QTableWidget::item {
+    selection-background-color: transparent;
+    selection-color: #000000;
+}
+
+QHeaderView::section:horizontal {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    font-size: 15px;
+}
+</string>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>25</number>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>60</number>
+         </attribute>
+         <attribute name="verticalHeaderHighlightSections">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Grade</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Strand</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Department</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Date</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Time</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
+         </column>
         </widget>
        </widget>
        <widget class="QWidget" name="studentList_page">

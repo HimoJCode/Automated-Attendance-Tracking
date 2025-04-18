@@ -239,7 +239,6 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         self.toolMenu_btn.clicked.connect(lambda: self.Down_Menu_Num_0())
         self.logout_btn.clicked.connect(self.logout)
-        self.superAdmin_btn.clicked.connect(self.superAdmin)
 
         self.searchBar.returnPressed.connect(self.search_attendance)
 
@@ -305,8 +304,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
                     WHEN p.first_name = '[Deleted]' THEN 'Deleted Student'
                     ELSE p.first_name || ' ' || p.middle_name || ' ' || p.last_name
                 END AS full_name,
-                COALESCE(g.grade_level, 'N/A') AS grade,
-                COALESCE(s.strand_name, 'N/A') AS strand,
+                g.grade_level,
+                s.strand_name,
+                d.department_name,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
@@ -314,21 +314,22 @@ class AdminDashboard(QtWidgets.QMainWindow):
             LEFT JOIN StudentDetails sd ON sd.person_id = p.person_id
             LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
+            LEFT JOIN StaffDetails st ON st.person_id = p.person_id
+            LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
         """)
         data = cursor.fetchall()
         conn.close()
 
-        #Store in memory so it can be searched later
         self.all_data = data
-
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
-                item = QtWidgets.QTableWidgetItem(str(col_data))
+                text = "" if col_data is None else str(col_data)
+                item = QtWidgets.QTableWidgetItem(text)
                 item.setForeground(QtGui.QColor("black"))
                 item.setTextAlignment(QtCore.Qt.AlignLeft)
                 table.setItem(row_index, col_index, item)
@@ -336,70 +337,68 @@ class AdminDashboard(QtWidgets.QMainWindow):
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
-        
-         # Adjust columns to fit neatly
+
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
-        # Set a fixed width for each column
-        table.setColumnWidth(0, 320)  # NAME
-        table.setColumnWidth(1, 180)  # GRADE
-        table.setColumnWidth(2, 180)  # STRAND
-        table.setColumnWidth(3, 280)  # DATE
-        table.setColumnWidth(4, 150)  # TIME
+        table.setColumnWidth(0, 300)  # NAME
+        table.setColumnWidth(1, 150)  # GRADE
+        table.setColumnWidth(2, 160)  # STRAND
+        table.setColumnWidth(3, 290)  # DEPARTMENT
+        table.setColumnWidth(4, 180)  # DATE
+        table.setColumnWidth(5, 130)  # TIME
 
-        # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(50)
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
+
 
     def refresh_table(self, data):
-        table = self.table = self.attendanceTableWidget
+        table = self.attendanceTableWidget
         table.setRowCount(0)  # Clear existing rows
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
-                item = QtWidgets.QTableWidgetItem(str(col_data))
+                text = "" if col_data is None else str(col_data)
+                item = QtWidgets.QTableWidgetItem(text)
                 item.setForeground(QtGui.QColor("black"))
                 item.setTextAlignment(QtCore.Qt.AlignLeft)
                 table.setItem(row_index, col_index, item)
+
+            header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
+            header_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            table.setVerticalHeaderItem(row_index, header_item)
 
         # Adjust columns to fit neatly
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
         # Set a fixed width for each column
-        table.setColumnWidth(0, 320)  # NAME
-        table.setColumnWidth(1, 190)  # GRADE
-        table.setColumnWidth(2, 180)  # STRAND
-        table.setColumnWidth(3, 280)  # DATE
-        table.setColumnWidth(4, 150)  # TIME
+        table.setColumnWidth(0, 300)  # NAME
+        table.setColumnWidth(1, 150)  # GRADE
+        table.setColumnWidth(2, 160)  # STRAND
+        table.setColumnWidth(3, 290)  # DEPARTMENT
+        table.setColumnWidth(4, 180)  # DATE
+        table.setColumnWidth(5, 130)  # TIME
 
         # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(50)
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
+
     def search_attendance(self):
         search_text = self.searchBar.text().strip().lower()
         filtered_data = []
 
         for row in self.all_data:
-            name = str(row[0]).lower()
-            grade = str(row[1]).lower()
-            strand = str(row[2]).lower()
-            date = str(row[3]).lower()
+            name = str(row[0] or "").lower()
+            grade = str(row[1] or "").lower()
+            strand = str(row[2] or "").lower()
+            department = str(row[3] or "").lower()
+            date = str(row[4] or "").lower()
 
-            # Check if search text matches any of the fields directly
             if (search_text in name or
                 search_text in grade or
                 search_text in strand or
+                search_text in department or
                 search_text in date or
                 search_text in self.extract_month_name(date).lower()):
                 filtered_data.append(row)
@@ -413,6 +412,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
         else:
             self.noDataLabel.setVisible(False)
             self.attendanceTableWidget.setVisible(True)
+
+
 
     def extract_month_name(self, date_str):
         try:
@@ -459,15 +460,6 @@ class AdminDashboard(QtWidgets.QMainWindow):
         else:
             self.attendance_window = AttendanceApp()
             self.attendance_window.show()
-
-    def superAdmin(self):
-        # Open login dialog as a popup
-        login_dialog = LoginDialog(super_admin_mode=True)
-        if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
-
-             # If login is successful, open Super Admin window
-            self.super_admin_window = SuperAdminDashboard()
-            self.super_admin_window.show()
 
 
 class SuperAdminDashboard(QtWidgets.QMainWindow):
@@ -1466,8 +1458,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                     WHEN p.first_name = '[Deleted]' THEN 'Deleted Student'
                     ELSE COALESCE(p.first_name || ' ' || p.middle_name || ' ' || p.last_name, 'Deleted Student')
                 END AS full_name,
-                COALESCE(g.grade_level, 'N/A'),
-                COALESCE(s.strand_name, 'N/A'),
+                g.grade_level,
+                s.strand_name,
+                d.department_name,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
@@ -1475,22 +1468,24 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             LEFT JOIN StudentDetails sd ON sd.person_id = a.person_id
             LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
+            LEFT JOIN StaffDetails st ON st.person_id = a.person_id
+            LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
         """)
         data = cursor.fetchall()
         conn.close()
 
-        #Store in memory so it can be searched later
         self.attendance_data = data
 
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
         table.verticalHeader().setVisible(True)
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
-                item = QtWidgets.QTableWidgetItem(str(col_data))
+                text = "" if col_data is None else str(col_data)
+                item = QtWidgets.QTableWidgetItem(text)
                 item.setForeground(QtGui.QColor("black"))
                 item.setTextAlignment(QtCore.Qt.AlignLeft)
                 table.setItem(row_index, col_index, item)
@@ -1499,68 +1494,62 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
-        # Set a fixed width for each column
-        table.setColumnWidth(0, 320)  # NAME
-        table.setColumnWidth(1, 170)  # GRADE
-        table.setColumnWidth(2, 180)  # STRAND
-        table.setColumnWidth(3, 280)  # DATE
-        table.setColumnWidth(4, 150)  # TIME
+        # Set column widths
+        table.setColumnWidth(0, 300)  # NAME
+        table.setColumnWidth(1, 150)  # GRADE
+        table.setColumnWidth(2, 160)  # STRAND
+        table.setColumnWidth(3, 260)  # DEPARTMENT
+        table.setColumnWidth(4, 180)  # DATE
+        table.setColumnWidth(5, 130)  # TIME
 
-        # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(50)
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
-
     def refresh_table(self, data):
-        table = self.table = self.attendanceTableWidget
-        table.setRowCount(0)  # Clear existing rows
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table = self.attendanceTableWidget
+        table.setRowCount(0)
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
-                item = QtWidgets.QTableWidgetItem(str(col_data))
+                text = "" if col_data is None else str(col_data)
+                item = QtWidgets.QTableWidgetItem(text)
                 item.setForeground(QtGui.QColor("black"))
                 item.setTextAlignment(QtCore.Qt.AlignLeft)
                 table.setItem(row_index, col_index, item)
 
-        # Adjust columns to fit neatly
+            header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
+            header_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            table.setVerticalHeaderItem(row_index, header_item)
+
+        # Adjust column widths
+        table.setColumnWidth(0, 300)  # NAME
+        table.setColumnWidth(1, 150)  # GRADE
+        table.setColumnWidth(2, 160)  # STRAND
+        table.setColumnWidth(3, 260)  # DEPARTMENT
+        table.setColumnWidth(4, 180)  # DATE
+        table.setColumnWidth(5, 130)  # TIME
+
+        table.verticalHeader().setDefaultSectionSize(50)
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-
-        # Set a fixed width for each column
-        table.setColumnWidth(0, 320)  # NAME
-        table.setColumnWidth(1, 190)  # GRADE
-        table.setColumnWidth(2, 180)  # STRAND
-        table.setColumnWidth(3, 280)  # DATE
-        table.setColumnWidth(4, 150)  # TIME
-
-        # Set a fixed height for each row
-        table.verticalHeader().setDefaultSectionSize(50)
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
     def search_attendance(self):
         search_text = self.searchBar.text().strip().lower()
         filtered_data = []
 
         for row in self.attendance_data:
-            name = str(row[0]).lower()
-            grade = str(row[1]).lower()
-            strand = str(row[2]).lower()
-            date = str(row[3]).lower()
+            name = str(row[0]).lower() if row[0] else ""
+            grade = str(row[1]).lower() if row[1] else ""
+            strand = str(row[2]).lower() if row[2] else ""
+            department = str(row[3]).lower() if row[3] else ""
+            date = str(row[4]).lower() if row[4] else ""
 
-            # Check if search text matches any of the fields directly
             if (search_text in name or
                 search_text in grade or
                 search_text in strand or
+                search_text in department or
                 search_text in date or
                 search_text in self.extract_month_name(date).lower()):
                 filtered_data.append(row)
@@ -1574,6 +1563,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         else:
             self.noDataLabel.setVisible(False)
             self.attendanceTableWidget.setVisible(True)
+
 
     def extract_month_name(self, date_str):
         try:
@@ -2416,11 +2406,12 @@ class AttendanceApp(QtWidgets.QMainWindow):
         cursor.execute("""
             SELECT 
                 CASE 
-                    WHEN p.first_name = '[Deleted]' THEN 'Deleted Student'
+                    WHEN p.first_name = '[Deleted]' THEN 'Deleted Person'
                     ELSE p.first_name || ' ' || p.middle_name || ' ' || p.last_name
                 END AS full_name,
-                COALESCE(g.grade_level, 'N/A') AS grade,
-                COALESCE(s.strand_name, 'N/A') AS strand,
+                COALESCE(g.grade_level, '') AS grade,
+                COALESCE(s.strand_name, '') AS strand,
+                COALESCE(d.department_name, '') AS department,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
@@ -2428,6 +2419,8 @@ class AttendanceApp(QtWidgets.QMainWindow):
             LEFT JOIN StudentDetails sd ON sd.person_id = p.person_id
             LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
+            LEFT JOIN StaffDetails st ON st.person_id = p.person_id
+            LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
         """)
         data = cursor.fetchall()
@@ -2435,7 +2428,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DATE", "TIME"])
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
@@ -2448,23 +2441,18 @@ class AttendanceApp(QtWidgets.QMainWindow):
             header_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
-        # Adjust columns to fit neatly
+        # Adjust columns
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
-        # Set a fixed width for each column
-        table.setColumnWidth(0, 163)  # NAME
-        table.setColumnWidth(1, 110)   # GRADE
-        table.setColumnWidth(2, 95)  # STRAND
-        table.setColumnWidth(3, 140)  # DATE
-        table.setColumnWidth(4, 70)   # TIME
+        table.setColumnWidth(0, 180)  # NAME
+        table.setColumnWidth(1, 115)   # GRADE
+        table.setColumnWidth(2, 90)  # STRAND
+        table.setColumnWidth(3, 190)  # DEPARTMENT
+        table.setColumnWidth(4, 130)  # DATE
+        table.setColumnWidth(5, 100)  # TIME
 
-        # Set a fixed height for each row
         table.verticalHeader().setDefaultSectionSize(30)
-        for row_index in range(len(data)):
-            self.attendanceTableWidget.setVerticalHeaderItem(
-                row_index, QtWidgets.QTableWidgetItem(str(row_index + 1))
-            )
 
     def preprocess_face_for_embedding(self, frame, box):
         x1, y1, x2, y2 = [int(v) for v in box]
@@ -2609,7 +2597,12 @@ class AttendanceApp(QtWidgets.QMainWindow):
             full_name = f"{person[0]} {person[1]} {person[2]}"
             profile_path = person[3]
 
-            # Get strand and grade
+            # Default values
+            strand = "N/A"
+            grade = "N/A"
+            department = "N/A"
+
+            # Try fetching student details
             cursor.execute("""
                 SELECT s.strand_name, g.grade_level
                 FROM StudentDetails sd
@@ -2617,21 +2610,35 @@ class AttendanceApp(QtWidgets.QMainWindow):
                 JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
                 WHERE sd.person_id = ?
             """, (person_id,))
-            academic = cursor.fetchone()
+            student_info = cursor.fetchone()
 
-            strand = academic[0] if academic else "N/A"
-            grade = academic[1] if academic else "N/A"
+            if student_info:
+                strand, grade = student_info
+            else:
+                # Try fetching staff department
+                cursor.execute("""
+                    SELECT d.department_name
+                    FROM StaffDetails st
+                    JOIN Department d ON d.department_id = st.department_id
+                    WHERE st.person_id = ?
+                """, (person_id,))
+                staff_info = cursor.fetchone()
+                if staff_info:
+                    department = staff_info[0]
 
-            # If date/time passed in, use those. Otherwise, use current.
+            # Determine display date and time
             display_date = date_in if date_in else datetime.datetime.now().strftime('%B %d, %Y')
             display_time = time_in if time_in else datetime.datetime.now().strftime('%I:%M %p')
 
+            # Update UI Labels
             self.nameLabel.setText(f"{full_name}")
             self.dateLabel.setText(f"{display_date}")
             self.timeLabel.setText(f"{display_time}")
             self.strandLabel.setText(f"{strand}")
             self.gradeLabel.setText(f"{grade}")
+            self.departmentLabel.setText(f"{department}")
 
+            # Load profile image
             if os.path.exists(profile_path):
                 pixmap = QPixmap(profile_path).scaled(250, 250, QtCore.Qt.KeepAspectRatio)
                 self.image.setPixmap(pixmap)
@@ -2639,6 +2646,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
                 self.image.clear()
 
         conn.close()
+
     def show_unrecognize_person_dialog(self):
         dialog = UnrecognizeModule(self)
         dialog.exec_()
