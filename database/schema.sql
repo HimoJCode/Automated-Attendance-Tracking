@@ -1,4 +1,3 @@
-
 -- Lookup Tables
 CREATE TABLE Strand (
     strand_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,9 +23,9 @@ CREATE TABLE Person (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     middle_name TEXT,
-    gender TEXT,
+    gender TEXT CHECK (gender IN ('Male', 'Female', 'Other')),
     profile_image_url TEXT,
-    role TEXT,
+    role TEXT CHECK (role IN ('Student', 'Staff'))
 );
 
 -- Student Details
@@ -78,11 +77,15 @@ CREATE TABLE FaceEmbeddings (
     FOREIGN KEY (person_id) REFERENCES Person(person_id) ON DELETE CASCADE
 );
 
--- Attendance Table
+-- Attendance Table (with backup fields to retain values after person deletion)
 CREATE TABLE AttendanceRecords (
     attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
     person_id INTEGER NOT NULL,
     date_in TEXT,
     time_in TEXT,
+    full_name TEXT,           -- backup name
+    grade_level TEXT,         -- backup for students
+    strand_name TEXT,         -- backup for students
+    department_name TEXT,     -- backup for staff
     FOREIGN KEY (person_id) REFERENCES Person(person_id) ON DELETE CASCADE
 );

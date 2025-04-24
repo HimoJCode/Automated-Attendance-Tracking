@@ -36,5 +36,6 @@
     <file>whiteBG.png</file>
     <file>minus.png</file>
     <file>cancel-sign.png</file>
+    <file>view-image.png</file>
   </qresource>
 </RCC>

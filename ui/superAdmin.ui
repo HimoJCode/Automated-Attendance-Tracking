@@ -139,7 +139,7 @@ background: transparent;</string>
  border: none;
 color: #000000;
 font: 87 10pt &quot;Segoe UI Black&quot;;
-</string>
+                                    </string>
         </property>
         <property name="text">
          <string>SUPER ADMIN</string>
@@ -285,7 +285,7 @@ border: none;</string>
         <string notr="true">color: #000000;
 background: transparent;
 
-</string>
+                                </string>
        </property>
        <property name="text">
         <string>ATTENDANCE TRACKING SYSTEM</string>
@@ -331,7 +331,7 @@ background: transparent;</string>
         <string notr="true">QWidget#leftMenu{
 background-image: url(:/resources/moduleBG.png);
 }
-</string>
+                                </string>
        </property>
        <widget class="QFrame" name="logoNameFrame">
         <property name="geometry">
@@ -395,7 +395,7 @@ color: white;</string>
     /* Background color behind the image (showing through if the image has transparency) */
     background: #ffffff;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -407,7 +407,7 @@ color: white;</string>
          <rect>
           <x>0</x>
           <y>210</y>
-          <width>221</width>
+          <width>250</width>
           <height>211</height>
          </rect>
         </property>
@@ -417,14 +417,14 @@ background: transparent;
 }
 
 
-</string>
+                                    </string>
         </property>
         <widget class="QPushButton" name="students_btn">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>60</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -439,7 +439,7 @@ QPushButton#students_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>STUDENTS               </string>
@@ -463,7 +463,7 @@ QPushButton#students_btn:hover {
           <rect>
            <x>0</x>
            <y>110</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -481,7 +481,7 @@ QPushButton#admin_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>ADMIN                      </string>
@@ -502,7 +502,7 @@ QPushButton#admin_btn:hover {
           <rect>
            <x>0</x>
            <y>160</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -517,7 +517,7 @@ QPushButton#staffs_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>STAFFS                     </string>
@@ -538,7 +538,7 @@ QPushButton#staffs_btn:hover {
           <rect>
            <x>0</x>
            <y>10</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -553,7 +553,7 @@ QPushButton#attendanceLogs_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>ATTENDANCE LOGS</string>
@@ -588,7 +588,7 @@ background-color: transparent;
 border: none;
 font-size: 16px;
 
-</string>
+                                    </string>
         </property>
         <property name="text">
          <string/>
@@ -612,7 +612,7 @@ font-size: 16px;
         <string notr="true">background-color: #DADADA;</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="attendanceLogs_page">
         <widget class="QFrame" name="frame">
@@ -650,7 +650,7 @@ color: #000000;
          <widget class="QLabel" name="label_4">
           <property name="geometry">
            <rect>
-            <x>950</x>
+            <x>940</x>
             <y>10</y>
             <width>51</width>
             <height>28</height>
@@ -671,7 +671,7 @@ color: #000000;
          <widget class="QLabel" name="label_5">
           <property name="geometry">
            <rect>
-            <x>1120</x>
+            <x>1100</x>
             <y>10</y>
             <width>51</width>
             <height>28</height>
@@ -692,7 +692,7 @@ color: #000000;
          <widget class="QLabel" name="label_6">
           <property name="geometry">
            <rect>
-            <x>330</x>
+            <x>320</x>
             <y>10</y>
             <width>71</width>
             <height>28</height>
@@ -713,7 +713,7 @@ color: #000000;
          <widget class="QLabel" name="label_7">
           <property name="geometry">
            <rect>
-            <x>490</x>
+            <x>480</x>
             <y>10</y>
             <width>81</width>
             <height>28</height>
@@ -734,7 +734,7 @@ color: #000000;
          <widget class="QLabel" name="label_15">
           <property name="geometry">
            <rect>
-            <x>700</x>
+            <x>670</x>
             <y>10</y>
             <width>131</width>
             <height>28</height>
@@ -805,7 +805,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -888,7 +888,7 @@ border-bottom-right-radius: 15px;</string>
           <string notr="true">color: #000000;
 background: transparent;
 
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>Attendance Logs</string>
@@ -910,7 +910,7 @@ background: transparent;
           <string notr="true">border:none;
 background: transparent;
 font: 63 9pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>  Print</string>
@@ -942,7 +942,7 @@ font: 63 9pt &quot;Segoe UI Semibold&quot;;
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -1008,7 +1008,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 15px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -1092,6 +1092,27 @@ QHeaderView::section:horizontal {
           </property>
          </column>
         </widget>
+        <widget class="QPushButton" name="deleteAttendance_btn">
+         <property name="geometry">
+          <rect>
+           <x>1220</x>
+           <y>80</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: red;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+border-radius: 10px;
+color: white;</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/images-removebg-preview (1).png</normaloff>:/resources/images-removebg-preview (1).png</iconset>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="studentList_page">
         <widget class="QLabel" name="label_8">
@@ -1115,7 +1136,7 @@ QHeaderView::section:horizontal {
           <string notr="true">color: #000000;
 background: transparent;
 
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>Student List</string>
@@ -1223,7 +1244,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1339,7 +1360,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -1497,7 +1518,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -1547,7 +1568,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -1575,7 +1596,7 @@ QComboBox::down-arrow {
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>  Print</string>
@@ -1625,7 +1646,7 @@ color: #000000;</string>
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -1638,6 +1659,37 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
           <size>
            <width>40</width>
            <height>40</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="viewImages_btn">
+         <property name="geometry">
+          <rect>
+           <x>1060</x>
+           <y>220</y>
+           <width>150</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+background-color: #6C3483;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+color: white;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>VIEW IMAGES</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/view-image.png</normaloff>:/resources/view-image.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
           </size>
          </property>
         </widget>
@@ -1664,7 +1716,7 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
           <string notr="true">color: #000000;
 background: transparent;
 
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>ADMINISTRATOR</string>
@@ -1706,7 +1758,7 @@ color: #000000;
          <widget class="QLabel" name="label_26">
           <property name="geometry">
            <rect>
-            <x>30</x>
+            <x>20</x>
             <y>10</y>
             <width>101</width>
             <height>21</height>
@@ -1732,7 +1784,7 @@ color: #000000;
          <widget class="QLabel" name="label_29">
           <property name="geometry">
            <rect>
-            <x>370</x>
+            <x>360</x>
             <y>10</y>
             <width>131</width>
             <height>21</height>
@@ -1745,7 +1797,7 @@ color: #000000;
          <widget class="QLabel" name="label_30">
           <property name="geometry">
            <rect>
-            <x>540</x>
+            <x>530</x>
             <y>5</y>
             <width>131</width>
             <height>31</height>
@@ -1806,7 +1858,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -1967,7 +2019,7 @@ color: white;</string>
           <string notr="true">color: #000000;
 background: transparent;
 
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>STAFF</string>
@@ -2014,7 +2066,7 @@ color: #000000;
          <widget class="QLabel" name="label_32">
           <property name="geometry">
            <rect>
-            <x>320</x>
+            <x>310</x>
             <y>10</y>
             <width>71</width>
             <height>21</height>
@@ -2027,7 +2079,7 @@ color: #000000;
          <widget class="QLabel" name="label_33">
           <property name="geometry">
            <rect>
-            <x>490</x>
+            <x>520</x>
             <y>5</y>
             <width>121</width>
             <height>31</height>
@@ -2043,7 +2095,7 @@ color: #000000;
           <rect>
            <x>1100</x>
            <y>110</y>
-           <width>121</width>
+           <width>151</width>
            <height>31</height>
           </rect>
          </property>
@@ -2066,7 +2118,7 @@ color: white;</string>
           <rect>
            <x>1100</x>
            <y>150</y>
-           <width>121</width>
+           <width>151</width>
            <height>31</height>
           </rect>
          </property>
@@ -2089,7 +2141,7 @@ color: white;</string>
           <rect>
            <x>1100</x>
            <y>190</y>
-           <width>121</width>
+           <width>151</width>
            <height>31</height>
           </rect>
          </property>
@@ -2131,7 +2183,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -2215,7 +2267,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -2277,7 +2329,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -2356,6 +2408,101 @@ color: #000000;</string>
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="viewStaffImages_btn">
+         <property name="geometry">
+          <rect>
+           <x>1100</x>
+           <y>230</y>
+           <width>150</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+background-color: #6C3483;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+color: white;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>VIEW IMAGES</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/view-image.png</normaloff>:/resources/view-image.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="printStaff_btn">
+         <property name="geometry">
+          <rect>
+           <x>1100</x>
+           <y>40</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>  Print</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/printer.png</normaloff>:/resources/printer.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="exportPDFStaff_btn">
+         <property name="geometry">
+          <rect>
+           <x>1210</x>
+           <y>40</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+                                        </string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/download-pdf (1).png</normaloff>:/resources/download-pdf (1).png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>

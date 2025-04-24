@@ -460,34 +460,31 @@ class AdminDashboard(QtWidgets.QMainWindow):
         cursor.execute(
             """
             SELECT 
-                CASE 
-                    WHEN p.first_name = '[Deleted]' THEN 'Deleted Student'
-                    ELSE p.first_name || ' ' || p.middle_name || ' ' || p.last_name
-                END AS full_name,
-                g.grade_level,
-                s.strand_name,
-                d.department_name,
+                COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
+                COALESCE(a.grade_level, g.grade_level) AS grade,
+                COALESCE(a.strand_name, s.strand_name) AS strand,
+                COALESCE(a.department_name, d.department_name) AS department,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
             LEFT JOIN Person p ON a.person_id = p.person_id
-            LEFT JOIN StudentDetails sd ON sd.person_id = p.person_id
+            LEFT JOIN StudentDetails sd ON sd.person_id = a.person_id
             LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
-            LEFT JOIN StaffDetails st ON st.person_id = p.person_id
+            LEFT JOIN StaffDetails st ON st.person_id = a.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
-        """
+            """
         )
         data = cursor.fetchall()
         conn.close()
 
-        self.all_data = data
+        self.attendance_data = data
+
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(
-            ["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"]
-        )
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
+        table.verticalHeader().setVisible(True)
 
         for row_index, row_data in enumerate(data):
             for col_index, col_data in enumerate(row_data):
@@ -501,8 +498,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
             header_item.setTextAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
-        table.verticalHeader().setDefaultSectionSize(30)
-        table.verticalHeader().setStyleSheet(""" 
+        table.verticalHeader().setDefaultSectionSize(50)
+        table.verticalHeader().setStyleSheet("""
             QHeaderView::section {
                 padding-top: 0px;
                 margin: 0px;
@@ -510,14 +507,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
                 qproperty-alignment: AlignTop | AlignHCenter;
             }
         """)
-        
-        table.setColumnWidth(0, 300)  # NAME
-        table.setColumnWidth(1, 150)  # GRADE
-        table.setColumnWidth(2, 160)  # STRAND
-        table.setColumnWidth(3, 290)  # DEPARTMENT
-        table.setColumnWidth(4, 180)  # DATE
-        table.setColumnWidth(5, 130)  # TIME
-
+        table.setColumnWidth(0, 300)
+        table.setColumnWidth(1, 150)
+        table.setColumnWidth(2, 160)
+        table.setColumnWidth(3, 260)
+        table.setColumnWidth(4, 180)
+        table.setColumnWidth(5, 130)
+        table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
        
     def refresh_table(self, data):
@@ -787,6 +784,19 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.addStaff_btn.clicked.connect(self.open_add_staff_dialog)
         self.updateStaff_btn.clicked.connect(self.update_selected_staff)
         self.removeStaff_btn.clicked.connect(self.remove_selected_staff)
+        self.viewImages_btn.clicked.connect(self.view_selected_images)
+        self.viewStaffImages_btn.clicked.connect(self.view_selected_staff_images)
+        self.deleteAttendance_btn.clicked.connect(self.delete_all_attendance_records)
+
+
+        self.printStaff_btn.clicked.connect(
+            lambda: self.print_table_widget(self.staffTable, "Staff List")
+        )
+        self.exportPDFStaff_btn.clicked.connect(
+            lambda: self.print_table_widget(self.staffTable, "Staff List", export_to_pdf=True)
+        )
+
+
         self.printStudent_btn.clicked.connect(
             lambda: self.print_table_widget(self.studentList_table, "Student List")
         )
@@ -1027,6 +1037,60 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                     "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
                     (person_id, aug_path),
                 )
+
+    def view_selected_images(self):
+        if self.selected_student_row is None:
+            QMessageBox.warning(self, "No Selection", "Please select a student first.")
+            return
+
+        person_id_item = self.studentList_table.item(self.selected_student_row, 0)
+        if not person_id_item:
+            QMessageBox.critical(self, "Error", "Unable to retrieve student ID.")
+            return
+
+        person_id = person_id_item.text()
+
+        conn = sqlite3.connect("recognition.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
+        images = cursor.fetchall()
+        conn.close()
+
+        if not images:
+            QMessageBox.information(self, "No Images", "No images found for this person.")
+            return
+
+        image_paths = [img[0] for img in images]
+
+        viewer = ImageViewerDialog(image_paths)
+        viewer.exec_()
+
+    def view_selected_staff_images(self):
+        selected_row = self.staffTable.currentRow()
+        if selected_row == -1:
+            QMessageBox.warning(self, "No Selection", "Please select a staff member first.")
+            return
+
+        person_id_item = self.staffTable.item(selected_row, 0)
+        if not person_id_item:
+            QMessageBox.critical(self, "Error", "Unable to retrieve staff ID.")
+            return
+
+        person_id = person_id_item.text()
+
+        conn = sqlite3.connect("recognition.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
+        images = cursor.fetchall()
+        conn.close()
+
+        if not images:
+            QMessageBox.information(self, "No Images", "No images found for this staff.")
+            return
+
+        image_paths = [img[0] for img in images]
+        viewer = ImageViewerDialog(image_paths)
+        viewer.exec_()
 
     def populate_studentList_data(self):
         selected_strand = self.strandFilter.currentText()
@@ -1621,6 +1685,28 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.move(event.globalPos() - self.drag_position)
             event.accept()
 
+    def delete_all_attendance_records(self):
+        reply = QMessageBox.question(
+            self,
+            "Confirm Deletion",
+            "Are you sure you want to delete ALL attendance records? This action cannot be undone.",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            try:
+                conn = sqlite3.connect("recognition.db")
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM AttendanceRecords")
+                conn.commit()
+                conn.close()
+
+                self.populate_attendance_data()  # refresh the table view
+                QMessageBox.information(self, "Success", "All attendance records deleted successfully.")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to delete records: {e}")
+
     def print_attendance_records(self):
         self.print_table_widget(self.attendanceTableWidget, "Attendance Records")
 
@@ -1629,24 +1715,6 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.attendanceTableWidget, "Attendance Records", export_to_pdf=True
         )
 
-    def print_student_list(self):
-        choice = QMessageBox.question(
-            self,
-            "Print Option",
-            "Do you want to export to PDF instead of printing?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
-        )
-        self.print_table_widget(
-            self.studentList_table,
-            "Student List",
-            export_to_pdf=(choice == QMessageBox.Yes),
-        )
-
-    def print_student_list_as_pdf(self):
-        self.print_table_widget(
-            self.studentList_table, "Student List", export_to_pdf=True
-        )
 
     def generate_embeddings_from_face_images(self, db_path="recognition.db"):
         embedder = InceptionResnetV1(pretrained="vggface2").eval()
@@ -1902,49 +1970,55 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
 
+        # Backup name, grade, and strand to AttendanceRecords
+        cursor.execute("""
+            SELECT 
+                p.first_name || ' ' || IFNULL(p.middle_name, '') || ' ' || p.last_name,
+                g.grade_level,
+                s.strand_name
+            FROM Person p
+            LEFT JOIN StudentDetails sd ON sd.person_id = p.person_id
+            LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
+            LEFT JOIN Strand s ON s.strand_id = sd.strand_id
+            WHERE p.person_id = ?
+        """, (person_id,))
+        result = cursor.fetchone()
+        if result:
+            full_name_backup, grade_backup, strand_backup = result
+            cursor.execute("""
+                UPDATE AttendanceRecords
+                SET full_name = ?, grade_level = ?, strand_name = ?
+                WHERE person_id = ?
+            """, (full_name_backup, grade_backup, strand_backup, person_id))
+
         # Delete from FaceEmbeddings
         cursor.execute("DELETE FROM FaceEmbeddings WHERE person_id = ?", (person_id,))
 
-        # Get FaceImages paths
-        cursor.execute(
-            "SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,)
-        )
+        # Get and delete FaceImages
+        cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
         image_paths = [row[0] for row in cursor.fetchall()]
-
-        # Delete from FaceImages
         cursor.execute("DELETE FROM FaceImages WHERE person_id = ?", (person_id,))
 
-        # Delete from StudentDetails
+        # Delete StudentDetails
         cursor.execute("DELETE FROM StudentDetails WHERE person_id = ?", (person_id,))
 
-        # Update Person table — keep entry but clear name/profile info (so logs remain intact)
-        cursor.execute(
-            """
-            UPDATE Person
-            SET first_name = '[Deleted]', middle_name = '', last_name = '',
-                gender = '', profile_image_url = ''
-            WHERE person_id = ?
-        """,
-            (person_id,),
-        )
+        # ✅ Now safe to delete Person because attendance data is backed up
+        cursor.execute("DELETE FROM Person WHERE person_id = ?", (person_id,))
+
 
         conn.commit()
         conn.close()
 
-        # Delete student folder if exists
+        # Delete folder if it exists
         if image_paths:
-            student_folder = os.path.dirname(image_paths[0])
-            try:
-                if os.path.exists(student_folder):
-                    shutil.rmtree(student_folder)
-            except Exception as e:
-                print(f"⚠️ Failed to delete folder {student_folder}: {e}")
+            folder = os.path.dirname(image_paths[0])
+            if os.path.exists(folder):
+                shutil.rmtree(folder, ignore_errors=True)
 
-        QMessageBox.information(
-            self, "Removed", f"'{full_name}' removed. Attendance logs kept."
-        )
+        QMessageBox.information(self, "Removed", f"'{full_name}' removed. Attendance logs kept.")
         self.populate_studentList_data()
         self.selected_student_row = None
+
 
     def remove_selected_staff(self):
         selected_row = self.staffTable.currentRow()
@@ -1973,42 +2047,50 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         cursor = conn.cursor()
 
         # Get person_id
-        cursor.execute(
-            "SELECT person_id FROM StaffDetails WHERE staff_id = ?", (staff_id,)
-        )
+        cursor.execute("SELECT person_id FROM StaffDetails WHERE staff_id = ?", (staff_id,))
         result = cursor.fetchone()
         if not result:
             QMessageBox.critical(self, "Error", "Could not find associated person.")
             return
+
         person_id = result[0]
 
-        # Delete from embeddings
-        cursor.execute("DELETE FROM FaceEmbeddings WHERE person_id = ?", (person_id,))
+        # 🟩 Backup full name and department into AttendanceRecords
+        cursor.execute("""
+            SELECT 
+                p.first_name, p.middle_name, p.last_name,
+                d.department_name
+            FROM Person p
+            LEFT JOIN StaffDetails sd ON sd.person_id = p.person_id
+            LEFT JOIN Department d ON d.department_id = sd.department_id
+            WHERE p.person_id = ?
+        """, (person_id,))
+        result = cursor.fetchone()
 
-        # Get image paths and delete them
-        cursor.execute(
-            "SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,)
-        )
+        if result:
+            first_name, middle_name, last_name, department = result
+            full_name_final = f"{first_name} {middle_name or ''} {last_name}".strip()
+
+            cursor.execute("""
+                UPDATE AttendanceRecords
+                SET 
+                    full_name = ?,
+                    department_name = ?
+                WHERE person_id = ?
+            """, (full_name_final, department, person_id))
+
+        # 🧹 Clean up
+        cursor.execute("DELETE FROM FaceEmbeddings WHERE person_id = ?", (person_id,))
+        cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
         image_paths = [row[0] for row in cursor.fetchall()]
         cursor.execute("DELETE FROM FaceImages WHERE person_id = ?", (person_id,))
-
-        # Delete staff details
         cursor.execute("DELETE FROM StaffDetails WHERE person_id = ?", (person_id,))
-
-        # Anonymize the person
-        cursor.execute(
-            """
-            UPDATE Person
-            SET first_name = '[Deleted]', middle_name = '', last_name = '', gender = '', profile_image_url = ''
-            WHERE person_id = ?
-        """,
-            (person_id,),
-        )
+        cursor.execute("DELETE FROM Person WHERE person_id = ?", (person_id,))
 
         conn.commit()
         conn.close()
 
-        # Remove folder
+        # Delete folder
         if image_paths:
             folder = os.path.dirname(image_paths[0])
             if os.path.exists(folder):
@@ -2023,13 +2105,10 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         cursor.execute(
             """
             SELECT 
-                CASE 
-                    WHEN p.first_name = '[Deleted]' THEN 'Deleted Student'
-                    ELSE COALESCE(p.first_name || ' ' || p.middle_name || ' ' || p.last_name, 'Deleted Student')
-                END AS full_name,
-                g.grade_level,
-                s.strand_name,
-                d.department_name,
+                COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
+                COALESCE(a.grade_level, g.grade_level) AS grade,
+                COALESCE(a.strand_name, s.strand_name) AS strand,
+                COALESCE(a.department_name, d.department_name) AS department,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
@@ -2040,7 +2119,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             LEFT JOIN StaffDetails st ON st.person_id = a.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
-        """
+            """
         )
         data = cursor.fetchall()
         conn.close()
@@ -2049,9 +2128,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
         table = self.attendanceTableWidget
         table.setRowCount(len(data))
-        table.setHorizontalHeaderLabels(
-            ["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"]
-        )
+        table.setHorizontalHeaderLabels(["NAME", "GRADE", "STRAND", "DEPARTMENT", "DATE", "TIME"])
         table.verticalHeader().setVisible(True)
 
         for row_index, row_data in enumerate(data):
@@ -2066,8 +2143,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             header_item.setTextAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
-        table.verticalHeader().setDefaultSectionSize(30)
-        table.verticalHeader().setStyleSheet(""" 
+        table.verticalHeader().setDefaultSectionSize(50)
+        table.verticalHeader().setStyleSheet("""
             QHeaderView::section {
                 padding-top: 0px;
                 margin: 0px;
@@ -2075,16 +2152,12 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                 qproperty-alignment: AlignTop | AlignHCenter;
             }
         """)
-
-        # Set column widths
-        table.setColumnWidth(0, 300)  # NAME
-        table.setColumnWidth(1, 150)  # GRADE
-        table.setColumnWidth(2, 160)  # STRAND
-        table.setColumnWidth(3, 260)  # DEPARTMENT
-        table.setColumnWidth(4, 180)  # DATE
-        table.setColumnWidth(5, 130)  # TIME
-
-        table.verticalHeader().setDefaultSectionSize(50)
+        table.setColumnWidth(0, 300)
+        table.setColumnWidth(1, 150)
+        table.setColumnWidth(2, 160)
+        table.setColumnWidth(3, 260)
+        table.setColumnWidth(4, 180)
+        table.setColumnWidth(5, 130)
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
@@ -3373,16 +3446,12 @@ class AttendanceApp(QtWidgets.QMainWindow):
     def populate_attendance_data(self):
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT 
-                CASE 
-                    WHEN p.first_name = '[Deleted]' THEN 'Deleted Person'
-                    ELSE p.first_name || ' ' || p.middle_name || ' ' || p.last_name
-                END AS full_name,
-                COALESCE(g.grade_level, '') AS grade,
-                COALESCE(s.strand_name, '') AS strand,
-                COALESCE(d.department_name, '') AS department,
+                COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
+                COALESCE(a.grade_level, g.grade_level, '') AS grade,
+                COALESCE(a.strand_name, s.strand_name, '') AS strand,
+                COALESCE(a.department_name, d.department_name, '') AS department,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
@@ -3393,8 +3462,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             LEFT JOIN StaffDetails st ON st.person_id = p.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
             ORDER BY a.attendance_id DESC
-        """
-        )
+        """)
         data = cursor.fetchall()
         conn.close()
 
@@ -3416,7 +3484,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             table.setVerticalHeaderItem(row_index, header_item)
 
         table.verticalHeader().setDefaultSectionSize(30)
-        table.verticalHeader().setStyleSheet(""" 
+        table.verticalHeader().setStyleSheet("""
             QHeaderView::section {
                 padding-top: 0px;
                 margin: 0px;
@@ -3425,16 +3493,16 @@ class AttendanceApp(QtWidgets.QMainWindow):
             }
         """)
 
-        # Adjust columns
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
         table.setColumnWidth(0, 180)  # NAME
         table.setColumnWidth(1, 115)  # GRADE
-        table.setColumnWidth(2, 90)  # STRAND
+        table.setColumnWidth(2, 90)   # STRAND
         table.setColumnWidth(3, 190)  # DEPARTMENT
         table.setColumnWidth(4, 130)  # DATE
         table.setColumnWidth(5, 100)  # TIME
+
 
     def preprocess_face_for_embedding(self, frame, box):
         x1, y1, x2, y2 = [int(v) for v in box]
@@ -3726,6 +3794,31 @@ class AttendanceApp(QtWidgets.QMainWindow):
         if event.buttons() == QtCore.Qt.LeftButton:
             self.move(event.globalPos() - self.drag_position)
             event.accept()
+
+class ImageViewerDialog(QtWidgets.QDialog):
+    def __init__(self, image_paths):
+        super(ImageViewerDialog, self).__init__()
+        self.setWindowTitle("View Images")
+        self.resize(800, 800)
+        layout = QtWidgets.QVBoxLayout(self)
+
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_widget = QtWidgets.QWidget()
+        scroll_layout = QtWidgets.QVBoxLayout(scroll_widget)
+
+        for path in image_paths:
+            if os.path.exists(path):
+                pixmap = QPixmap(path).scaledToWidth(400, Qt.SmoothTransformation)
+                label = QtWidgets.QLabel()
+                label.setPixmap(pixmap)
+                label.setAlignment(Qt.AlignCenter)
+                scroll_layout.addWidget(label)
+
+        scroll_area.setWidget(scroll_widget)
+        scroll_area.setWidgetResizable(True)
+        layout.addWidget(scroll_area)
+
+        self.setLayout(layout)
 
 
 if __name__ == "__main__":
