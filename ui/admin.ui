@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1366</width>
-    <height>768</height>
+    <width>1489</width>
+    <height>895</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@ border-image:url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
       <widget class="QPushButton" name="searchButton">
        <property name="geometry">
         <rect>
-         <x>1120</x>
+         <x>1140</x>
          <y>150</y>
          <width>81</width>
          <height>61</height>
@@ -80,10 +80,10 @@ border-bottom-right-radius: 15px;</string>
       <widget class="QLabel" name="time_label">
        <property name="geometry">
         <rect>
-         <x>1020</x>
-         <y>33</y>
-         <width>161</width>
-         <height>28</height>
+         <x>1160</x>
+         <y>30</y>
+         <width>221</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -95,13 +95,68 @@ background: transparent;</string>
         <string/>
        </property>
       </widget>
+      <widget class="QToolButton" name="attendanceLogin_btn">
+       <property name="geometry">
+        <rect>
+         <x>1230</x>
+         <y>150</y>
+         <width>231</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::ActionsContextMenu</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolButton#attendanceLogin_btn{
+background: #000000;
+border: 4px solid #5A5958 ;
+border-radius: 15px;
+color: #ffffff;
+font: 87 10pt &quot;Segoe UI Black&quot;;
+}
+
+QToolButton#attendanceLogin_btn:hover {
+background-color: #1a1a1a; 
+border: 4px solid #ffffff; 
+}</string>
+       </property>
+       <property name="text">
+        <string>Track Attendance</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/face-detection (1).png</normaloff>:/resources/face-detection (1).png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>60</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
       <widget class="Line" name="line">
        <property name="geometry">
         <rect>
          <x>-7</x>
          <y>224</y>
-         <width>1370</width>
-         <height>3</height>
+         <width>1495</width>
+         <height>2</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -114,7 +169,7 @@ background: transparent;</string>
       <widget class="QLineEdit" name="searchBar">
        <property name="geometry">
         <rect>
-         <x>187</x>
+         <x>200</x>
          <y>150</y>
          <width>1015</width>
          <height>61</height>
@@ -122,7 +177,7 @@ background: transparent;</string>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #000000;
-font: 30pt &quot;MS Shell Dlg 2&quot;;
+font: 25pt &quot;MS Shell Dlg 2&quot;;
 background: transparent;
 background-color: #dadada;
 
@@ -141,7 +196,7 @@ border-bottom-left-radius: 15px;
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <property name="placeholderText">
-        <string>Search by name, grade, strand, department, month</string>
+        <string>Search</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -150,9 +205,9 @@ border-bottom-left-radius: 15px;
        </property>
        <property name="geometry">
         <rect>
-         <x>205</x>
+         <x>120</x>
          <y>70</y>
-         <width>991</width>
+         <width>1231</width>
          <height>69</height>
         </rect>
        </property>
@@ -169,10 +224,10 @@ font: 63 48pt &quot;Segoe UI Semibold&quot;;
       <widget class="QLabel" name="date_label">
        <property name="geometry">
         <rect>
-         <x>220</x>
-         <y>33</y>
-         <width>201</width>
-         <height>41</height>
+         <x>30</x>
+         <y>30</y>
+         <width>231</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -187,10 +242,10 @@ background: transparent;</string>
       <widget class="QFrame" name="frame_1">
        <property name="geometry">
         <rect>
-         <x>1232</x>
-         <y>10</y>
-         <width>121</width>
-         <height>51</height>
+         <x>1380</x>
+         <y>20</y>
+         <width>101</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -212,12 +267,44 @@ color: white;</string>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
+       <widget class="QPushButton" name="logout_btn">
+        <property name="geometry">
+         <rect>
+          <x>5</x>
+          <y>50</y>
+          <width>81</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: #000000;
+font: 87 7pt &quot;Segoe UI Black&quot;;
+background: transparent;
+border: none;</string>
+        </property>
+        <property name="text">
+         <string>LOGOUT</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/res.qrc">
+          <normaloff>:/resources/logout.png</normaloff>:/resources/logout.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>25</height>
+         </size>
+        </property>
+       </widget>
        <widget class="QToolButton" name="toolMenu_btn">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>83</width>
+          <x>0</x>
+          <y>0</y>
+          <width>101</width>
           <height>43</height>
          </rect>
         </property>
@@ -260,45 +347,15 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
          <enum>Qt::NoArrow</enum>
         </property>
        </widget>
-       <widget class="QPushButton" name="logout_btn">
-        <property name="geometry">
-         <rect>
-          <x>5</x>
-          <y>60</y>
-          <width>81</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: #000000;
-font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
-border: none;</string>
-        </property>
-        <property name="text">
-         <string>LOGOUT</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../resources/res.qrc">
-          <normaloff>:/resources/logout.png</normaloff>:/resources/logout.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>30</width>
-          <height>25</height>
-         </size>
-        </property>
-       </widget>
+       <zorder>toolMenu_btn</zorder>
+       <zorder>logout_btn</zorder>
       </widget>
       <widget class="QLabel" name="nameLogs">
        <property name="geometry">
         <rect>
          <x>130</x>
          <y>250</y>
-         <width>101</width>
+         <width>91</width>
          <height>31</height>
         </rect>
        </property>
@@ -314,7 +371,7 @@ color: #000000;</string>
       <widget class="QLabel" name="gradeLogs">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>370</x>
          <y>250</y>
          <width>121</width>
          <height>31</height>
@@ -350,9 +407,9 @@ color: #000000;</string>
       <widget class="QLabel" name="dateLogs">
        <property name="geometry">
         <rect>
-         <x>1040</x>
+         <x>1030</x>
          <y>250</y>
-         <width>91</width>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
@@ -388,8 +445,8 @@ color: #000000;</string>
         <rect>
          <x>55</x>
          <y>280</y>
-         <width>1251</width>
-         <height>401</height>
+         <width>1411</width>
+         <height>561</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -522,7 +579,7 @@ QHeaderView::section:horizontal {
         <rect>
          <x>455</x>
          <y>330</y>
-         <width>561</width>
+         <width>671</width>
          <height>41</height>
         </rect>
        </property>
@@ -538,9 +595,9 @@ color: #000000;</string>
       <widget class="QLabel" name="strandLogs_2">
        <property name="geometry">
         <rect>
-         <x>755</x>
+         <x>740</x>
          <y>250</y>
-         <width>151</width>
+         <width>181</width>
          <height>31</height>
         </rect>
        </property>
@@ -553,21 +610,22 @@ color: #000000;</string>
         <string>DEPARTMENT</string>
        </property>
       </widget>
-      <zorder>time_label</zorder>
       <zorder>line</zorder>
       <zorder>searchBar</zorder>
       <zorder>label</zorder>
-      <zorder>date_label</zorder>
-      <zorder>frame_1</zorder>
       <zorder>nameLogs</zorder>
       <zorder>gradeLogs</zorder>
       <zorder>strandLogs</zorder>
       <zorder>dateLogs</zorder>
       <zorder>timeLogs</zorder>
-      <zorder>attendanceTableWidget</zorder>
       <zorder>noDataLabel</zorder>
       <zorder>searchButton</zorder>
       <zorder>strandLogs_2</zorder>
+      <zorder>attendanceLogin_btn</zorder>
+      <zorder>frame_1</zorder>
+      <zorder>attendanceTableWidget</zorder>
+      <zorder>date_label</zorder>
+      <zorder>time_label</zorder>
      </widget>
     </item>
    </layout>

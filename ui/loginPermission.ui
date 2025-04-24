@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>276</height>
+    <width>552</width>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>444</width>
-     <height>276</height>
+     <width>551</width>
+     <height>371</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -37,10 +37,10 @@
    <widget class="QLabel" name="noteLabel_2">
     <property name="geometry">
      <rect>
-      <x>138</x>
-      <y>31</y>
-      <width>165</width>
-      <height>21</height>
+      <x>170</x>
+      <y>50</y>
+      <width>221</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -54,9 +54,9 @@ font: 75 13pt;</string>
    <widget class="QLabel" name="noteLabel">
     <property name="geometry">
      <rect>
-      <x>35</x>
-      <y>62</y>
-      <width>391</width>
+      <x>20</x>
+      <y>100</y>
+      <width>511</width>
       <height>41</height>
      </rect>
     </property>
@@ -68,12 +68,15 @@ font: 10pt;</string>
      <string>This system requires admin access to run and save attendance logs.
 Please have the admin login to enable attendance recording.</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLineEdit" name="usernameInput">
     <property name="geometry">
      <rect>
-      <x>27</x>
-      <y>110</y>
+      <x>90</x>
+      <y>160</y>
       <width>388</width>
       <height>41</height>
      </rect>
@@ -95,9 +98,9 @@ border: 1px solid white;
    <widget class="QLineEdit" name="passwordInput">
     <property name="geometry">
      <rect>
-      <x>28</x>
-      <y>169</y>
-      <width>388</width>
+      <x>90</x>
+      <y>220</y>
+      <width>391</width>
       <height>41</height>
      </rect>
     </property>
@@ -117,10 +120,10 @@ border: 1px solid white;</string>
    <widget class="QPushButton" name="login_btn">
     <property name="geometry">
      <rect>
-      <x>178</x>
-      <y>225</y>
-      <width>98</width>
-      <height>25</height>
+      <x>210</x>
+      <y>280</y>
+      <width>141</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -136,7 +139,7 @@ border-radius: 12px;</string>
    <widget class="QPushButton" name="exit_btn">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>510</x>
       <y>10</y>
       <width>28</width>
       <height>24</height>
@@ -149,9 +152,9 @@ border-radius: 12px;</string>
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>../../../../Downloads/cancel.png</normaloff>../../../../Downloads/cancel.png</iconset>
-    </property>
+    <iconset>
+     <normaloff>:/resources/cancel-sign.png</normaloff>:/resources/cancel-sign.png</iconset>
+   </property>
     <property name="iconSize">
      <size>
       <width>20</width>
@@ -175,26 +178,6 @@ border-radius: 12px;</string>
      <enum>QFrame::Raised</enum>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2"/>
-   </widget>
-   <widget class="QPushButton" name="minimize_btn">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>10</y>
-      <width>28</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border: none;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>../../../../Downloads/minus (2).png</normaloff>../../../../Downloads/minus (2).png</iconset>
-    </property>
    </widget>
   </widget>
  </widget>

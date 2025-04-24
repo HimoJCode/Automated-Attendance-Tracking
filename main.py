@@ -9,6 +9,8 @@ import ast
 import shutil
 import resources.res_rc
 import hashlib
+import random
+
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation, Qt
 from PyQt5.QtGui import QImage, QPixmap
@@ -18,6 +20,7 @@ from facenet_pytorch import InceptionResnetV1
 from PIL import Image
 from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog, QPrintDialog
 from PyQt5.QtGui import QTextDocument, QTextCursor
+from PIL import ImageEnhance, ImageOps
 
 # Paths to UI files
 STARTAPP_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "startApp.ui")
@@ -44,9 +47,14 @@ class StartScreen(QtWidgets.QDialog):
         # Connect buttons
         self.attendanceLogin_btn.clicked.connect(self.open_attendance_login)
         self.loginAdmin_btn.clicked.connect(self.open_admin_login)
-
-        self.exit_btn.clicked.connect(self.close)
         self.minimize_btn.clicked.connect(self.showMinimized)
+        self.exit_btn.clicked.connect(self.confirm_exit)
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def open_attendance_login(self):
         dialog = LoginPermissionDialog()
@@ -79,6 +87,28 @@ class StartScreen(QtWidgets.QDialog):
         self.animation.setEndValue(1.0)
         self.animation.start()
 
+    def confirm_exit(self):
+        reply = QtWidgets.QMessageBox.question(
+            self,
+            'Confirm Exit',
+            'Are you sure you want to exit?',
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.No
+        )
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.close()
+
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
+
 
 class LoginPermissionDialog(QtWidgets.QDialog):
     """Admin Login for Automated Attendance Logging."""
@@ -87,10 +117,15 @@ class LoginPermissionDialog(QtWidgets.QDialog):
         uic.loadUi(ADMIN_LOGIN_UI_PATH, self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.exit_btn.clicked.connect(self.close)
-        self.minimize_btn.clicked.connect(self.showMinimized)
 
         self.login_btn.clicked.connect(self.login_action)
 
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+        
     def login_action(self):
         username = self.usernameInput.text().strip()
         password = self.passwordInput.text().strip()
@@ -123,6 +158,17 @@ class LoginPermissionDialog(QtWidgets.QDialog):
             QtWidgets.QMessageBox.critical(self, "Database Error", f"An error occurred while connecting to the database:\n{e}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred:\n{e}")
+        
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
 
 class LoginDialog(QtWidgets.QDialog):
     """Dashboard Login Dialog"""
@@ -133,12 +179,17 @@ class LoginDialog(QtWidgets.QDialog):
         uic.loadUi(LOGIN_UI_PATH, self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.exit_btn.clicked.connect(self.close)
-        self.minimize_btn.clicked.connect(self.showMinimized)
         self.super_admin_mode = super_admin_mode 
         self.logged_in_role = None  # 'admin' or 'superadmin'
 
         # Connect login button
         self.login_btn.clicked.connect(self.login_action)
+
+     # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def login_action(self):
         username = self.usernameInput.text().strip()
@@ -162,9 +213,11 @@ class LoginDialog(QtWidgets.QDialog):
             conn.close()
 
             if result:
-                self.admin_id, self.logged_in_role = result
+                self.admin_id = result[0]
+                self.logged_in_role = result[1]  # Correctly set to 'admin' or 'super_admin'
                 self.logged_in = True 
                 self.accept()
+
             else:
                 QtWidgets.QMessageBox.critical(self, "Login Failed", "Invalid username or password!")
 
@@ -172,6 +225,17 @@ class LoginDialog(QtWidgets.QDialog):
             QtWidgets.QMessageBox.critical(self, "Database Error", f"An error occurred while connecting to the database:\n{e}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred:\n{e}")
+
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
 
 class SuperAdminPasswordDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -195,58 +259,91 @@ class SuperAdminPasswordDialog(QtWidgets.QDialog):
 
         self.setLayout(layout)
 
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def get_password(self):
         return self.password_input.text().strip()
 
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
 def verify_superadmin_password(parent):
-    dialog = SuperAdminPasswordDialog(parent)
-    if dialog.exec_() == QtWidgets.QDialog.Accepted:
-        password = dialog.get_password()
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        dialog = SuperAdminPasswordDialog(parent)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            password = dialog.get_password()
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        conn = sqlite3.connect("recognition.db")
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT admin_id FROM Admin WHERE password_hash = ? AND admin_role = 'super_admin'
-        """, (hashed_password,))
-        result = cursor.fetchone()
-        conn.close()
+            conn = sqlite3.connect("recognition.db")
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT admin_id FROM Admin WHERE password_hash = ? AND admin_role = 'super_admin'
+            """, (hashed_password,))
+            result = cursor.fetchone()
+            conn.close()
 
-        if result:
-            return True
+            if result:
+                return True
 
-    QMessageBox.warning(parent, "Permission Denied", "Incorrect password.")
-    return False
-
+        QMessageBox.warning(parent, "Permission Denied", "Incorrect password.")
+        return False
     
 class AdminDashboard(QtWidgets.QMainWindow):
     """Admin Dashboard UI (After Successful Login)"""
+
     def __init__(self, return_to_start=True):
         super(AdminDashboard, self).__init__()
         self.return_to_start = return_to_start
+
         # Load Admin UI
         uic.loadUi(ADMIN_UI_PATH, self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        # Set up QTimer to update the time every second
+
+        # ✅ Connect "Track Attendance" button
+        if hasattr(self, "attendanceLogin_btn"):
+            self.attendanceLogin_btn.clicked.connect(self.open_attendance_app)
+        else:
+            print("❌ attendanceLogin_btn not found in UI")
+
+        # ✅ Set up QTimer to update time every second
         self.timer_clock = QTimer(self)
         self.timer_clock.timeout.connect(self.update_time)
-        self.timer_clock.start(1000)  # Update every 1 second
+        self.timer_clock.start(1000)
 
-        # Update time on startup
         self.update_time()
 
+        # ✅ Menu and button connections
         self.Down_Menu_Num = 0
-
         self.toolMenu_btn.clicked.connect(lambda: self.Down_Menu_Num_0())
         self.logout_btn.clicked.connect(self.logout)
 
         self.searchBar.returnPressed.connect(self.search_attendance)
 
-
-        conn = sqlite3.connect("recognition.db")
-        cursor = conn.cursor()
-
+        # ✅ Load data into the table
         self.populate_attendance_data()
+
+        # ✅ Center the window
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+
+        self.move(qr.topLeft())
+
+    def open_attendance_app(self):
+        self.attendance_app = AttendanceApp()
+        self.attendance_app.show()
+        self.close()
+
 
     def Down_Menu_Num_0(self):
         if self.Down_Menu_Num == 0:
@@ -262,8 +359,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.animation2.setStartValue(51)
             self.animation2.setEndValue(141)
             self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
-
             self.animation2.start()
+
             self.Down_Menu_Num = 1
 
         else:
@@ -282,6 +379,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.animation2.start()
 
             self.Down_Menu_Num = 0
+
     def update_time(self):
         """Update Date and Time dynamically."""
         current_datetime = QDateTime.currentDateTime()
@@ -461,6 +559,18 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.attendance_window = AttendanceApp()
             self.attendance_window.show()
 
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
+
+
 
 class SuperAdminDashboard(QtWidgets.QMainWindow):
     """Super Admin Dashboard UI (After Successful Login)"""
@@ -469,6 +579,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.current_admin_id = current_admin_id
         self.return_to_start = return_to_start
         uic.loadUi(SUPERADMIN_UI_PATH, self)
+
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.initUI_btn()
         self.init_page_navigation()
@@ -476,6 +587,12 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.populate_initial_data()
         self.selected_student_row = None
         self.selected_staff_row = None
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def setup_timers(self):
         self.timer_clock = QTimer(self)
@@ -609,14 +726,14 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.animation1 = QtCore.QPropertyAnimation(self.leftMenu, b"maximumWidth")
             self.animation1.setDuration(500)
             self.animation1.setStartValue(0)
-            self.animation1.setEndValue(221)
+            self.animation1.setEndValue(250)
             self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
             self.animation1.start()
 
             self.animation2 = QtCore.QPropertyAnimation(self.leftMenu, b"minimumWidth")
             self.animation2.setDuration(500)
             self.animation2.setStartValue(0)
-            self.animation2.setEndValue(221)
+            self.animation2.setEndValue(250)
             self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
             self.animation2.start()
 
@@ -644,6 +761,70 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.date_label.setText(now.toString("MMMM dd, yyyy"))
         if hasattr(self, "time_label"):
             self.time_label.setText(now.toString("hh:mm:ss AP"))
+
+    def augment_and_save_images(self, image_path, save_folder, person_id, cursor):
+        def augment_image(image):
+            augmented = []
+            img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            for _ in range(5):
+                img_aug = img_pil.copy()
+                if random.random() > 0.5:
+                    img_aug = ImageOps.mirror(img_aug)
+                img_aug = ImageEnhance.Brightness(img_aug).enhance(random.uniform(0.8, 1.2))
+                img_aug = ImageEnhance.Contrast(img_aug).enhance(random.uniform(0.8, 1.2))
+                img_aug = img_aug.rotate(random.uniform(-10, 10))
+                augmented.append(cv2.cvtColor(np.array(img_aug), cv2.COLOR_RGB2BGR))
+            return augmented
+
+        def detect_and_crop_face(image_np):
+            image_pil = Image.fromarray(cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB))
+            mtcnn = MTCNN(keep_all=False, device='cuda' if torch.cuda.is_available() else 'cpu')
+            boxes, probs, _ = mtcnn.detect(image_pil, landmarks=True)
+
+            if boxes is None or probs is None:
+                return []
+
+            cropped_faces = []
+            for i, (box, prob) in enumerate(zip(boxes, probs)):
+                if prob < 0.90:
+                    continue
+
+                x1, y1, x2, y2 = [int(v) for v in box]
+                w, h = x2 - x1, y2 - y1
+                margin = int(min(w, h) * 0.1)
+                x1m = max(0, x1 - margin)
+                y1m = max(0, y1 - margin)
+                x2m = min(image_np.shape[1], x2 + margin)
+                y2m = min(image_np.shape[0], y2 + margin)
+                cropped_face = image_np[y1m:y2m, x1m:x2m]
+                resized_face = cv2.resize(cropped_face, (160, 160))
+                cropped_faces.append(resized_face)
+
+            return cropped_faces
+
+        original = cv2.imread(image_path)
+        if original is None:
+            return
+
+        faces = detect_and_crop_face(original)
+        if not faces:
+            return
+
+        base = os.path.splitext(os.path.basename(image_path))[0]
+        for f_idx, face in enumerate(faces):
+            filename = f"{base}_crop{f_idx+1}.jpg"
+            save_path = os.path.join(save_folder, filename)
+            cv2.imwrite(save_path, face)
+            cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, save_path))
+
+            # Now augment this cropped face
+            augmented_faces = augment_image(face)
+            for i, aug in enumerate(augmented_faces):
+                aug_name = f"{base}_crop{f_idx+1}_aug{i+1}.jpg"
+                aug_path = os.path.join(save_folder, aug_name)
+                cv2.imwrite(aug_path, aug)
+                cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, aug_path))
+
 
     def populate_studentList_data(self):
         selected_strand = self.strandFilter.currentText()
@@ -948,7 +1129,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
             # 3. Save images
             student_folder = " ".join(part for part in [data['first_name'], data['middle_name'], data['last_name']] if part.strip())
-            face_folder = os.path.join("images", student_folder)
+            face_folder = os.path.join("images/student", student_folder)
             os.makedirs(face_folder, exist_ok=True)
 
 
@@ -969,6 +1150,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             # Add to FaceImages table
             cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, profile_dst))
 
+            self.augment_and_save_images(profile_dst, face_folder, person_id, cursor)
+
             # 4. Copy all other images from folder
             for file in os.listdir(data["image_folder"]):
                 src = os.path.join(data["image_folder"], file)
@@ -980,6 +1163,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                     dst = os.path.join(face_folder, file)
                     shutil.copy(src, dst)
                     cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, dst))
+
+                    self.augment_and_save_images(dst, face_folder, person_id, cursor)
 
             conn.commit()
             conn.close()
@@ -1002,24 +1187,20 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             conn = sqlite3.connect("recognition.db")
             cursor = conn.cursor()
 
-            # Insert Person
             cursor.execute("""
                 INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url)
                 VALUES (?, ?, ?, ?, ?)
             """, (data["first_name"], data["middle_name"], data["last_name"], data["gender"], "temp"))
             person_id = cursor.lastrowid
 
-            # Department
             cursor.execute("SELECT department_id FROM Department WHERE department_name = ?", (data["department"],))
             department_id = cursor.fetchone()[0]
 
             cursor.execute("INSERT INTO StaffDetails (person_id, department_id) VALUES (?, ?)", (person_id, department_id))
 
-            # Save images
             folder_name = " ".join(part for part in [data['first_name'], data['middle_name'], data['last_name']] if part.strip())
             folder_path = os.path.join("images/staff", folder_name)
             os.makedirs(folder_path, exist_ok=True)
-
 
             profile_dst = os.path.join(folder_path, "profile.jpg")
             shutil.copy(data["profile_image"], profile_dst)
@@ -1027,7 +1208,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             cursor.execute("UPDATE Person SET profile_image_url = ? WHERE person_id = ?", (profile_dst, person_id))
             cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, profile_dst))
 
-            # Copy other images
+            self.augment_and_save_images(profile_dst, folder_path, person_id, cursor)
+
             if data["image_folder"]:
                 for file in os.listdir(data["image_folder"]):
                     src = os.path.join(data["image_folder"], file)
@@ -1037,14 +1219,15 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                         dst = os.path.join(folder_path, file)
                         shutil.copy(src, dst)
                         cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, dst))
+                        self.augment_and_save_images(dst, folder_path, person_id, cursor)
 
             conn.commit()
             conn.close()
 
             self.populate_staff_table()
             QMessageBox.information(self, "Added", "Staff added successfully.")
-
             self.generate_embeddings_from_face_images("recognition.db")
+
 
     def print_table_widget(self, table_widget, title, export_to_pdf=False):
         printer = QPrinter(QPrinter.HighResolution)
@@ -1118,6 +1301,16 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                 table.cellAt(r_idx, col).firstCursorPosition().insertText(text)
 
         document.print_(printer)
+        # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
 
 
     def print_attendance_records(self):
@@ -1135,21 +1328,14 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.print_table_widget(self.studentList_table, "Student List", export_to_pdf=True)
 
     def generate_embeddings_from_face_images(self, db_path="recognition.db"):
-        print("🔄 Embedding generation started...")
         embedder = InceptionResnetV1(pretrained='vggface2').eval()
 
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT DISTINCT person_id FROM FaceEmbeddings")
-        embedded_ids = {row[0] for row in cursor.fetchall()}
-
-        cursor.execute("""
-            SELECT person_id, image_path FROM FaceImages
-            WHERE person_id NOT IN (
-                SELECT DISTINCT person_id FROM FaceEmbeddings
-            )
-        """)
+        # Get all image paths from FaceImages (not just unembedded ones)
+        cursor.execute("DELETE FROM FaceEmbeddings")  # Clear old ones
+        cursor.execute("SELECT person_id, image_path FROM FaceImages")
         rows = cursor.fetchall()
 
         inserted = 0
@@ -1185,7 +1371,8 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
         conn.commit()
         conn.close()
-        print(f"✅ {inserted} new embeddings added.")
+        print(f"✅ {inserted} embeddings regenerated.")
+
 
     def get_selected_student_row(self):
         selected_items = self.studentList_table.selectedItems()
@@ -1586,12 +1773,16 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         conn.close()
 
         table = self.adminTable
-        table.setRowCount(len(rows))
+        table.clearContents()               # 🧽 Clear any old content
+        table.setRowCount(0)   
         table.setColumnCount(4)
         table.setHorizontalHeaderLabels(["Username", "Password", "Role", "Created By"])
         table.verticalHeader().setVisible(True)
         self.admin_ids = []
 
+        table.setRowCount(len(rows))   
+        table.setVerticalHeaderLabels([str(i + 1) for i in range(len(rows))])
+        
         for row_index, (admin_id, username, role, created_by) in enumerate(rows):
             self.admin_ids.append(admin_id)
 
@@ -1721,8 +1912,17 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
     def superAdmin(self):
         login_dialog = LoginDialog(super_admin_mode=True)
         if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
-            self.super_admin_window = SuperAdminDashboard(self.current_admin_id)
-            self.super_admin_window.show()
+            role = getattr(login_dialog, 'logged_in_role', None)
+            if role == 'super_admin':
+                self.new_window = SuperAdminDashboard(current_admin_id=login_dialog.admin_id)
+                self.new_window.show()
+            elif role == 'admin':
+                self.new_window = AdminDashboard()
+                self.new_window.show()
+            else:
+                QtWidgets.QMessageBox.warning(self, "Login Failed", "Unknown role or login failure.")
+            self.close()
+
 
 class ChangeCredentialsDialog(QtWidgets.QDialog):
     def __init__(self, parent=None, current_admin_id=None):
@@ -1737,6 +1937,12 @@ class ChangeCredentialsDialog(QtWidgets.QDialog):
 
         self.buttonBox.accepted.connect(self.change_credentials)
         self.buttonBox.rejected.connect(self.reject)
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def load_username(self):
         """Pre-fill the username field with the currently logged-in admin's username."""
@@ -1838,6 +2044,12 @@ class AddStudentDialog(QtWidgets.QDialog):
         self.genderComboBox.addItems(["Male", "Female"])
         self.load_comboboxes()
 
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def select_image_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Folder with Student Images")
         if folder:
@@ -1899,6 +2111,12 @@ class AddStaffDialog(QtWidgets.QDialog):
         self.profileImageUpload_btn.clicked.connect(self.select_profile_image)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def select_image_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Folder with Staff Images")
@@ -1968,6 +2186,13 @@ class UpdateStudentDialog(QtWidgets.QDialog):
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def get_updated_data(self):
         return {
             "first_name": self.firstNameLineEdit.text().strip(),
@@ -2034,6 +2259,12 @@ class UpdateStaffDialog(QtWidgets.QDialog):
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def load_departments(self):
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
@@ -2072,6 +2303,12 @@ class AddAdminDialog(QtWidgets.QDialog):
 
         self.role = "admin"  
 
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def validate_and_submit(self):
         username = self.usernameLineEdit.text().strip()
         password = self.passwordLineEdit.text()
@@ -2109,7 +2346,6 @@ class AddAdminDialog(QtWidgets.QDialog):
 
         QMessageBox.information(self, "Success", f"Admin '{username}' added.")
         self.accept()
-
 class UnrecognizeModule(QtWidgets.QDialog):
     def __init__(self, parent=None, frame=None):
         super(UnrecognizeModule, self).__init__(parent)
@@ -2119,54 +2355,81 @@ class UnrecognizeModule(QtWidgets.QDialog):
         self.setWindowTitle("Unrecognized Person")
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
 
-        # UI Elements
         self.scan_face_label = self.findChild(QtWidgets.QLabel, "scanFace")
-        self.reminder_text = self.findChild(QtWidgets.QLabel, "importantReminder")
-        self.reminder_head = self.findChild(QtWidgets.QLabel, "importantReminderHead")
-        self.startScan_btn = self.findChild(QtWidgets.QPushButton, "startScan_btn")
-        self.cancelScan_btn = self.findChild(QtWidgets.QPushButton, "cancelScan_btn")
+        self.cancel_btn = self.findChild(QtWidgets.QPushButton, "cancelButton")
+        self.gradeComboBox = self.findChild(QtWidgets.QComboBox, "comboBox_yearLevel")
+        self.strandComboBox = self.findChild(QtWidgets.QComboBox, "comboBox_strand")
+        self.departmentComboBox = self.findChild(QtWidgets.QComboBox, "comboBox_department")
+        self.genderComboBox = self.findChild(QtWidgets.QComboBox, "comboBox_gender")
 
-        # Detector
+        self.cancel_btn.clicked.connect(self.close)
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+        try:
+            conn = sqlite3.connect("recognition.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT grade_level FROM GradeLevel")
+            self.gradeComboBox.addItems([str(row[0]) for row in cursor.fetchall()])
+            cursor.execute("SELECT strand_name FROM Strand")
+            self.strandComboBox.addItems([str(row[0]) for row in cursor.fetchall()])
+            cursor.execute("SELECT department_name FROM Department")
+            self.departmentComboBox.addItems([str(row[0]) for row in cursor.fetchall()])
+            self.genderComboBox.addItems(["Select Gender", "Male", "Female", "Other"])
+            conn.close()
+        except Exception as e:
+            print("Error loading dropdowns:", e)
+
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.detector = MTCNN(keep_all=False, device=self.device)
+        self.embedder = InceptionResnetV1(pretrained='vggface2').eval().to(self.device)
 
-        # Camera and Timer
         self.camera = cv2.VideoCapture(0)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
 
-        # Connect buttons
-        if self.startScan_btn:
-            self.startScan_btn.clicked.connect(self.start_camera)
-        if self.cancelScan_btn:
-            self.cancelScan_btn.clicked.connect(self.reject)
-
         if frame is not None and frame.size > 0:
             self.display_frame(frame)
 
-    def start_camera(self):
-        if self.reminder_text:
-            self.reminder_text.hide()
-        if self.reminder_head:
-            self.reminder_head.hide()
-        self.timer.start(30)
+        self.radio_student = self.findChild(QtWidgets.QRadioButton, "radiobuttonStudent")
+        self.radio_staff = self.findChild(QtWidgets.QRadioButton, "radiobuttonStaff")
+        self.register_btn = self.findChild(QtWidgets.QPushButton, "registerButton")
+
+        if self.register_btn:
+            self.register_btn.clicked.connect(self.register_person)
+        if self.radio_student:
+            self.radio_student.toggled.connect(self.toggle_role_fields)
+        if self.radio_staff:
+            self.radio_staff.toggled.connect(self.toggle_role_fields)
+
+        self.gradeComboBox.hide()
+        self.strandComboBox.hide()
+        self.departmentComboBox.hide()
+
+    def toggle_role_fields(self):
+        if self.radio_student.isChecked():
+            self.gradeComboBox.show()
+            self.strandComboBox.show()
+            self.departmentComboBox.hide()
+        elif self.radio_staff.isChecked():
+            self.gradeComboBox.hide()
+            self.strandComboBox.hide()
+            self.departmentComboBox.show()
 
     def update_frame(self):
         ret, frame = self.camera.read()
         if not ret:
             return
-
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image_pil = Image.fromarray(rgb_frame)
-
-        # Detect faces
         boxes, _ = self.detector.detect(image_pil)
-
         if boxes is not None:
             for box in boxes:
                 x1, y1, x2, y2 = map(int, box)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-
         self.display_frame(frame)
 
     def display_frame(self, frame):
@@ -2178,6 +2441,181 @@ class UnrecognizeModule(QtWidgets.QDialog):
             self.scan_face_label.width(), self.scan_face_label.height(), QtCore.Qt.KeepAspectRatio)
         self.scan_face_label.setPixmap(pixmap)
 
+    def register_person(self):
+        first_name = self.findChild(QtWidgets.QLineEdit, "firstNameInput").text().strip()
+        middle_name = self.findChild(QtWidgets.QLineEdit, "middleNameInput").text().strip()
+        last_name = self.findChild(QtWidgets.QLineEdit, "lastNameInput").text().strip()
+        gender = self.genderComboBox.currentText()
+
+        if self.radio_student.isChecked():
+            role = "Student"
+            strand = self.strandComboBox.currentText()
+            grade = self.gradeComboBox.currentText()
+            folder_base = "images/student"
+        else:
+            role = "Staff"
+            department = self.departmentComboBox.currentText()
+            folder_base = "images/staff"
+
+        if not all([first_name, last_name]):
+            QtWidgets.QMessageBox.warning(self, "Input Error", "First and Last name are required!")
+            return
+
+        ret, frame = self.camera.read()
+        if not ret:
+            QtWidgets.QMessageBox.critical(self, "Camera Error", "Failed to capture image.")
+            return
+
+        faces_info = self.detect_and_crop_face(frame)
+        if not faces_info:
+            QtWidgets.QMessageBox.warning(self, "Face Not Detected", "No face detected.")
+            return
+
+        face_img, _ = faces_info[0]
+
+        folder_name = " ".join([first_name, middle_name, last_name]).strip()
+        folder_path = os.path.join(folder_base, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
+
+        profile_path = os.path.join(folder_path, "profile.jpg")
+        cv2.imwrite(profile_path, face_img)
+
+        conn = sqlite3.connect("recognition.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url, role)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (first_name, middle_name, last_name, gender, profile_path, role))
+        person_id = cursor.lastrowid
+
+        if role == "Student":
+            cursor.execute("""
+                INSERT INTO StudentDetails (person_id, grade_level_id, strand_id)
+                VALUES (
+                    ?, 
+                    (SELECT grade_level_id FROM GradeLevel WHERE grade_level = ?),
+                    (SELECT strand_id FROM Strand WHERE strand_name = ?)
+                )
+            """, (person_id, grade, strand))
+        else:
+            cursor.execute("""
+                INSERT INTO StaffDetails (person_id, department_id)
+                VALUES (
+                    ?, 
+                    (SELECT department_id FROM Department WHERE department_name = ?)
+                )
+            """, (person_id, department))
+
+        cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, profile_path))
+
+        # Augment profile + save all
+        self.augment_and_save(face_img, folder_path, person_id, cursor)
+
+        conn.commit()
+        conn.close()
+
+        # Regenerate embeddings for the new face
+        embedder = InceptionResnetV1(pretrained='vggface2').eval()
+
+        conn = sqlite3.connect("recognition.db")
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM FaceEmbeddings WHERE person_id = ?", (person_id,))
+        cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
+        images = cursor.fetchall()
+
+        for (img_path,) in images:
+            if not os.path.exists(img_path):
+                continue
+            img = cv2.imread(img_path)
+            if img is None:
+                continue
+            try:
+                img = cv2.resize(img, (160, 160))
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype('float32') / 255.0
+                img = (img - 0.5) / 0.5
+                img = np.transpose(img, (2, 0, 1))
+                img_tensor = torch.tensor(img).unsqueeze(0).float()
+
+                with torch.no_grad():
+                    emb = embedder(img_tensor)[0].numpy()
+                emb = emb / np.linalg.norm(emb)
+
+                cursor.execute("""
+                    INSERT INTO FaceEmbeddings (person_id, embedding_vector)
+                    VALUES (?, ?)
+                """, (person_id, str(emb.tolist())))
+            except Exception as e:
+                print(f"Embedding failed for {img_path}: {e}")
+
+        conn.commit()
+        conn.close()
+
+        QtWidgets.QMessageBox.information(self, "Success", f"{first_name} {last_name} registered successfully.")
+        self.accept()
+
+    def augment_and_save(self, base_image, folder_path, person_id, cursor):
+        def augment(img):
+            augmented = []
+            img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            for i in range(5):
+                aug = img_pil.copy()
+                if random.random() > 0.5:
+                    aug = ImageOps.mirror(aug)
+                aug = ImageEnhance.Brightness(aug).enhance(random.uniform(0.8, 1.2))
+                aug = ImageEnhance.Contrast(aug).enhance(random.uniform(0.8, 1.2))
+                aug = aug.rotate(random.uniform(-10, 10))
+                aug_cv = cv2.cvtColor(np.array(aug), cv2.COLOR_RGB2BGR)
+                augmented.append(aug_cv)
+            return augmented
+
+        augmented_faces = augment(base_image)
+        for i, aug_img in enumerate(augmented_faces):
+            filename = os.path.join(folder_path, f"augmented_{i+1}.jpg")
+            cv2.imwrite(filename, aug_img)
+            cursor.execute("INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)", (person_id, filename))
+
+    def detect_and_crop_face(self, image_np):
+        image_pil = Image.fromarray(cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB))
+        boxes, probs, landmarks = self.detector.detect(image_pil, landmarks=True)
+
+        if boxes is None or probs is None:
+            return None
+
+        IMG_SIZE = 160
+        MARGIN = 0.2
+        faces_info = []
+
+        for i, (box, prob, landmark) in enumerate(zip(boxes, probs, landmarks)):
+            if prob < 0.90:
+                continue
+
+            x1, y1, x2, y2 = [int(v) for v in box]
+            w, h = x2 - x1, y2 - y1
+
+            margin = int(min(w, h) * MARGIN)
+            x1m = max(0, x1 - margin)
+            y1m = max(0, y1 - margin)
+            x2m = min(image_np.shape[1], x2 + margin)
+            y2m = min(image_np.shape[0], y2 + margin)
+
+            cropped_face = image_np[y1m:y2m, x1m:x2m]
+            resized_face = cv2.resize(cropped_face, (IMG_SIZE, IMG_SIZE))
+
+            faces_info.append((resized_face, (x1, y1, x2, y2)))
+
+        return faces_info
+
+    def preprocess_image(self, img):
+        IMG_SIZE = 160
+        img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = img.astype('float32') / 255.0
+        img = (img - 0.5) / 0.5
+        img = np.transpose(img, (2, 0, 1))
+        return img
+
     def closeEvent(self, event):
         try:
             if hasattr(self, "timer") and self.timer.isActive():
@@ -2188,52 +2626,37 @@ class UnrecognizeModule(QtWidgets.QDialog):
             print("Error releasing camera in UnrecognizeModule:", e)
         event.accept()
 
-    def register_person(self):
-        first_name = self.findChild(QtWidgets.QLineEdit, "firstNameInput").text().strip()
-        middle_name = self.findChild(QtWidgets.QLineEdit, "middleNameInput").text().strip()
-        last_name = self.findChild(QtWidgets.QLineEdit, "lastNameInput").text().strip()
-        role = self.findChild(QtWidgets.QComboBox, "roleComboBox").currentText()
-        strand = self.findChild(QtWidgets.QComboBox, "strandComboBox").currentText()
-        grade = self.findChild(QtWidgets.QComboBox, "gradeComboBox").currentText()
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            self.setCursor(QtCore.Qt.OpenHandCursor)
+            event.accept()
 
-        if not all([first_name, last_name]):
-            QtWidgets.QMessageBox.warning(self, "Input Error", "First and Last name are required!")
-            return
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton and hasattr(self, "drag_position"):
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
 
-        # Save to database
-        conn = sqlite3.connect("recognition.db")
-        cursor = conn.cursor()
+    def mouseReleaseEvent(self, event):
+        self.setCursor(QtCore.Qt.ArrowCursor)
 
-        cursor.execute("INSERT INTO Person (first_name, middle_name, last_name, role) VALUES (?, ?, ?, ?)",
-                       (first_name, middle_name, last_name, role))
-        person_id = cursor.lastrowid
-
-        if role.lower() == "student":
-            cursor.execute("""
-                INSERT INTO StudentDetails (person_id, grade_level_id, strand_id)
-                VALUES (
-                    ?, 
-                    (SELECT grade_level_id FROM GradeLevel WHERE grade_level = ?),
-                    (SELECT strand_id FROM Strand WHERE strand_name = ?)
-                )
-            """, (person_id, grade, strand))
-
-        conn.commit()
-        conn.close()
-
-        QtWidgets.QMessageBox.information(self, "Success", f"{first_name} {last_name} registered successfully.")
-        self.accept()
 
 class AttendanceApp(QtWidgets.QMainWindow):
     """Main Attendance System UI"""
     def __init__(self):
         super(AttendanceApp, self).__init__()
 
+        RECOGNITION_THRESHOLD = 0.7
+        DETECTION_THRESHOLD = 0.95
+        
         # Load the Main UI
         uic.loadUi(MAIN_UI_PATH, self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.exit_btn.clicked.connect(self.close)
-        self.minimize_btn.clicked.connect(self.showMinimized)
+        
+        self.Down_Menu_Num = 0
+
+        self.toolMenu_btn.clicked.connect(lambda: self.Down_Menu_Num_0())
+        self.logout_btn.clicked.connect(self.logout)
 
         # Set up webcam feed
         self.camera = cv2.VideoCapture(0)  # Open default webcam
@@ -2249,7 +2672,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.embedder = InceptionResnetV1(pretrained='vggface2').eval()
 
         self.generate_embeddings_from_face_images("recognition.db")
-        # Load known embeddings
         self.known_embeddings, self.known_ids = self.load_embeddings_from_db()
 
         # Keep track of recognized people
@@ -2264,6 +2686,12 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.unrecognized_timer.timeout.connect(self.handle_unrecognized_timeout)
 
         self.populate_attendance_data()
+
+         # Center StartScreen on screen
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
@@ -2372,6 +2800,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             # Delay restart slightly
             QTimer.singleShot(300, self.restart_main_camera)
 
+            self.known_embeddings, self.known_ids = self.load_embeddings_from_db()
             self.dialog_shown = False
             self.unrecognized_detected = False
             self.unrecognized_timer.stop()
@@ -2468,7 +2897,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
 
     def generate_embeddings_from_face_images(self, db_path="recognition.db"):
-        print("🔄 Embedding generation started...")
         embedder = InceptionResnetV1(pretrained='vggface2').eval()
 
         conn = sqlite3.connect(db_path)
@@ -2524,7 +2952,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
         conn.commit()
         conn.close()
-        print(f"✅ {inserted} new embeddings added.")
 
     def load_embeddings_from_db(self):
         conn = sqlite3.connect("recognition.db")
@@ -2543,7 +2970,8 @@ class AttendanceApp(QtWidgets.QMainWindow):
                 person_ids.append(person_id)
             except Exception as e:
                 print(f"Error loading embedding for person {person_id}: {e}")
-                
+        # ✅ Debug print to verify how many embeddings were loaded
+        print(f"✅ Loaded {len(embeddings)} embeddings from database")     
         return embeddings, person_ids
 
     def mark_attendance(self, person_id):
@@ -2639,11 +3067,12 @@ class AttendanceApp(QtWidgets.QMainWindow):
             self.departmentLabel.setText(f"{department}")
 
             # Load profile image
-            if os.path.exists(profile_path):
+            if profile_path and os.path.exists(profile_path):
                 pixmap = QPixmap(profile_path).scaled(250, 250, QtCore.Qt.KeepAspectRatio)
                 self.image.setPixmap(pixmap)
             else:
                 self.image.clear()
+
 
         conn.close()
 
@@ -2653,23 +3082,74 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.dialog_shown = False  # Reset so next unknown face can trigger it again
 
     def show_login(self):
-        login_dialog = LoginDialog()
-        if login_dialog.exec_() == QtWidgets.QDialog.Accepted:
-            self.close()
+        self.admin_window = AdminDashboard(return_to_start=True)
+        self.admin_window.show()
+        self.close()  # ✅ This closes the AttendanceApp window
 
-            if login_dialog.logged_in_role == "super_admin":
-                self.super_admin_window = SuperAdminDashboard(current_admin_id=login_dialog.admin_id, return_to_start=False)
-                self.super_admin_window.show()
-            elif login_dialog.logged_in_role == "admin":
-                self.admin_window = AdminDashboard(return_to_start=False)
-                self.admin_window.show()
-            else:
-                QtWidgets.QMessageBox.critical(self, "Error", "Unknown role!")
-
+    
     def closeEvent(self, event):
         """Stop the camera when closing the application."""
         self.camera.release()
         event.accept()
+
+    def Down_Menu_Num_0(self):
+        if self.Down_Menu_Num == 0:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(51)
+            self.animation1.setEndValue(141)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
+
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(51)
+            self.animation2.setEndValue(141)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation2.start()
+
+            self.Down_Menu_Num = 1
+
+        else:
+            self.animation1 = QtCore.QPropertyAnimation(self.frame_1, b"maximumHeight")
+            self.animation1.setDuration(500)
+            self.animation1.setStartValue(141)
+            self.animation1.setEndValue(51)
+            self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation1.start()
+
+            self.animation2 = QtCore.QPropertyAnimation(self.frame_1, b"minimumHeight")
+            self.animation2.setDuration(500)
+            self.animation2.setStartValue(141)
+            self.animation2.setEndValue(51)
+            self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+            self.animation2.start()
+
+            self.Down_Menu_Num = 0
+    def logout(self):
+        reply = QMessageBox.question(
+            self,
+            "Logout Confirmation",
+            "Are you sure you want to logout?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            self.close()
+            self.start_screen = StartScreen()
+            self.start_screen.show()
+
+    # For dragging the window
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.drag_position)
+            event.accept()
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

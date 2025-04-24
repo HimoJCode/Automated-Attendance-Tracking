@@ -34,5 +34,7 @@
     <file>AClogo.png</file>
     <file>moduleBG.png</file>
     <file>whiteBG.png</file>
+    <file>minus.png</file>
+    <file>cancel-sign.png</file>
   </qresource>
 </RCC>
