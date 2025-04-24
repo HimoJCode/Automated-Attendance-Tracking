@@ -25,7 +25,8 @@ CREATE TABLE Person (
     last_name TEXT NOT NULL,
     middle_name TEXT,
     gender TEXT,
-    profile_image_url TEXT
+    profile_image_url TEXT,
+    role TEXT,
 );
 
 -- Student Details

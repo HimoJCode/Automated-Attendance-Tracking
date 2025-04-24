@@ -610,6 +610,70 @@ color: #000000;</string>
         <string>DEPARTMENT</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="printAttendance_btn">
+       <property name="geometry">
+        <rect>
+         <x>1320</x>
+         <y>240</y>
+         <width>91</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border:none;
+background: transparent;
+font: 63 9pt &quot;Segoe UI Semibold&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>  Print</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/printer.png</normaloff>:/resources/printer.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="exportPDFAttendance_btn">
+       <property name="geometry">
+        <rect>
+         <x>1420</x>
+         <y>240</y>
+         <width>41</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/resources/download-pdf (1).png</normaloff>:/resources/download-pdf (1).png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
       <zorder>line</zorder>
       <zorder>searchBar</zorder>
       <zorder>label</zorder>
@@ -626,6 +690,8 @@ color: #000000;</string>
       <zorder>attendanceTableWidget</zorder>
       <zorder>date_label</zorder>
       <zorder>time_label</zorder>
+      <zorder>printAttendance_btn_2</zorder>
+      <zorder>exportPDFAttendance_btn_2</zorder>
      </widget>
     </item>
    </layout>
