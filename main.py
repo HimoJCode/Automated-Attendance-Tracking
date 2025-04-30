@@ -967,7 +967,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         def augment_image(image):
             augmented = []
             img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            for _ in range(5):
+            for _ in range(8):
                 img_aug = img_pil.copy()
                 if random.random() > 0.5:
                     img_aug = ImageOps.mirror(img_aug)
@@ -1071,15 +1071,26 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.warning(self, "No Selection", "Please select a staff member first.")
             return
 
-        person_id_item = self.staffTable.item(selected_row, 0)
-        if not person_id_item:
+        staff_id_item = self.staffTable.item(selected_row, 0)
+        if not staff_id_item:
             QMessageBox.critical(self, "Error", "Unable to retrieve staff ID.")
             return
 
-        person_id = person_id_item.text()
+        staff_id = int(staff_id_item.text())
 
         conn = sqlite3.connect("recognition.db")
         cursor = conn.cursor()
+
+        # Fetch the corresponding person_id
+        cursor.execute("SELECT person_id FROM StaffDetails WHERE staff_id = ?", (staff_id,))
+        result = cursor.fetchone()
+        if not result:
+            conn.close()
+            QMessageBox.critical(self, "Error", "Unable to retrieve staff person ID.")
+            return
+
+        person_id = result[0]
+
         cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
         images = cursor.fetchall()
         conn.close()
@@ -2928,8 +2939,36 @@ class UnrecognizeModule(QtWidgets.QDialog):
             print("Error loading dropdowns:", e)
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.detector = MTCNN(keep_all=False, device=self.device)
-        self.embedder = InceptionResnetV1(pretrained="vggface2").eval().to(self.device)
+
+       # ✅ Set the correct MTCNN weights directory (for pnet.pt, rnet.pt, onet.pt)
+        if getattr(sys, 'frozen', False):
+            mtcnn_path = os.path.join(sys._MEIPASS, 'models')  # points to the bundled folder
+        else:
+            mtcnn_path = os.path.join('models')  # works in development
+
+        # ✅ Initialize MTCNN with explicit weights path
+        self.detector = MTCNN(
+            keep_all=True,
+            device=self.device,
+            thresholds=[0.6, 0.7, 0.7],
+            margin=14,
+            min_face_size=20,
+            post_process=True,
+            select_largest=False,
+            selection_method='probability',
+        )
+
+        # Set custom model path if using PyInstaller
+        if getattr(sys, 'frozen', False):
+            model_path = os.path.join(sys._MEIPASS, 'models', '20180402-114759-vggface2.pt')
+        else:
+            model_path = os.path.join('models', '20180402-114759-vggface2.pt')
+
+        # Load FaceNet with stripped logits
+        self.embedder = InceptionResnetV1(classify=False).eval()
+        state_dict = torch.load(model_path, map_location=self.device)
+        state_dict = {k: v for k, v in state_dict.items() if not k.startswith('logits.')}
+        self.embedder.load_state_dict(state_dict)
 
         self.camera = cv2.VideoCapture(0)
         self.timer = QTimer(self)
@@ -3137,7 +3176,7 @@ class UnrecognizeModule(QtWidgets.QDialog):
         def augment(img):
             augmented = []
             img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            for i in range(5):
+            for i in range(9):
                 aug = img_pil.copy()
                 if random.random() > 0.5:
                     aug = ImageOps.mirror(aug)
@@ -3248,10 +3287,36 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
         # Initialize MTCNN face detector using the device
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.detector = MTCNN(keep_all=True, device=self.device)
 
-        # Load FaceNet
-        self.embedder = InceptionResnetV1(pretrained="vggface2").eval()
+        # ✅ Set the correct MTCNN weights directory (for pnet.pt, rnet.pt, onet.pt)
+        if getattr(sys, 'frozen', False):
+            mtcnn_path = os.path.join(sys._MEIPASS, 'models')  # points to the bundled folder
+        else:
+            mtcnn_path = os.path.join('models')  # works in development
+
+        # ✅ Initialize MTCNN with explicit weights path
+        self.detector = MTCNN(
+            keep_all=True,
+            device=self.device,
+            thresholds=[0.6, 0.7, 0.7],
+            margin=14,
+            min_face_size=20,
+            post_process=True,
+            select_largest=False,
+            selection_method='probability',
+        )
+
+        # Set custom model path if using PyInstaller
+        if getattr(sys, 'frozen', False):
+            model_path = os.path.join(sys._MEIPASS, 'models', '20180402-114759-vggface2.pt')
+        else:
+            model_path = os.path.join('models', '20180402-114759-vggface2.pt')
+
+        # Load FaceNet with stripped logits
+        self.embedder = InceptionResnetV1(classify=False).eval()
+        state_dict = torch.load(model_path, map_location=self.device)
+        state_dict = {k: v for k, v in state_dict.items() if not k.startswith('logits.')}
+        self.embedder.load_state_dict(state_dict)
 
         self.generate_embeddings_from_face_images("recognition.db")
         self.known_embeddings, self.known_ids = self.load_embeddings_from_db()
@@ -3713,7 +3778,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
             # Load profile image
             if profile_path and os.path.exists(profile_path):
                 pixmap = QPixmap(profile_path).scaled(
-                    250, 250, QtCore.Qt.KeepAspectRatio
+                    291, 369, QtCore.Qt.KeepAspectRatio
                 )
                 self.image.setPixmap(pixmap)
             else:

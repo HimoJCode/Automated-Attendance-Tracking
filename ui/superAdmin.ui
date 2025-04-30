@@ -49,7 +49,7 @@
        <property name="styleSheet">
         <string notr="true">color: #000000;
 font: 63 20pt &quot;Segoe UI Semibold&quot;;
-background: transparent;</string>
+background-color: rgba(255, 255, 255, 200); </string>
        </property>
        <property name="text">
         <string/>
@@ -83,7 +83,7 @@ background: transparent;</string>
        <property name="styleSheet">
         <string notr="true">color: #000000;
 font: 63 20pt &quot;Segoe UI Semibold&quot;;
-background: transparent;</string>
+background-color: rgba(255, 255, 255, 200); </string>
        </property>
        <property name="text">
         <string/>
@@ -135,7 +135,7 @@ background: transparent;</string>
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true"> background: transparent;
+         <string notr="true">background-color: rgba(255, 255, 255, 200); 
  border: none;
 color: #000000;
 font: 87 10pt &quot;Segoe UI Black&quot;;
@@ -179,7 +179,7 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
         <property name="styleSheet">
          <string notr="true">color: #000000;
 font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
+background-color: rgba(255, 255, 255, 200); 
 border: none;</string>
         </property>
         <property name="text">
@@ -211,7 +211,7 @@ border: none;</string>
         <property name="styleSheet">
          <string notr="true">color: #000000;
 font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
+background-color: rgba(255, 255, 255, 200); 
 border: none;</string>
         </property>
         <property name="text">
@@ -243,7 +243,7 @@ border: none;</string>
         <property name="styleSheet">
          <string notr="true">color: #000000;
 font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
+background-color: rgba(255, 255, 255, 200); 
 border: none;</string>
         </property>
         <property name="text">
@@ -283,7 +283,7 @@ border: none;</string>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #000000;
-background: transparent;
+background-color: rgba(255, 255, 255, 200); 
 
                                 </string>
        </property>
@@ -301,8 +301,7 @@ background: transparent;
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">
-background: transparent;</string>
+        <string notr="true">background-color: rgba(255, 255, 255, 200); </string>
        </property>
        <property name="text">
         <string/>
@@ -462,7 +461,7 @@ QPushButton#students_btn:hover {
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>110</y>
+           <y>160</y>
            <width>260</width>
            <height>41</height>
           </rect>
@@ -501,7 +500,7 @@ QPushButton#admin_btn:hover {
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>160</y>
+           <y>110</y>
            <width>260</width>
            <height>41</height>
           </rect>

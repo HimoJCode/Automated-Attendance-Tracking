@@ -89,7 +89,7 @@ border-bottom-right-radius: 15px;</string>
        <property name="styleSheet">
         <string notr="true">color: #000000;
 font: 63 20pt &quot;Segoe UI Semibold&quot;;
-background: transparent;</string>
+background-color: rgba(255, 255, 255, 200);</string>
        </property>
        <property name="text">
         <string/>
@@ -213,7 +213,7 @@ border-bottom-left-radius: 15px;
        </property>
        <property name="styleSheet">
         <string notr="true">color: #000000;
-background: transparent;
+background-color: rgba(255, 255, 255, 200);
 font: 63 48pt &quot;Segoe UI Semibold&quot;;
 </string>
        </property>
@@ -233,7 +233,7 @@ font: 63 48pt &quot;Segoe UI Semibold&quot;;
        <property name="styleSheet">
         <string notr="true">color: #000000;
 font: 63 20pt &quot;Segoe UI Semibold&quot;;
-background: transparent;</string>
+background-color: rgba(255, 255, 255, 200);</string>
        </property>
        <property name="text">
         <string/>
@@ -282,7 +282,7 @@ color: white;</string>
         <property name="styleSheet">
          <string notr="true">color: #000000;
 font: 87 7pt &quot;Segoe UI Black&quot;;
-background: transparent;
+background-color: rgba(255, 255, 255, 200);
 border: none;</string>
         </property>
         <property name="text">
@@ -318,8 +318,8 @@ border: none;</string>
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true"> background: transparent;
- border: none;
+         <string notr="true">background-color: rgba(255, 255, 255, 200);
+border: none;
 color: #000000;
 font: 87 10pt &quot;Segoe UI Black&quot;;
 </string>

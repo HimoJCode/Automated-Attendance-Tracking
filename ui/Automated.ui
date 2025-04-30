@@ -34,11 +34,8 @@
      <widget class="QFrame" name="background">
       <property name="styleSheet">
        <string notr="true">QFrame#background{
-border-image:url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
-background-color: #ffffff;
-}
-
-                                                        </string>
+ border-image: url(:/resources/whiteBG.png) 0 0 0 0 stretch stretch;
+}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -92,7 +89,7 @@ background: transparent;</string>
         <enum>Qt::RightToLeft</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">background:transparent;
+        <string notr="true">background: transparent;
 color: white;</string>
        </property>
        <property name="frameShape">
@@ -152,7 +149,7 @@ border: none;</string>
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true"> background: transparent;
+         <string notr="true"> background-color: rgba(255, 255, 255, 200); 
  border: none;
 color: #000000;
 font: 87 10pt &quot;Segoe UI Black&quot;;
@@ -233,8 +230,9 @@ border: 7px solid black;</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background: transparent;
-color: #000000</string>
+        <string notr="true">background-color: rgba(255, 255, 255, 150);  /* Adjust alpha (0-255) */
+color: #000000;
+</string>
        </property>
        <property name="text">
         <string>Attendance Tracking System</string>
