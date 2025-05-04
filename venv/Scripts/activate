@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\ASUS\OneDrive\Desktop\Automated Attendance Tracking\venv"
+VIRTUAL_ENV="C:\Users\lokkf\Desktop\Automated-Attendance-Tracking\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

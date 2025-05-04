@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>905</width>
-    <height>512</height>
+    <width>1489</width>
+    <height>895</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,10 +50,10 @@ border: 6px solid #5A5958;
      <widget class="QFrame" name="boxFrame">
       <property name="geometry">
        <rect>
-        <x>90</x>
-        <y>50</y>
-        <width>741</width>
-        <height>411</height>
+        <x>30</x>
+        <y>40</y>
+        <width>1431</width>
+        <height>831</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -65,10 +65,10 @@ border: 6px solid #5A5958;
       <widget class="QLabel" name="circleLogo">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>175</y>
-         <width>81</width>
-         <height>81</height>
+         <x>470</x>
+         <y>320</y>
+         <width>101</width>
+         <height>101</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -76,7 +76,7 @@ border: 6px solid #5A5958;
 	border-image: url(:/resources/AClogo.png) 0 0 0 0 stretch stretch;
     /* Creates a circular shape if the label is square (e.g., 100 x 100). 
        If the label is 100 x 100, use a 50px radius. */
-    border-radius: 40px;  
+    border-radius: 50px;  
     
     /* Optional border around the circle */
     border: 2px solid white;
@@ -89,7 +89,7 @@ border: 6px solid #5A5958;
     /* Background color behind the image (showing through if the image has transparency) */
     background: #ffffff;
 }
-</string>
+                                                                </string>
        </property>
        <property name="text">
         <string/>
@@ -98,17 +98,17 @@ border: 6px solid #5A5958;
       <widget class="QLabel" name="agusanCollge_label">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>80</y>
-         <width>501</width>
-         <height>101</height>
+         <x>340</x>
+         <y>150</y>
+         <width>681</width>
+         <height>121</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #ffffff;
 background: transparent;
 border:none;
-font: 87 70pt &quot;Segoe UI Black&quot;;</string>
+font: 87 80pt &quot;Segoe UI Black&quot;;</string>
        </property>
        <property name="text">
         <string>  AGUSAN</string>
@@ -117,36 +117,45 @@ font: 87 70pt &quot;Segoe UI Black&quot;;</string>
       <widget class="QLabel" name="agusanCollge_label_2">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>170</y>
-         <width>501</width>
-         <height>81</height>
+         <x>380</x>
+         <y>270</y>
+         <width>681</width>
+         <height>181</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #ffffff;
 background: transparent;
 border:none;
-font: 87 75pt &quot;Segoe UI Black&quot;;</string>
+font: 87 80pt &quot;Segoe UI Black&quot;;</string>
        </property>
        <property name="text">
-        <string>COLLEGES</string>
+        <string>C   LLEGES</string>
        </property>
       </widget>
       <widget class="QLabel" name="agusanCollge_label_3">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>30</y>
-         <width>541</width>
+         <x>280</x>
+         <y>60</y>
+         <width>851</width>
          <height>51</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI Black</family>
+         <pointsize>25</pointsize>
+         <weight>10</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #ffffff;
 background: transparent;
 border:none;
-font: 87 20pt &quot;Segoe UI Black&quot;;</string>
+font: 87 25pt &quot;Segoe UI Black&quot;;</string>
        </property>
        <property name="text">
         <string>Automated Attendance Tracking System</string>
@@ -155,9 +164,9 @@ font: 87 20pt &quot;Segoe UI Black&quot;;</string>
       <widget class="QToolButton" name="attendanceLogin_btn">
        <property name="geometry">
         <rect>
-         <x>200</x>
-         <y>320</y>
-         <width>181</width>
+         <x>460</x>
+         <y>560</y>
+         <width>231</width>
          <height>61</height>
         </rect>
        </property>
@@ -210,9 +219,9 @@ border: 4px solid #ffffff;
       <widget class="QToolButton" name="loginAdmin_btn">
        <property name="geometry">
         <rect>
-         <x>400</x>
-         <y>320</y>
-         <width>171</width>
+         <x>720</x>
+         <y>560</y>
+         <width>221</width>
          <height>61</height>
         </rect>
        </property>
@@ -271,7 +280,7 @@ border: 4px solid #ffffff;
      <widget class="QPushButton" name="exit_btn">
       <property name="geometry">
        <rect>
-        <x>855</x>
+        <x>1450</x>
         <y>10</y>
         <width>28</width>
         <height>24</height>
@@ -284,8 +293,8 @@ border: 4px solid #ffffff;
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../../../../Downloads/cancel.png</normaloff>../../../../Downloads/cancel.png</iconset>
+       <iconset resource="../resources/res.qrc">
+        <normaloff>:/resources/cancel-sign.png</normaloff>:/resources/cancel-sign.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -297,7 +306,7 @@ border: 4px solid #ffffff;
      <widget class="QPushButton" name="minimize_btn">
       <property name="geometry">
        <rect>
-        <x>820</x>
+        <x>1420</x>
         <y>10</y>
         <width>28</width>
         <height>24</height>
@@ -310,8 +319,8 @@ border: 4px solid #ffffff;
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../../../../Downloads/minus (2).png</normaloff>../../../../Downloads/minus (2).png</iconset>
+       <iconset resource="../resources/res.qrc">
+        <normaloff>:/resources/minus.png</normaloff>:/resources/minus.png</iconset>
       </property>
      </widget>
     </widget>

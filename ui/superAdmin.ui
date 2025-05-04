@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1366</width>
-    <height>768</height>
+    <width>1489</width>
+    <height>895</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,10 +40,10 @@
       <widget class="QLabel" name="date_label">
        <property name="geometry">
         <rect>
-         <x>220</x>
+         <x>230</x>
          <y>10</y>
-         <width>201</width>
-         <height>41</height>
+         <width>231</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -60,8 +60,8 @@ background: transparent;</string>
         <rect>
          <x>0</x>
          <y>130</y>
-         <width>1370</width>
-         <height>3</height>
+         <width>1489</width>
+         <height>2</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -74,9 +74,9 @@ background: transparent;</string>
       <widget class="QLabel" name="time_label">
        <property name="geometry">
         <rect>
-         <x>1010</x>
+         <x>1030</x>
          <y>10</y>
-         <width>161</width>
+         <width>221</width>
          <height>28</height>
         </rect>
        </property>
@@ -92,9 +92,9 @@ background: transparent;</string>
       <widget class="QFrame" name="frame_1">
        <property name="geometry">
         <rect>
-         <x>1200</x>
+         <x>1250</x>
          <y>10</y>
-         <width>161</width>
+         <width>231</width>
          <height>51</height>
         </rect>
        </property>
@@ -119,9 +119,9 @@ background: transparent;</string>
        <widget class="QToolButton" name="toolMenu_btn">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>40</x>
           <y>10</y>
-          <width>131</width>
+          <width>171</width>
           <height>43</height>
          </rect>
         </property>
@@ -139,7 +139,7 @@ background: transparent;</string>
  border: none;
 color: #000000;
 font: 87 10pt &quot;Segoe UI Black&quot;;
-</string>
+                                    </string>
         </property>
         <property name="text">
          <string>SUPER ADMIN</string>
@@ -167,9 +167,9 @@ font: 87 10pt &quot;Segoe UI Black&quot;;
        <widget class="QPushButton" name="logout_btn">
         <property name="geometry">
          <rect>
-          <x>-5</x>
+          <x>30</x>
           <y>110</y>
-          <width>91</width>
+          <width>81</width>
           <height>23</height>
          </rect>
         </property>
@@ -199,7 +199,7 @@ border: none;</string>
        <widget class="QPushButton" name="superAdmin_btn">
         <property name="geometry">
          <rect>
-          <x>-10</x>
+          <x>30</x>
           <y>80</y>
           <width>131</width>
           <height>23</height>
@@ -231,9 +231,9 @@ border: none;</string>
        <widget class="QPushButton" name="changeCredentials_btn">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>10</x>
           <y>50</y>
-          <width>141</width>
+          <width>211</width>
           <height>31</height>
          </rect>
         </property>
@@ -267,17 +267,25 @@ border: none;</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>190</x>
+         <x>340</x>
          <y>40</y>
-         <width>991</width>
+         <width>841</width>
          <height>69</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Spectral SC</family>
+         <pointsize>28</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="styleSheet">
         <string notr="true">color: #000000;
 background: transparent;
-font: 63 48pt &quot;Segoe UI Semibold&quot;;
-</string>
+
+                                </string>
        </property>
        <property name="text">
         <string>ATTENDANCE TRACKING SYSTEM</string>
@@ -286,8 +294,8 @@ font: 63 48pt &quot;Segoe UI Semibold&quot;;
       <widget class="QToolButton" name="burgerMenu_btn">
        <property name="geometry">
         <rect>
-         <x>40</x>
-         <y>20</y>
+         <x>100</x>
+         <y>30</y>
          <width>51</width>
          <height>41</height>
         </rect>
@@ -316,14 +324,14 @@ background: transparent;</string>
          <x>0</x>
          <y>0</y>
          <width>0</width>
-         <height>768</height>
+         <height>895</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QWidget#leftMenu{
 background-image: url(:/resources/moduleBG.png);
 }
-</string>
+                                </string>
        </property>
        <widget class="QFrame" name="logoNameFrame">
         <property name="geometry">
@@ -387,7 +395,7 @@ color: white;</string>
     /* Background color behind the image (showing through if the image has transparency) */
     background: #ffffff;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -399,7 +407,7 @@ color: white;</string>
          <rect>
           <x>0</x>
           <y>210</y>
-          <width>221</width>
+          <width>250</width>
           <height>211</height>
          </rect>
         </property>
@@ -409,14 +417,14 @@ background: transparent;
 }
 
 
-</string>
+                                    </string>
         </property>
         <widget class="QPushButton" name="students_btn">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>60</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -431,7 +439,7 @@ QPushButton#students_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>STUDENTS               </string>
@@ -455,7 +463,7 @@ QPushButton#students_btn:hover {
           <rect>
            <x>0</x>
            <y>110</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -473,7 +481,7 @@ QPushButton#admin_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>ADMIN                      </string>
@@ -494,7 +502,7 @@ QPushButton#admin_btn:hover {
           <rect>
            <x>0</x>
            <y>160</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -509,7 +517,7 @@ QPushButton#staffs_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>STAFFS                     </string>
@@ -530,7 +538,7 @@ QPushButton#staffs_btn:hover {
           <rect>
            <x>0</x>
            <y>10</y>
-           <width>221</width>
+           <width>260</width>
            <height>41</height>
           </rect>
          </property>
@@ -545,7 +553,7 @@ QPushButton#attendanceLogs_btn:hover {
     border: 2px solid #ffffff;
 	background-color: #000000;
 }
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>ATTENDANCE LOGS</string>
@@ -580,7 +588,7 @@ background-color: transparent;
 border: none;
 font-size: 16px;
 
-</string>
+                                    </string>
         </property>
         <property name="text">
          <string/>
@@ -596,8 +604,8 @@ font-size: 16px;
         <rect>
          <x>0</x>
          <y>130</y>
-         <width>1366</width>
-         <height>631</height>
+         <width>1489</width>
+         <height>771</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -610,18 +618,25 @@ font-size: 16px;
         <widget class="QFrame" name="frame">
          <property name="geometry">
           <rect>
-           <x>100</x>
-           <y>100</y>
-           <width>1211</width>
+           <x>120</x>
+           <y>140</y>
+           <width>1281</width>
            <height>48</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">QFrame{
 background: transparent;
 }
 QLabel{
-font: 87 15pt &quot;Segoe UI Black&quot;;
 background: transparent;
 color: #000000;
 }</string>
@@ -635,11 +650,19 @@ color: #000000;
          <widget class="QLabel" name="label_4">
           <property name="geometry">
            <rect>
-            <x>890</x>
+            <x>940</x>
             <y>10</y>
-            <width>54</width>
+            <width>51</width>
             <height>28</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>DATE</string>
@@ -648,11 +671,19 @@ color: #000000;
          <widget class="QLabel" name="label_5">
           <property name="geometry">
            <rect>
-            <x>1050</x>
+            <x>1100</x>
             <y>10</y>
             <width>51</width>
             <height>28</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>TIME</string>
@@ -661,11 +692,19 @@ color: #000000;
          <widget class="QLabel" name="label_6">
           <property name="geometry">
            <rect>
-            <x>270</x>
+            <x>320</x>
             <y>10</y>
-            <width>70</width>
+            <width>71</width>
             <height>28</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>GRADE</string>
@@ -674,40 +713,64 @@ color: #000000;
          <widget class="QLabel" name="label_7">
           <property name="geometry">
            <rect>
-            <x>440</x>
+            <x>480</x>
             <y>10</y>
-            <width>84</width>
+            <width>81</width>
             <height>28</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>STRAND</string>
           </property>
          </widget>
-         <widget class="QLabel" name="label_2">
-          <property name="geometry">
-           <rect>
-            <x>70</x>
-            <y>10</y>
-            <width>62</width>
-            <height>28</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>NAME</string>
-          </property>
-         </widget>
          <widget class="QLabel" name="label_15">
           <property name="geometry">
            <rect>
-            <x>630</x>
+            <x>670</x>
             <y>10</y>
-            <width>141</width>
+            <width>131</width>
             <height>28</height>
            </rect>
           </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>DEPARTMENT</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_14">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>10</y>
+            <width>71</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Spectral SC ExtraBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>NAME</string>
           </property>
          </widget>
         </widget>
@@ -715,14 +778,21 @@ color: #000000;
          <property name="geometry">
           <rect>
            <x>380</x>
-           <y>60</y>
+           <y>80</y>
            <width>651</width>
-           <height>41</height>
+           <height>51</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>20</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
-font: 25pt &quot;MS Shell Dlg 2&quot;;
 background: transparent;
 background-color: #ffffff;
 
@@ -735,7 +805,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -766,9 +836,9 @@ color: #000000;</string>
          <property name="geometry">
           <rect>
            <x>980</x>
-           <y>60</y>
+           <y>80</y>
            <width>51</width>
-           <height>41</height>
+           <height>51</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -801,15 +871,24 @@ border-bottom-right-radius: 15px;</string>
           <rect>
            <x>580</x>
            <y>10</y>
-           <width>291</width>
-           <height>41</height>
+           <width>361</width>
+           <height>51</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>24</pointsize>
+           <weight>75</weight>
+           <italic>false</italic>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
 background: transparent;
-font: 63 25pt &quot;Segoe UI Black&quot;;
-</string>
+
+                                        </string>
          </property>
          <property name="text">
           <string>Attendance Logs</string>
@@ -819,7 +898,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
          <property name="geometry">
           <rect>
            <x>1050</x>
-           <y>55</y>
+           <y>80</y>
            <width>91</width>
            <height>51</height>
           </rect>
@@ -831,7 +910,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
           <string notr="true">border:none;
 background: transparent;
 font: 63 9pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>  Print</string>
@@ -851,7 +930,7 @@ font: 63 9pt &quot;Segoe UI Semibold&quot;;
          <property name="geometry">
           <rect>
            <x>1150</x>
-           <y>50</y>
+           <y>80</y>
            <width>51</width>
            <height>51</height>
           </rect>
@@ -863,7 +942,7 @@ font: 63 9pt &quot;Segoe UI Semibold&quot;;
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -882,10 +961,10 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
         <widget class="QTableWidget" name="attendanceTableWidget">
          <property name="geometry">
           <rect>
-           <x>50</x>
-           <y>140</y>
-           <width>1261</width>
-           <height>411</height>
+           <x>120</x>
+           <y>200</y>
+           <width>1271</width>
+           <height>551</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -929,7 +1008,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 15px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -953,7 +1032,7 @@ QHeaderView::section:horizontal {
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>false</bool>
@@ -1013,22 +1092,51 @@ QHeaderView::section:horizontal {
           </property>
          </column>
         </widget>
+        <widget class="QPushButton" name="deleteAttendance_btn">
+         <property name="geometry">
+          <rect>
+           <x>1220</x>
+           <y>80</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: red;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+border-radius: 10px;
+color: white;</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/images-removebg-preview (1).png</normaloff>:/resources/images-removebg-preview (1).png</iconset>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="studentList_page">
         <widget class="QLabel" name="label_8">
          <property name="geometry">
           <rect>
-           <x>630</x>
+           <x>660</x>
            <y>10</y>
-           <width>201</width>
+           <width>291</width>
            <height>41</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>24</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
 background: transparent;
-font: 63 25pt &quot;Segoe UI Black&quot;;
-</string>
+
+                                        </string>
          </property>
          <property name="text">
           <string>Student List</string>
@@ -1037,9 +1145,9 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
         <widget class="QFrame" name="frame_2">
          <property name="geometry">
           <rect>
-           <x>410</x>
+           <x>420</x>
            <y>90</y>
-           <width>671</width>
+           <width>631</width>
            <height>41</height>
           </rect>
          </property>
@@ -1048,7 +1156,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
 background: transparent;
 }
 QLabel{
-font: 63 15pt &quot;Segoe UI Semibold&quot;;
+font: 63 10pt &quot;Spectral SC ExtraBold&quot;;
 background: transparent;
 color: #000000;
 }</string>
@@ -1062,9 +1170,9 @@ color: #000000;
          <widget class="QLabel" name="label_9">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>0</x>
             <y>10</y>
-            <width>61</width>
+            <width>81</width>
             <height>21</height>
            </rect>
           </property>
@@ -1075,9 +1183,9 @@ color: #000000;
          <widget class="QLabel" name="label_10">
           <property name="geometry">
            <rect>
-            <x>220</x>
+            <x>210</x>
             <y>10</y>
-            <width>61</width>
+            <width>91</width>
             <height>21</height>
            </rect>
           </property>
@@ -1090,7 +1198,7 @@ color: #000000;
            <rect>
             <x>510</x>
             <y>10</y>
-            <width>158</width>
+            <width>101</width>
             <height>21</height>
            </rect>
           </property>
@@ -1101,9 +1209,9 @@ color: #000000;
          <widget class="QLabel" name="label_11">
           <property name="geometry">
            <rect>
-            <x>360</x>
+            <x>350</x>
             <y>10</y>
-            <width>71</width>
+            <width>101</width>
             <height>21</height>
            </rect>
           </property>
@@ -1115,15 +1223,15 @@ color: #000000;
         <widget class="QLineEdit" name="studentList_searchBar">
          <property name="geometry">
           <rect>
-           <x>590</x>
-           <y>60</y>
+           <x>470</x>
+           <y>50</y>
            <width>271</width>
            <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
-font: 63 14pt &quot;Segoe UI Semibold&quot;;
+font: 63 10pt &quot;Spectral SC ExtraBold&quot;;
 background: transparent;
 background-color: #ffffff;
 
@@ -1136,7 +1244,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1148,8 +1256,8 @@ border-bottom-left-radius: 15px;
         <widget class="QPushButton" name="searchButton_2">
          <property name="geometry">
           <rect>
-           <x>830</x>
-           <y>60</y>
+           <x>710</x>
+           <y>50</y>
            <width>31</width>
            <height>31</height>
           </rect>
@@ -1182,10 +1290,10 @@ border-bottom-right-radius: 15px;</string>
         <widget class="QPushButton" name="addStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1050</x>
-           <y>150</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1060</x>
+           <y>100</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1252,7 +1360,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -1326,10 +1434,10 @@ QHeaderView::section:horizontal {
         <widget class="QPushButton" name="updateStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1050</x>
-           <y>180</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1060</x>
+           <y>140</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1349,10 +1457,10 @@ color: white;</string>
         <widget class="QPushButton" name="removeStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1050</x>
-           <y>210</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1060</x>
+           <y>180</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1372,8 +1480,8 @@ color: white;</string>
         <widget class="QComboBox" name="strandFilter">
          <property name="geometry">
           <rect>
-           <x>880</x>
-           <y>60</y>
+           <x>760</x>
+           <y>50</y>
            <width>121</width>
            <height>31</height>
           </rect>
@@ -1410,7 +1518,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -1425,8 +1533,8 @@ QComboBox::down-arrow {
         <widget class="QComboBox" name="gradeFilter">
          <property name="geometry">
           <rect>
-           <x>1020</x>
-           <y>60</y>
+           <x>890</x>
+           <y>50</y>
            <width>121</width>
            <height>31</height>
           </rect>
@@ -1460,7 +1568,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -1475,10 +1583,10 @@ QComboBox::down-arrow {
         <widget class="QPushButton" name="printStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1030</x>
-           <y>100</y>
-           <width>111</width>
-           <height>51</height>
+           <x>1050</x>
+           <y>50</y>
+           <width>101</width>
+           <height>41</height>
           </rect>
          </property>
          <property name="layoutDirection">
@@ -1488,7 +1596,7 @@ QComboBox::down-arrow {
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string>  Print</string>
@@ -1525,10 +1633,10 @@ color: #000000;</string>
         <widget class="QPushButton" name="exportPDFStudent_btn">
          <property name="geometry">
           <rect>
-           <x>1140</x>
-           <y>100</y>
-           <width>51</width>
-           <height>51</height>
+           <x>1160</x>
+           <y>50</y>
+           <width>41</width>
+           <height>41</height>
           </rect>
          </property>
          <property name="layoutDirection">
@@ -1538,7 +1646,7 @@ color: #000000;</string>
           <string notr="true">border:none;
 background: transparent;
 font: 63 10pt &quot;Segoe UI Semibold&quot;;
-</string>
+                                        </string>
          </property>
          <property name="text">
           <string/>
@@ -1554,42 +1662,89 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
           </size>
          </property>
         </widget>
+        <widget class="QPushButton" name="viewImages_btn">
+         <property name="geometry">
+          <rect>
+           <x>1060</x>
+           <y>220</y>
+           <width>150</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+background-color: #6C3483;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+color: white;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>VIEW IMAGES</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/view-image.png</normaloff>:/resources/view-image.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="adminList_page">
         <widget class="QLabel" name="label_25">
          <property name="geometry">
           <rect>
-           <x>610</x>
-           <y>10</y>
-           <width>131</width>
+           <x>600</x>
+           <y>20</y>
+           <width>381</width>
            <height>41</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>24</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
 background: transparent;
-font: 63 25pt &quot;Segoe UI Black&quot;;
-</string>
+
+                                        </string>
          </property>
          <property name="text">
-          <string>ADMIN</string>
+          <string>ADMINISTRATOR</string>
          </property>
         </widget>
         <widget class="QFrame" name="frame_5">
          <property name="geometry">
           <rect>
-           <x>330</x>
-           <y>50</y>
-           <width>661</width>
+           <x>400</x>
+           <y>70</y>
+           <width>691</width>
            <height>41</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>20</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">QFrame{
 background: transparent;
 }
 QLabel{
-font: 63 15pt &quot;Segoe UI Semibold&quot;;
+font: 63 10pt &quot;Spectral SC ExtraBold&quot;;
 background: transparent;
 color: #000000;
 }</string>
@@ -1603,7 +1758,7 @@ color: #000000;
          <widget class="QLabel" name="label_26">
           <property name="geometry">
            <rect>
-            <x>30</x>
+            <x>20</x>
             <y>10</y>
             <width>101</width>
             <height>21</height>
@@ -1616,9 +1771,9 @@ color: #000000;
          <widget class="QLabel" name="label_27">
           <property name="geometry">
            <rect>
-            <x>220</x>
+            <x>210</x>
             <y>10</y>
-            <width>91</width>
+            <width>101</width>
             <height>21</height>
            </rect>
           </property>
@@ -1629,9 +1784,9 @@ color: #000000;
          <widget class="QLabel" name="label_29">
           <property name="geometry">
            <rect>
-            <x>370</x>
+            <x>360</x>
             <y>10</y>
-            <width>111</width>
+            <width>131</width>
             <height>21</height>
            </rect>
           </property>
@@ -1642,9 +1797,9 @@ color: #000000;
          <widget class="QLabel" name="label_30">
           <property name="geometry">
            <rect>
-            <x>540</x>
+            <x>530</x>
             <y>5</y>
-            <width>111</width>
+            <width>131</width>
             <height>31</height>
            </rect>
           </property>
@@ -1656,8 +1811,8 @@ color: #000000;
         <widget class="QTableWidget" name="adminTable">
          <property name="geometry">
           <rect>
-           <x>290</x>
-           <y>90</y>
+           <x>390</x>
+           <y>130</y>
            <width>701</width>
            <height>451</height>
           </rect>
@@ -1703,7 +1858,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -1774,10 +1929,10 @@ QHeaderView::section:horizontal {
         <widget class="QPushButton" name="addAdmin_btn">
          <property name="geometry">
           <rect>
-           <x>1000</x>
-           <y>75</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1140</x>
+           <y>80</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1797,10 +1952,10 @@ color: white;</string>
         <widget class="QPushButton" name="changePassword_btn">
          <property name="geometry">
           <rect>
-           <x>1000</x>
-           <y>105</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1140</x>
+           <y>120</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1820,10 +1975,10 @@ color: white;</string>
         <widget class="QPushButton" name="removeAdmin_btn">
          <property name="geometry">
           <rect>
-           <x>1000</x>
-           <y>135</y>
-           <width>121</width>
-           <height>23</height>
+           <x>1140</x>
+           <y>160</y>
+           <width>150</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1845,17 +2000,26 @@ color: white;</string>
         <widget class="QLabel" name="label_28">
          <property name="geometry">
           <rect>
-           <x>610</x>
+           <x>720</x>
            <y>10</y>
-           <width>111</width>
+           <width>131</width>
            <height>41</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Spectral SC ExtraBold</family>
+           <pointsize>24</pointsize>
+           <weight>75</weight>
+           <italic>false</italic>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
 background: transparent;
-font: 63 25pt &quot;Segoe UI Black&quot;;
-</string>
+
+                                        </string>
          </property>
          <property name="text">
           <string>STAFF</string>
@@ -1866,7 +2030,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
           <rect>
            <x>350</x>
            <y>100</y>
-           <width>651</width>
+           <width>671</width>
            <height>41</height>
           </rect>
          </property>
@@ -1875,7 +2039,7 @@ font: 63 25pt &quot;Segoe UI Black&quot;;
 background: transparent;
 }
 QLabel{
-font: 63 15pt &quot;Segoe UI Semibold&quot;;
+font: 63 10pt &quot;Spectral SC ExtraBold&quot;;
 background: transparent;
 color: #000000;
 }</string>
@@ -1889,9 +2053,9 @@ color: #000000;
          <widget class="QLabel" name="label_31">
           <property name="geometry">
            <rect>
-            <x>100</x>
+            <x>90</x>
             <y>10</y>
-            <width>101</width>
+            <width>51</width>
             <height>21</height>
            </rect>
           </property>
@@ -1902,9 +2066,9 @@ color: #000000;
          <widget class="QLabel" name="label_32">
           <property name="geometry">
            <rect>
-            <x>320</x>
+            <x>310</x>
             <y>10</y>
-            <width>91</width>
+            <width>71</width>
             <height>21</height>
            </rect>
           </property>
@@ -1915,9 +2079,9 @@ color: #000000;
          <widget class="QLabel" name="label_33">
           <property name="geometry">
            <rect>
-            <x>530</x>
+            <x>520</x>
             <y>5</y>
-            <width>111</width>
+            <width>121</width>
             <height>31</height>
            </rect>
           </property>
@@ -1931,8 +2095,8 @@ color: #000000;
           <rect>
            <x>1100</x>
            <y>110</y>
-           <width>121</width>
-           <height>23</height>
+           <width>151</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1953,9 +2117,9 @@ color: white;</string>
          <property name="geometry">
           <rect>
            <x>1100</x>
-           <y>140</y>
-           <width>121</width>
-           <height>23</height>
+           <y>150</y>
+           <width>151</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1976,9 +2140,9 @@ color: white;</string>
          <property name="geometry">
           <rect>
            <x>1100</x>
-           <y>170</y>
-           <width>121</width>
-           <height>23</height>
+           <y>190</y>
+           <width>151</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -2006,7 +2170,7 @@ color: white;</string>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #000000;
-font: 63 14pt &quot;Segoe UI Semibold&quot;;
+font: 63 10pt &quot;Spectral SC ExtraBold&quot;;
 background: transparent;
 background-color: #ffffff;
 
@@ -2019,7 +2183,7 @@ border-top-right-radius: 15px;
 border-bottom-right-radius: 15px;
 border-top-left-radius: 15px;
 border-bottom-left-radius: 15px;
-</string>
+                                        </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -2103,7 +2267,7 @@ QComboBox::down-arrow {
     width: 20px;
     height: 20px;
 }
-</string>
+                                        </string>
          </property>
          <property name="iconSize">
           <size>
@@ -2165,7 +2329,7 @@ QHeaderView::section:horizontal {
     border: none;
     font-size: 7px;
 }
-</string>
+                                        </string>
          </property>
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
@@ -2244,6 +2408,101 @@ color: #000000;</string>
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="viewStaffImages_btn">
+         <property name="geometry">
+          <rect>
+           <x>1100</x>
+           <y>230</y>
+           <width>150</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+background-color: #6C3483;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+border: 2px solid black;
+color: white;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>VIEW IMAGES</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/view-image.png</normaloff>:/resources/view-image.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="printStaff_btn">
+         <property name="geometry">
+          <rect>
+           <x>1100</x>
+           <y>40</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+                                        </string>
+         </property>
+         <property name="text">
+          <string>  Print</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/printer.png</normaloff>:/resources/printer.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="exportPDFStaff_btn">
+         <property name="geometry">
+          <rect>
+           <x>1210</x>
+           <y>40</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
+background: transparent;
+font: 63 10pt &quot;Segoe UI Semibold&quot;;
+                                        </string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/res.qrc">
+           <normaloff>:/resources/download-pdf (1).png</normaloff>:/resources/download-pdf (1).png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>587</width>
-    <height>376</height>
+    <width>500</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,10 +46,10 @@ border-image:url(:/resources/moduleBG.png) 0 0 0 0 stratch stretch;
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>20</y>
+        <x>190</x>
+        <y>30</y>
         <width>121</width>
-        <height>16</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -63,10 +63,10 @@ color: #ffffff;</string>
      <widget class="QFrame" name="updateFormFrame">
       <property name="geometry">
        <rect>
-        <x>45</x>
-        <y>50</y>
-        <width>471</width>
-        <height>291</height>
+        <x>10</x>
+        <y>80</y>
+        <width>481</width>
+        <height>401</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -96,7 +96,7 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>50</y>
+         <y>90</y>
          <width>301</width>
          <height>31</height>
         </rect>
@@ -106,7 +106,7 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>120</y>
+         <y>170</y>
          <width>211</width>
          <height>31</height>
         </rect>
@@ -116,8 +116,8 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>30</y>
-         <width>71</width>
+         <y>60</y>
+         <width>91</width>
          <height>16</height>
         </rect>
        </property>
@@ -129,9 +129,9 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>30</y>
-         <width>81</width>
-         <height>16</height>
+         <y>60</y>
+         <width>111</width>
+         <height>21</height>
         </rect>
        </property>
        <property name="text">
@@ -142,8 +142,8 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>100</y>
-         <width>71</width>
+         <y>140</y>
+         <width>91</width>
          <height>16</height>
         </rect>
        </property>
@@ -154,8 +154,8 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
       <widget class="QLineEdit" name="middleNameLineEdit">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>50</y>
+         <x>370</x>
+         <y>90</y>
          <width>26</width>
          <height>31</height>
         </rect>
@@ -168,7 +168,7 @@ font: 63 10pt &quot;Segoe UI Semibold&quot;;
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>190</y>
+         <y>250</y>
          <width>101</width>
          <height>31</height>
         </rect>
@@ -218,9 +218,9 @@ QComboBox::down-arrow {
       <widget class="QLabel" name="strand_label">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>100</y>
-         <width>81</width>
+         <x>300</x>
+         <y>140</y>
+         <width>101</width>
          <height>16</height>
         </rect>
        </property>
@@ -232,7 +232,7 @@ QComboBox::down-arrow {
        <property name="geometry">
         <rect>
          <x>165</x>
-         <y>250</y>
+         <y>320</y>
          <width>156</width>
          <height>23</height>
         </rect>
@@ -245,7 +245,7 @@ QComboBox::down-arrow {
        <property name="geometry">
         <rect>
          <x>240</x>
-         <y>120</y>
+         <y>170</y>
          <width>211</width>
          <height>31</height>
         </rect>
@@ -301,7 +301,7 @@ QComboBox::drop-down {
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>170</y>
+         <y>220</y>
          <width>71</width>
          <height>16</height>
         </rect>
@@ -314,7 +314,7 @@ QComboBox::drop-down {
        <property name="geometry">
         <rect>
          <x>170</x>
-         <y>190</y>
+         <y>250</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -345,8 +345,8 @@ border-radius: 10px;
       <widget class="QPushButton" name="profileImageUpload_btn">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>190</y>
+         <x>340</x>
+         <y>250</y>
          <width>121</width>
          <height>31</height>
         </rect>
@@ -377,9 +377,9 @@ border-radius: 10px;
       <widget class="QLabel" name="lastNmae_label_3">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>165</y>
-         <width>101</width>
+         <x>170</x>
+         <y>220</y>
+         <width>121</width>
          <height>21</height>
         </rect>
        </property>
@@ -391,8 +391,8 @@ border-radius: 10px;
        <property name="geometry">
         <rect>
          <x>310</x>
-         <y>165</y>
-         <width>131</width>
+         <y>220</y>
+         <width>161</width>
          <height>21</height>
         </rect>
        </property>
