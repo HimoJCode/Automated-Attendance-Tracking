@@ -10,17 +10,20 @@ import shutil
 import resources.res_rc
 import hashlib
 import random
+import subprocess
 
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
-from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation, Qt
+from PyQt5.QtCore import QTimer, QDateTime, QPropertyAnimation, Qt,  QThread, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox, QFileDialog, QDialog
+from PyQt5.QtWidgets import QGraphicsOpacityEffect, QMessageBox, QFileDialog, QDialog, QVBoxLayout, QLabel, QProgressDialog
 from facenet_pytorch import MTCNN
 from facenet_pytorch import InceptionResnetV1
-from PIL import Image
+from torchvision import transforms
+from PIL import Image, ImageEnhance, ImageOps
 from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog, QPrintDialog
 from PyQt5.QtGui import QTextDocument, QTextCursor
 from PIL import ImageEnhance, ImageOps
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 # Paths to UI files
 STARTAPP_UI_PATH = os.path.join(os.path.dirname(__file__), "ui", "startApp.ui")
@@ -155,6 +158,7 @@ class LoginPermissionDialog(QtWidgets.QDialog):
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -236,6 +240,7 @@ class LoginDialog(QtWidgets.QDialog):
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -338,6 +343,7 @@ def verify_superadmin_password(parent):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -371,6 +377,10 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.attendanceLogin_btn.clicked.connect(self.open_attendance_app)
         else:
             print("❌ attendanceLogin_btn not found in UI")
+
+        # Automatically refresh table when checkbox is toggled
+        if hasattr(self, "showArchivedCheckBox"):
+            self.showArchivedCheckBox.stateChanged.connect(self.populate_attendance_data)
 
         # ✅ Set up QTimer to update time every second
         self.timer_clock = QTimer(self)
@@ -456,9 +466,16 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
     def populate_attendance_data(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
-        cursor.execute(
-            """
+
+        show_archived = (
+        hasattr(self, "showArchivedCheckBox")
+        and self.showArchivedCheckBox.isChecked()
+        )
+        where_clause = "a.archived = 1" if show_archived else "a.archived = 0"
+
+        query = f"""
             SELECT 
                 COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
                 COALESCE(a.grade_level, g.grade_level) AS grade,
@@ -473,9 +490,10 @@ class AdminDashboard(QtWidgets.QMainWindow):
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
             LEFT JOIN StaffDetails st ON st.person_id = a.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
+            WHERE {where_clause}
             ORDER BY a.attendance_id DESC
             """
-        )
+        cursor.execute(query)
         data = cursor.fetchall()
         conn.close()
 
@@ -564,7 +582,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         search_text = self.searchBar.text().strip().lower()
         filtered_data = []
 
-        for row in self.all_data:
+        for row in self.attendance_data:
             name = str(row[0] or "").lower()
             grade = str(row[1] or "").lower()
             strand = str(row[2] or "").lower()
@@ -584,7 +602,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.refresh_table(filtered_data)
         self.noDataLabel.setVisible(len(filtered_data) == 0)
         if len(filtered_data) == 0:
-            self.noDataLabel.setText("🔍 No matching records found.")
+            self.noDataLabel.setText("🔍No matching records found.")
             self.noDataLabel.setVisible(True)
             self.attendanceTableWidget.setVisible(False)
         else:
@@ -738,6 +756,22 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.move(event.globalPos() - self.drag_position)
             event.accept()
 
+class EmbeddingWorker(QThread):
+    progress = pyqtSignal(int)
+    done = pyqtSignal(str)
+
+    def __init__(self, parent, person_ids):
+        super().__init__(parent)
+        self.parent = parent
+        self.person_ids = person_ids
+
+    def run(self):
+        try:
+            if not self.isInterruptionRequested():
+                self.parent.generate_embeddings_for_ids(self.person_ids, self.progress.emit)
+            self.done.emit("Embeddings generated successfully.")
+        except Exception as e:
+            self.done.emit(f"Embedding failed: {e}")
 
 class SuperAdminDashboard(QtWidgets.QMainWindow):
     """Super Admin Dashboard UI (After Successful Login)"""
@@ -755,6 +789,10 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.populate_initial_data()
         self.selected_student_row = None
         self.selected_staff_row = None
+
+        # Automatically refresh table when checkbox is toggled
+        if hasattr(self, "showArchivedCheckBox"):
+            self.showArchivedCheckBox.stateChanged.connect(self.populate_attendance_data)
 
         # Center StartScreen on screen
         qr = self.frameGeometry()
@@ -787,7 +825,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.viewImages_btn.clicked.connect(self.view_selected_images)
         self.viewStaffImages_btn.clicked.connect(self.view_selected_staff_images)
         self.deleteAttendance_btn.clicked.connect(self.delete_all_attendance_records)
-
+        self.generateEmbeddings_btn.clicked.connect(self.prompt_embedding_students)
+        self.staffgenerateEmbeddings_btn.clicked.connect(self.prompt_embedding_staff)
+        self.trackAttendance_btn.clicked.connect(self.open_attendance_app)
 
         self.printStaff_btn.clicked.connect(
             lambda: self.print_table_widget(self.staffTable, "Staff List")
@@ -795,7 +835,6 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.exportPDFStaff_btn.clicked.connect(
             lambda: self.print_table_widget(self.staffTable, "Staff List", export_to_pdf=True)
         )
-
 
         self.printStudent_btn.clicked.connect(
             lambda: self.print_table_widget(self.studentList_table, "Student List")
@@ -823,6 +862,11 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.studentList_table.itemSelectionChanged.connect(
             self.get_selected_student_row
         )
+
+    def open_attendance_app(self):
+        self.attendance_app = AttendanceApp()
+        self.attendance_app.show()
+        self.close()
 
     def init_page_navigation(self):
         self.attendanceLogs_btn.clicked.connect(
@@ -919,7 +963,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.animation2.setEndValue(51)
             self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
             self.animation2.start()
-
+            
             self.Down_Menu_Num = 0
 
     def Side_Menu_Num_0(self):
@@ -967,76 +1011,153 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         def augment_image(image):
             augmented = []
             img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            for _ in range(8):
-                img_aug = img_pil.copy()
-                if random.random() > 0.5:
-                    img_aug = ImageOps.mirror(img_aug)
-                img_aug = ImageEnhance.Brightness(img_aug).enhance(
-                    random.uniform(0.8, 1.2)
-                )
-                img_aug = ImageEnhance.Contrast(img_aug).enhance(
-                    random.uniform(0.8, 1.2)
-                )
-                img_aug = img_aug.rotate(random.uniform(-10, 10))
-                augmented.append(cv2.cvtColor(np.array(img_aug), cv2.COLOR_RGB2BGR))
+
+            base_transforms = transforms.Compose([
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2),
+                transforms.RandomRotation(degrees=10),
+                transforms.RandomResizedCrop(size=img_pil.size[0], scale=(0.9, 1.0), ratio=(0.95, 1.05)),
+            ])
+
+            for _ in range(9):
+                img_aug = base_transforms(img_pil)
+                img_cv = cv2.cvtColor(np.array(img_aug), cv2.COLOR_RGB2BGR)
+                augmented.append(img_cv)
+
             return augmented
 
-        def detect_and_crop_face(image_np):
-            image_pil = Image.fromarray(cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB))
-            mtcnn = MTCNN(
-                keep_all=False, device="cuda" if torch.cuda.is_available() else "cpu"
-            )
-            boxes, probs, _ = mtcnn.detect(image_pil, landmarks=True)
-
-            if boxes is None or probs is None:
-                return []
-
-            cropped_faces = []
-            for i, (box, prob) in enumerate(zip(boxes, probs)):
-                if prob < 0.90:
-                    continue
-
-                x1, y1, x2, y2 = [int(v) for v in box]
-                w, h = x2 - x1, y2 - y1
-                margin = int(min(w, h) * 0.1)
-                x1m = max(0, x1 - margin)
-                y1m = max(0, y1 - margin)
-                x2m = min(image_np.shape[1], x2 + margin)
-                y2m = min(image_np.shape[0], y2 + margin)
-                cropped_face = image_np[y1m:y2m, x1m:x2m]
-                resized_face = cv2.resize(cropped_face, (160, 160))
-                cropped_faces.append(resized_face)
-
-            return cropped_faces
-
-        original = cv2.imread(image_path)
-        if original is None:
-            return
-
-        faces = detect_and_crop_face(original)
-        if not faces:
+        # Load original image
+        image = cv2.imread(image_path)
+        if image is None:
+            print(f"Failed to load image: {image_path}")
             return
 
         base = os.path.splitext(os.path.basename(image_path))[0]
-        for f_idx, face in enumerate(faces):
-            filename = f"{base}_crop{f_idx+1}.jpg"
-            save_path = os.path.join(save_folder, filename)
-            cv2.imwrite(save_path, face)
+
+        # Save the original image
+        original_dst = os.path.join(save_folder, f"{base}.jpg")
+        cv2.imwrite(original_dst, image)
+        cursor.execute(
+            "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
+            (person_id, original_dst),
+        )
+
+        # Generate and save augmentations
+        augmented_images = augment_image(image)
+        for i, aug_img in enumerate(augmented_images):
+            aug_path = os.path.join(save_folder, f"{base}_aug{i+1}.jpg")
+            cv2.imwrite(aug_path, aug_img)
             cursor.execute(
                 "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                (person_id, save_path),
+                (person_id, aug_path),
             )
+    def generate_embeddings_for_ids(self, person_ids, progress_callback=None):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.mtcnn = MTCNN(keep_all=False, device=device)
+        self.embedder = InceptionResnetV1(pretrained="vggface2").eval().to(device)
 
-            # Now augment this cropped face
-            augmented_faces = augment_image(face)
-            for i, aug in enumerate(augmented_faces):
-                aug_name = f"{base}_crop{f_idx+1}_aug{i+1}.jpg"
-                aug_path = os.path.join(save_folder, aug_name)
-                cv2.imwrite(aug_path, aug)
+        conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT person_id, first_name, middle_name, last_name FROM Person WHERE person_id IN ({})".format(
+                ",".join(["?"] * len(person_ids))
+            ),
+            person_ids,
+        )
+        person_info = {row[0]: f"{row[1]} {row[2]} {row[3]}".strip().replace("  ", " ") for row in cursor.fetchall()}
+
+        total = sum([cursor.execute("SELECT COUNT(*) FROM FaceImages WHERE person_id = ?", (pid,)).fetchone()[0] for pid in person_ids])
+
+        face_batches = []
+        person_ids_per_face = []
+        count = 0
+        batch_size = 16
+        saved_crops = {} 
+
+        for pid in person_ids:
+            cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (pid,))
+            image_paths = [row[0] for row in cursor.fetchall()]
+
+            for img_path in image_paths:
+
+                if progress_callback:
+                    progress_callback(count)
+                QtWidgets.QApplication.processEvents()
+
+                if not os.path.exists(img_path):
+                    count += 1
+                    continue
+
+                img = cv2.imread(img_path)
+                if img is None:
+                    count += 1
+                    continue
+
+                try:
+                    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    img_pil = Image.fromarray(img_rgb)
+                    face = self.mtcnn(img_pil)
+
+                    if face is None:
+                        print(f"❌ No face detected in {img_path}")
+                        count += 1
+                        continue
+
+                    # Convert and save cropped face to debug folder
+                    person_name = person_info.get(pid, f"Person_{pid}")
+                    debug_dir = os.path.join("debug_crops", person_name)
+                    os.makedirs(debug_dir, exist_ok=True)
+
+                    # Track how many we've saved
+                    if pid not in saved_crops:
+                        saved_crops[pid] = 0
+
+                    # Save crop as "crop_0.jpg", "crop_1.jpg", etc.
+                    crop_np = face.permute(1, 2, 0).mul(255).byte().cpu().numpy()
+                    crop_bgr = cv2.cvtColor(crop_np, cv2.COLOR_RGB2BGR)
+                    crop_path = os.path.join(debug_dir, f"crop_{saved_crops[pid]}.jpg")
+                    cv2.imwrite(crop_path, crop_bgr)
+                    saved_crops[pid] += 1
+
+                    face_batches.append(face.to(device))
+                    person_ids_per_face.append(pid)
+                    count += 1
+
+                    if len(face_batches) >= batch_size:
+                        self._embed_and_insert(face_batches, person_ids_per_face, self.embedder, cursor, device)
+                        face_batches.clear()
+                        person_ids_per_face.clear()
+
+                except Exception as e:
+                    print(f"❌ Error processing {img_path}: {e}")
+                    count += 1
+
+        if face_batches:
+            self._embed_and_insert(face_batches, person_ids_per_face, self.embedder, cursor, device)
+
+        if progress_callback:
+            progress_callback(total)
+
+        conn.commit()
+        conn.close()
+
+    def _embed_and_insert(self, face_batch, person_id_list, embedder, cursor, device):
+        try:
+            batch_tensor = torch.stack(face_batch).to(device)
+            with torch.no_grad():
+                embeddings = embedder(batch_tensor).cpu().numpy()
+            embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+
+            for i, emb in enumerate(embeddings):
                 cursor.execute(
-                    "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                    (person_id, aug_path),
+                    "INSERT INTO FaceEmbeddings (person_id, embedding_vector) VALUES (?, ?)",
+                    (person_id_list[i], str(emb.tolist())),
                 )
+        except Exception as e:
+            print(f"❌ Batch embedding failed: {e}")
+
 
     def view_selected_images(self):
         if self.selected_student_row is None:
@@ -1051,6 +1172,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         person_id = person_id_item.text()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT image_path FROM FaceImages WHERE person_id = ?", (person_id,))
         images = cursor.fetchall()
@@ -1060,10 +1182,16 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.information(self, "No Images", "No images found for this person.")
             return
 
-        image_paths = [img[0] for img in images]
+        # Get the directory of the first image path
+        first_image_path = images[0][0]
+        image_folder = os.path.dirname(os.path.abspath(first_image_path))
 
-        viewer = ImageViewerDialog(image_paths)
-        viewer.exec_()
+        if not os.path.isdir(image_folder):
+            QMessageBox.warning(self, "Folder Not Found", "The image folder does not exist.")
+            return
+
+        # ✅ Open the folder in File Explorer
+        subprocess.Popen(f'explorer "{image_folder}"')
 
     def view_selected_staff_images(self):
         selected_row = self.staffTable.currentRow()
@@ -1079,6 +1207,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         staff_id = int(staff_id_item.text())
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         # Fetch the corresponding person_id
@@ -1099,15 +1228,24 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             QMessageBox.information(self, "No Images", "No images found for this staff.")
             return
 
-        image_paths = [img[0] for img in images]
-        viewer = ImageViewerDialog(image_paths)
-        viewer.exec_()
+        # Use the first image to locate the folder
+        first_image_path = images[0][0]
+        image_folder = os.path.dirname(os.path.abspath(first_image_path))
+
+        if not os.path.isdir(image_folder):
+            QMessageBox.warning(self, "Folder Not Found", "The image folder does not exist.")
+            return
+
+        # ✅ Open folder in File Explorer (Windows)
+        subprocess.Popen(f'explorer "{image_folder}"')
+
 
     def populate_studentList_data(self):
         selected_strand = self.strandFilter.currentText()
         selected_grade = self.gradeFilter.currentText()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         base_query = """
@@ -1190,6 +1328,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         selected_department = self.departmentFilter.currentText()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         base_query = """
@@ -1304,7 +1443,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         if hasattr(self, "noStaffLabel"):
             self.noStaffLabel.setVisible(len(searched_data) == 0)
             if len(searched_data) == 0:
-                self.noStaffLabel.setText("🔍 No matching staff found.")
+                self.noStaffLabel.setText("🔍No matching staff found.")
 
     def search_student_list(self):
         search_text = self.studentList_searchBar.text().strip().lower()
@@ -1321,10 +1460,11 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         if hasattr(self, "studentNoDataLabel"):
             self.studentNoDataLabel.setVisible(len(searched_data) == 0)
             if len(searched_data) == 0:
-                self.studentNoDataLabel.setText("🔍 No matching student found.")
+                self.studentNoDataLabel.setText("🔍No matching student found.")
 
     def setup_strand_filter(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT strand_name FROM Strand ORDER BY strand_name ASC")
         strands = [row[0] for row in cursor.fetchall()]
@@ -1340,6 +1480,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
     def setup_grade_filter(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT grade_level FROM GradeLevel ORDER BY grade_level ASC")
         grades = [str(row[0]) for row in cursor.fetchall()]
@@ -1355,6 +1496,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
     def setup_department_filter(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT department_name FROM Department ORDER BY department_name ASC"
@@ -1385,7 +1527,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                 table.setItem(row_index, col_index, item)
 
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
-            header_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            header_item.setTextAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
         # Hides the person_id column
@@ -1398,36 +1540,36 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             data = dialog.get_student_data()
 
-            if not all(
-                [
-                    data["first_name"],
-                    data["last_name"],
-                    data["image_folder"],
-                    data["profile_image"],
-                ]
+            if (
+                not data["first_name"] or
+                not data["last_name"] or
+                not data["profile_image"] or
+                (not data.get("image_folder") and not data.get("captured_folder"))
             ):
                 QMessageBox.warning(
                     self,
                     "Missing Info",
-                    "All fields including images must be provided.",
+                    "All fields including at least one set of images (upload or camera) must be provided.",
                 )
                 return
 
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
 
             # 1. Insert person record first with temporary profile path
             cursor.execute(
                 """
-                INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url)
-                VALUES (?, ?, ?, ?, ?)
-            """,
+                INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url, role)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
                 (
                     data["first_name"],
                     data["middle_name"],
                     data["last_name"],
                     data["gender"],
                     "temp",
+                    "Student",
                 ),
             )
             person_id = cursor.lastrowid
@@ -1450,7 +1592,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             )
             conn.commit()
 
-            # 3. Save images
+            # 3. Prepare image saving folders
             student_folder = " ".join(
                 part
                 for part in [data["first_name"], data["middle_name"], data["last_name"]]
@@ -1459,88 +1601,134 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             face_folder = os.path.join("images/student", student_folder)
             os.makedirs(face_folder, exist_ok=True)
 
-            # Copy profile image
-            profile_dst = os.path.join(face_folder, "profile.jpg")
-            if not os.path.samefile(
-                os.path.dirname(data["profile_image"]), face_folder
-            ):
-                shutil.copy(data["profile_image"], profile_dst)
-            else:
-                # Rename if already in same folder
-                src = data["profile_image"]
+            # 4. Gather all image paths from both sources (excluding profile image)
+            image_paths = set()
+            if data.get("captured_folder"):
+                for file in os.listdir(data["captured_folder"]):
+                    src = os.path.join(data["captured_folder"], file)
+                    if os.path.isfile(src):
+                        image_paths.add(src)
+            if data.get("image_folder"):
+                for file in os.listdir(data["image_folder"]):
+                    src = os.path.join(data["image_folder"], file)
+                    if os.path.isfile(src):
+                        image_paths.add(src)
+
+            # --- Progress Dialog and Worker for Augmentation ---
+            class StudentImageAugmentWorker(QtCore.QThread):
+                progress = QtCore.pyqtSignal(int)
+                done = QtCore.pyqtSignal(str)
+
+                def __init__(self, image_paths, profile_image, face_folder, person_id, augment_fn):
+                    super().__init__()
+                    self.image_paths = list(image_paths)
+                    self.profile_image = profile_image
+                    self.face_folder = face_folder
+                    self.person_id = person_id
+                    self.augment_fn = augment_fn
+
+                def run(self):
+                    try:
+                        conn = sqlite3.connect("recognition.db")
+                        conn.execute("PRAGMA journal_mode=WAL;")
+                        cursor = conn.cursor()
+                        total = len(self.image_paths)
+                        count = 0
+                        for idx, src in enumerate(self.image_paths):
+                            try:
+                                if os.path.samefile(src, self.profile_image):
+                                    continue
+                            except Exception:
+                                pass
+                            dst = os.path.join(self.face_folder, os.path.basename(src))
+                            shutil.copy(src, dst)
+                            cursor.execute(
+                                "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
+                                (self.person_id, dst),
+                            )
+                            self.augment_fn(dst, self.face_folder, self.person_id, cursor)
+                            count += 1
+                            self.progress.emit(int(100 * count / total) if total else 100)
+                        conn.commit()
+                        conn.close()
+                        self.done.emit("All images processed and augmented.")
+                    except Exception as e:
+                        self.done.emit(f"Failed: {e}")
+
+            progress_dialog = QProgressDialog("Processing and augmenting images...", "Cancel", 0, 100, self)
+            progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            progress_dialog.setWindowTitle("Adding Student")
+            progress_dialog.setValue(0)
+            progress_dialog.show()
+
+            worker = StudentImageAugmentWorker(
+                image_paths, data["profile_image"], face_folder, person_id, self.augment_and_save_images
+            )
+            self.student_augment_worker = worker 
+            worker.progress.connect(progress_dialog.setValue)
+            progress_dialog.canceled.connect(worker.terminate)
+
+            def on_done(msg):
+                # Copy the profile image as profile.jpg (after augmenting others)
                 profile_dst = os.path.join(face_folder, "profile.jpg")
-                if src != profile_dst:
-                    os.rename(src, profile_dst)
+                shutil.copy(data["profile_image"], profile_dst)
+                cursor.execute(
+                    "UPDATE Person SET profile_image_url = ? WHERE person_id = ?",
+                    (profile_dst, person_id),
+                )
+                conn.commit()
+                conn.close()
+                progress_dialog.close()
+                QMessageBox.information(self, "Added", "Student successfully added.")
+                self.populate_studentList_data()
+                # Clean up temp captures
+                if os.path.exists("temp_captures"):
+                    shutil.rmtree("temp_captures", ignore_errors=True)
+                self.student_augment_worker = None
 
-            # ✅ Update correct profile_image_url path
-            cursor.execute(
-                "UPDATE Person SET profile_image_url = ? WHERE person_id = ?",
-                (profile_dst, person_id),
-            )
-
-            # Add to FaceImages table
-            cursor.execute(
-                "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                (person_id, profile_dst),
-            )
-
-            self.augment_and_save_images(profile_dst, face_folder, person_id, cursor)
-
-            # 4. Copy all other images from folder
-            for file in os.listdir(data["image_folder"]):
-                src = os.path.join(data["image_folder"], file)
-                if os.path.isfile(src):
-                    # Don’t re-copy the profile image if it's the same
-                    if os.path.samefile(src, data["profile_image"]):
-                        continue
-
-                    dst = os.path.join(face_folder, file)
-                    shutil.copy(src, dst)
-                    cursor.execute(
-                        "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                        (person_id, dst),
-                    )
-
-                    self.augment_and_save_images(dst, face_folder, person_id, cursor)
-
-            conn.commit()
-            conn.close()
-
-            QMessageBox.information(self, "Added", "Student successfully added.")
-            self.populate_studentList_data()
-
-            # Trigger embedding generation
-            self.generate_embeddings_from_face_images("recognition.db")
+            worker.done.connect(on_done)
+            worker.start()
 
     def open_add_staff_dialog(self):
         dialog = AddStaffDialog(self)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             data = dialog.get_staff_data()
 
-            if not all([data["first_name"], data["last_name"], data["profile_image"]]):
+            if (
+                not data["first_name"] or
+                not data["last_name"] or
+                not data["profile_image"] or
+                (not data.get("image_folder") and not data.get("captured_folder"))
+            ):
                 QMessageBox.warning(
-                    self, "Missing Info", "Name and profile image are required."
+                    self,
+                    "Missing Info",
+                    "All fields including at least one set of images (upload or camera) must be provided.",
                 )
                 return
 
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
 
+            # Insert Person record first
             cursor.execute(
                 """
-                INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url)
-                VALUES (?, ?, ?, ?, ?)
-            """,
+                INSERT INTO Person (first_name, middle_name, last_name, gender, profile_image_url, role)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
                 (
                     data["first_name"],
                     data["middle_name"],
                     data["last_name"],
                     data["gender"],
                     "temp",
+                    "Staff",
                 ),
             )
             person_id = cursor.lastrowid
 
+            # Get department id
             cursor.execute(
                 "SELECT department_id FROM Department WHERE department_name = ?",
                 (data["department"],),
@@ -1551,52 +1739,204 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                 "INSERT INTO StaffDetails (person_id, department_id) VALUES (?, ?)",
                 (person_id, department_id),
             )
+            conn.commit()
 
-            folder_name = " ".join(
+            staff_folder = " ".join(
                 part
                 for part in [data["first_name"], data["middle_name"], data["last_name"]]
                 if part.strip()
             )
-            folder_path = os.path.join("images/staff", folder_name)
-            os.makedirs(folder_path, exist_ok=True)
+            face_folder = os.path.join("images/staff", staff_folder)
+            os.makedirs(face_folder, exist_ok=True)
 
-            profile_dst = os.path.join(folder_path, "profile.jpg")
-            shutil.copy(data["profile_image"], profile_dst)
-
-            cursor.execute(
-                "UPDATE Person SET profile_image_url = ? WHERE person_id = ?",
-                (profile_dst, person_id),
-            )
-            cursor.execute(
-                "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                (person_id, profile_dst),
-            )
-
-            self.augment_and_save_images(profile_dst, folder_path, person_id, cursor)
-
-            if data["image_folder"]:
+            # Gather all image paths (excluding profile image)
+            image_paths = set()
+            if data.get("captured_folder"):
+                for file in os.listdir(data["captured_folder"]):
+                    src = os.path.join(data["captured_folder"], file)
+                    if os.path.isfile(src):
+                        image_paths.add(src)
+            if data.get("image_folder"):
                 for file in os.listdir(data["image_folder"]):
                     src = os.path.join(data["image_folder"], file)
                     if os.path.isfile(src):
-                        if os.path.samefile(src, data["profile_image"]):
-                            continue
-                        dst = os.path.join(folder_path, file)
-                        shutil.copy(src, dst)
-                        cursor.execute(
-                            "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
-                            (person_id, dst),
-                        )
-                        self.augment_and_save_images(
-                            dst, folder_path, person_id, cursor
-                        )
+                        image_paths.add(src)
 
-            conn.commit()
-            conn.close()
+            # --- Progress Dialog and Worker for Augmentation ---
+            class StaffImageAugmentWorker(QtCore.QThread):
+                progress = QtCore.pyqtSignal(int)
+                done = QtCore.pyqtSignal(str)
 
-            self.populate_staff_table()
-            QMessageBox.information(self, "Added", "Staff added successfully.")
-            self.generate_embeddings_from_face_images("recognition.db")
+                def __init__(self, image_paths, profile_image, face_folder, person_id, augment_fn):
+                    super().__init__()
+                    self.image_paths = list(image_paths)
+                    self.profile_image = profile_image
+                    self.face_folder = face_folder
+                    self.person_id = person_id
+                    self.augment_fn = augment_fn
 
+                def run(self):
+                    try:
+                        conn = sqlite3.connect("recognition.db")
+                        conn.execute("PRAGMA journal_mode=WAL;")
+                        cursor = conn.cursor()
+                        total = len(self.image_paths)
+                        count = 0
+                        for idx, src in enumerate(self.image_paths):
+                            try:
+                                if os.path.samefile(src, self.profile_image):
+                                    continue
+                            except Exception:
+                                pass
+                            dst = os.path.join(self.face_folder, os.path.basename(src))
+                            shutil.copy(src, dst)
+                            cursor.execute(
+                                "INSERT INTO FaceImages (person_id, image_path) VALUES (?, ?)",
+                                (self.person_id, dst),
+                            )
+                            self.augment_fn(dst, self.face_folder, self.person_id, cursor)
+                            count += 1
+                            self.progress.emit(int(100 * count / total) if total else 100)
+                        conn.commit()
+                        conn.close()
+                        self.done.emit("All images processed and augmented.")
+                    except Exception as e:
+                        self.done.emit(f"Failed: {e}")
+
+            progress_dialog = QProgressDialog("Processing and augmenting images...", "Cancel", 0, 100, self)
+            progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            progress_dialog.setWindowTitle("Adding Staff")
+            progress_dialog.setValue(0)
+            progress_dialog.show()
+
+            worker = StaffImageAugmentWorker(
+                image_paths, data["profile_image"], face_folder, person_id, self.augment_and_save_images
+            )
+            self.staff_augment_worker = worker
+            worker.progress.connect(progress_dialog.setValue)
+            progress_dialog.canceled.connect(worker.terminate)
+
+            def on_done(msg):
+                # Copy the profile image as profile.jpg (after augmenting others)
+                profile_dst = os.path.join(face_folder, "profile.jpg")
+                shutil.copy(data["profile_image"], profile_dst)
+                cursor.execute(
+                    "UPDATE Person SET profile_image_url = ? WHERE person_id = ?",
+                    (profile_dst, person_id),
+                )
+                conn.commit()
+                conn.close()
+                progress_dialog.close()
+                QMessageBox.information(self, "Added", "Staff successfully added.")
+                self.populate_staff_table()
+                # Clean up temp captures
+                if os.path.exists("temp_captures"):
+                    shutil.rmtree("temp_captures", ignore_errors=True)
+                self.staff_augment_worker = None
+
+            worker.done.connect(on_done)
+            worker.start()
+
+
+    def get_unembedded_staff(self):
+        conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.person_id, p.first_name, p.middle_name, p.last_name
+            FROM Person p
+            WHERE p.role = 'Staff'
+            AND p.person_id IN (
+                SELECT DISTINCT fi.person_id FROM FaceImages fi
+            )
+            AND p.person_id NOT IN (
+                SELECT DISTINCT fe.person_id FROM FaceEmbeddings fe
+            )
+        """)
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    
+    def prompt_embedding_staff(self):
+        staff = self.get_unembedded_staff()
+        if not staff:
+            QMessageBox.information(self, "No Pending Embeddings", "All staff already have embeddings.")
+            return
+
+        names = [f"{s[1]} {s[2]} {s[3]}" if s[2] else f"{s[1]} {s[3]}" for s in staff]
+        display_text = "Staff without embeddings:\n\n" + "\n".join(names)
+
+        reply = QMessageBox.question(
+            self, "Generate Staff Embeddings",
+            display_text + "\n\nProceed to generate?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.progress_dialog = QProgressDialog("Generating embeddings...", "Cancel", 0, 100, self)
+            self.progress_dialog.setWindowModality(Qt.NonModal)
+            self.progress_dialog.setWindowTitle("Progress")
+            self.progress_dialog.show()
+
+            self.worker = EmbeddingWorker(self, [s[0] for s in staff])
+            self.worker.progress.connect(self.progress_dialog.setValue)
+            self.worker.done.connect(self.on_embedding_done)
+            self.progress_dialog.canceled.connect(self.worker.terminate)
+            self.worker.start()
+
+    def get_unembedded_students(self):
+        conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT p.person_id, p.first_name, p.middle_name, p.last_name
+            FROM Person p
+            WHERE p.role = 'Student'
+            AND p.person_id IN (
+                SELECT DISTINCT fi.person_id FROM FaceImages fi
+            )
+            AND p.person_id NOT IN (
+                SELECT DISTINCT fe.person_id FROM FaceEmbeddings fe
+            )
+        """)
+
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    
+    def prompt_embedding_students(self):
+        students = self.get_unembedded_students()
+        if not students:
+            QMessageBox.information(self, "No Pending Embeddings", "All students already have embeddings.")
+            return
+
+        names = [f"{s[1]} {s[2]} {s[3]}" if s[2] else f"{s[1]} {s[3]}" for s in students]
+        display_text = "Students without embeddings:\n\n" + "\n".join(names)
+
+        reply = QMessageBox.question(
+            self, "Generate Student Embeddings",
+            display_text + "\n\nProceed to generate?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.progress_dialog = QProgressDialog("Generating embeddings...", "Cancel", 0, 100, self)
+            self.progress_dialog.setWindowModality(Qt.NonModal)
+            self.progress_dialog.setWindowTitle("Progress")
+            self.progress_dialog.show()
+
+            self.worker = EmbeddingWorker(self, [s[0] for s in students])
+            self.worker.progress.connect(self.progress_dialog.setValue)
+            self.worker.done.connect(self.on_embedding_done)
+            self.progress_dialog.canceled.connect(self.worker.terminate)
+            self.worker.start()
+            
+
+    def on_embedding_done(self, message):
+        self.progress_dialog.close()
+        QMessageBox.information(self, "Status", message)
+        
     def print_table_widget(self, table_widget, title, export_to_pdf=False):
         printer = QPrinter(QPrinter.HighResolution)
 
@@ -1700,7 +2040,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         reply = QMessageBox.question(
             self,
             "Confirm Deletion",
-            "Are you sure you want to delete ALL attendance records? This action cannot be undone.",
+            "Are you sure you want to delete ALL attendance records? They will be moved to the archive and can still be viewed later.",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
@@ -1708,8 +2048,9 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         if reply == QMessageBox.Yes:
             try:
                 conn = sqlite3.connect("recognition.db")
+                conn.execute("PRAGMA journal_mode=WAL;")
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM AttendanceRecords")
+                cursor.execute("UPDATE AttendanceRecords SET archived = 1 WHERE archived = 0")
                 conn.commit()
                 conn.close()
 
@@ -1726,6 +2067,36 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             self.attendanceTableWidget, "Attendance Records", export_to_pdf=True
         )
 
+    def view_unembedded_images(self):
+        conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
+        cursor = conn.cursor()
+
+        # Get person_ids that already have embeddings
+        cursor.execute("SELECT DISTINCT person_id FROM FaceEmbeddings")
+        embedded_ids = {row[0] for row in cursor.fetchall()}
+
+        # Get images of people who don't yet have embeddings
+        cursor.execute("""
+            SELECT DISTINCT image_path
+            FROM FaceImages
+            WHERE person_id NOT IN (
+                SELECT DISTINCT person_id FROM FaceEmbeddings
+            )
+        """)
+        image_rows = cursor.fetchall()
+        conn.close()
+
+        if not image_rows:
+            QMessageBox.information(self, "No Pending Embeddings", "All face images already have embeddings.")
+            return
+
+        # Collect unique folders
+        folders = {os.path.dirname(path[0]) for path in image_rows if os.path.exists(path[0])}
+
+        # Open all folders
+        for folder in folders:
+            subprocess.Popen(f'explorer "{folder}"')
 
     def generate_embeddings_from_face_images(self, db_path="recognition.db"):
         embedder = InceptionResnetV1(pretrained="vggface2").eval()
@@ -1828,6 +2199,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
             # --- DATABASE UPDATE ---
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
 
             cursor.execute(
@@ -1893,6 +2265,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         department = self.staffTable.item(selected_row, 3).text()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT person_id FROM StaffDetails WHERE staff_id = ?",
@@ -1979,6 +2352,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             return
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         # Backup name, grade, and strand to AttendanceRecords
@@ -2055,6 +2429,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             return
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         # Get person_id
@@ -2112,9 +2487,16 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
     def populate_attendance_data(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
-        cursor.execute(
-            """
+
+        show_archived = (
+        hasattr(self, "showArchivedCheckBox")
+        and self.showArchivedCheckBox.isChecked()
+        )
+        where_clause = "a.archived = 1" if show_archived else "a.archived = 0"
+
+        query = f"""
             SELECT 
                 COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
                 COALESCE(a.grade_level, g.grade_level) AS grade,
@@ -2129,9 +2511,10 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
             LEFT JOIN StaffDetails st ON st.person_id = a.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
+            WHERE {where_clause}
             ORDER BY a.attendance_id DESC
             """
-        )
+        cursor.execute(query)
         data = cursor.fetchall()
         conn.close()
 
@@ -2189,7 +2572,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
                 table.setItem(row_index, col_index, item)
 
             header_item = QtWidgets.QTableWidgetItem(str(row_index + 1))
-            header_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            header_item.setTextAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
             table.setVerticalHeaderItem(row_index, header_item)
 
         # Adjust column widths
@@ -2228,7 +2611,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         self.refresh_table(filtered_data)
         self.noDataLabel.setVisible(len(filtered_data) == 0)
         if len(filtered_data) == 0:
-            self.noDataLabel.setText("🔍 No matching records found.")
+            self.noDataLabel.setText("🔍No matching records found.")
             self.noDataLabel.setVisible(True)
             self.attendanceTableWidget.setVisible(False)
         else:
@@ -2244,6 +2627,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
 
     def populate_admin_table(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         cursor.execute(
@@ -2327,6 +2711,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         password_hash = hashlib.sha256(new_pass.encode()).hexdigest()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "UPDATE Admin SET password_hash = ? WHERE admin_id = ?",
@@ -2362,6 +2747,7 @@ class SuperAdminDashboard(QtWidgets.QMainWindow):
         admin_id = self.admin_ids[selected_row]
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("DELETE FROM Admin WHERE admin_id = ?", (admin_id,))
         conn.commit()
@@ -2457,6 +2843,7 @@ class ChangeCredentialsDialog(QtWidgets.QDialog):
     def load_username(self):
         """Pre-fill the username field with the currently logged-in admin's username."""
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT username FROM Admin WHERE admin_id = ?", (self.current_admin_id,)
@@ -2485,6 +2872,7 @@ class ChangeCredentialsDialog(QtWidgets.QDialog):
         hashed_new = hashlib.sha256(new_pass.encode()).hexdigest()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         # Get current stored data
@@ -2562,6 +2950,10 @@ class AddStudentDialog(QtWidgets.QDialog):
         self.animation.start()
 
         # Button connections
+        self.cameraButton.clicked.connect(self.take_picture)
+        self.cameraButton_2.clicked.connect(self.take_multiple_pictures)
+        self.viewProfileImage.clicked.connect(self.view_profile_image)
+        self.viewUploadedImages.clicked.connect(self.open_image_folder)
         self.imagesUpload_btn.clicked.connect(self.select_image_folder)
         self.profileImageUpload_btn.clicked.connect(self.select_profile_image)
 
@@ -2569,6 +2961,7 @@ class AddStudentDialog(QtWidgets.QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
         self.image_folder = ""
+        self.captured_folder = ""
         self.profile_image_path = ""
 
         self.genderComboBox.addItems(["Male", "Female"])
@@ -2596,8 +2989,111 @@ class AddStudentDialog(QtWidgets.QDialog):
             self.profile_image_path = file
             self.profileImageUpload_btn.setText("Selected")
 
+    def take_picture(self):
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            QtWidgets.QMessageBox.critical(self, "Error", "Cannot access the webcam.")
+            return
+
+        QtWidgets.QMessageBox.information(self, "Camera", "Press 's' to take photo, or 'q' to cancel.")
+        
+        # ✅ Create shared folder if not already created
+        if not self.captured_folder:
+            self.captured_folder = f"temp_captures/student_images_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            os.makedirs(self.captured_folder, exist_ok=True)
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            cv2.imshow("Camera", frame)
+            key = cv2.waitKey(1)
+            if key == ord("s"):
+                path = os.path.join(self.captured_folder, "profile.jpg")
+                cv2.imwrite(path, frame)
+                self.profile_image_path = path
+                self.viewProfileImage.setText("Captured")
+                break
+            elif key == ord("q"):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+    def take_multiple_pictures(self):
+        if not self.captured_folder:
+            self.captured_folder = f"temp_captures/student_images_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            os.makedirs(self.captured_folder, exist_ok=True)
+
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            QtWidgets.QMessageBox.critical(self, "Error", "Cannot open webcam.")
+            return
+
+        count = 0
+        QtWidgets.QMessageBox.information(self, "Instructions", "Press 's' to save image, 'q' to finish.")
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            cv2.putText(frame, f"Images Captured: {count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.imshow("Capture Images", frame)
+            key = cv2.waitKey(1)
+            if key == ord("s"):
+                filename = os.path.join(self.captured_folder, f"img_{count}.jpg")
+                cv2.imwrite(filename, frame)
+                count += 1
+            elif key == ord("q"):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+        if count > 0:
+            self.viewUploadedImages.setProperty("folderType", "captured")
+            self.viewUploadedImages.setText(f"{count} Captured")
+        else:
+            QtWidgets.QMessageBox.information(self, "No Images", "No images were captured.")
+
+
+    def view_profile_image(self):
+        if not os.path.isfile(self.profile_image_path):
+            QtWidgets.QMessageBox.warning(self, "Not Found", "No profile image selected.")
+            return
+
+        try:
+            os.startfile(os.path.abspath(self.profile_image_path))
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Error", f"Failed to open image:\n{e}")
+
+
+    def open_image_folder(self):
+        folder_type = self.viewUploadedImages.property("folderType")
+        folder_to_open = None
+
+        if folder_type == "captured" and self.captured_folder:
+            folder_to_open = self.captured_folder
+        elif self.image_folder:
+            folder_to_open = self.image_folder
+
+        if not folder_to_open:
+            QtWidgets.QMessageBox.warning(self, "Invalid", "No folder selected.")
+            return
+
+        folder_to_open = os.path.abspath(folder_to_open)
+
+
+        if not os.path.isdir(folder_to_open):
+            QtWidgets.QMessageBox.warning(self, "Invalid", "Folder does not exist.")
+            return
+
+        subprocess.Popen(f'explorer \"{folder_to_open}\"')
+
     def load_comboboxes(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         cursor.execute("SELECT strand_name FROM Strand ORDER BY strand_name")
@@ -2616,11 +3112,11 @@ class AddStudentDialog(QtWidgets.QDialog):
             "gender": self.genderComboBox.currentText(),
             "strand": self.strandComboBox.currentText(),
             "grade": self.gradeComboBox.currentText(),
-            "image_folder": self.image_folder,
+            "image_folder": self.image_folder,           
+            "captured_folder": self.captured_folder,     
             "profile_image": self.profile_image_path,
         }
-
-
+    
 class AddStaffDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(AddStaffDialog, self).__init__(parent)
@@ -2637,13 +3133,19 @@ class AddStaffDialog(QtWidgets.QDialog):
         self.animation.start()
 
         self.image_folder = ""
+        self.captured_folder = ""
         self.profile_image_path = ""
 
         self.genderComboBox.addItems(["Male", "Female"])
         self.load_comboboxes()
 
-        self.imagesUpload_btn.clicked.connect(self.select_image_folder)
-        self.profileImageUpload_btn.clicked.connect(self.select_profile_image)
+        self.staffCameraButton.clicked.connect(self.take_picture)
+        self.staffCameraButton2.clicked.connect(self.take_multiple_pictures)
+        self.staffviewProfileImage.clicked.connect(self.view_profile_image)
+        self.staffviewUploadedImages.clicked.connect(self.open_image_folder)
+        self.staffImagesUpload_btn.clicked.connect(self.select_image_folder)
+        self.staffprofileImageUpload_btn.clicked.connect(self.select_profile_image)
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
@@ -2659,7 +3161,7 @@ class AddStaffDialog(QtWidgets.QDialog):
         )
         if folder:
             self.image_folder = folder
-            self.imagesUpload_btn.setText("Selected")
+            self.staffImagesUpload_btn.setText("Selected")
 
     def select_profile_image(self):
         file, _ = QFileDialog.getOpenFileName(
@@ -2667,10 +3169,95 @@ class AddStaffDialog(QtWidgets.QDialog):
         )
         if file:
             self.profile_image_path = file
-            self.profileImageUpload_btn.setText("Selected")
+            self.staffprofileImageUpload_btn.setText("Selected")
 
+    def take_picture(self):
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            QtWidgets.QMessageBox.critical(self, "Error", "Cannot access the webcam.")
+            return
+
+        QtWidgets.QMessageBox.information(self, "Camera", "Press 's' to take photo, or 'q' to cancel.")
+        
+        # Create a shared capture folder first
+        if not self.captured_folder:
+            self.captured_folder = f"temp_captures/staff_images_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            os.makedirs(self.captured_folder, exist_ok=True)
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            cv2.imshow("Camera", frame)
+            key = cv2.waitKey(1)
+            if key == ord("s"):
+                # Save profile image inside the same folder as other staff images
+                path = os.path.join(self.captured_folder, "profile.jpg")
+                cv2.imwrite(path, frame)
+                self.profile_image_path = path
+                self.staffviewProfileImage.setText("Captured")
+                break
+            elif key == ord("q"):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+    def take_multiple_pictures(self):
+        temp_dir = f"temp_captures/staff_images_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        os.makedirs(temp_dir, exist_ok=True)
+
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            QtWidgets.QMessageBox.critical(self, "Error", "Cannot open webcam.")
+            return
+
+        count = 0
+        QtWidgets.QMessageBox.information(self, "Instructions", "Press 's' to save image, 'q' to finish.")
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            cv2.putText(frame, f"Images Captured: {count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.imshow("Capture Staff Images", frame)
+            key = cv2.waitKey(1)
+            if key == ord("s"):
+                filename = os.path.join(temp_dir, f"img_{count}.jpg")
+                cv2.imwrite(filename, frame)
+                count += 1
+            elif key == ord("q"):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+        if count > 0:
+            self.captured_folder = temp_dir
+            self.staffviewUploadedImages.setProperty("folderType", "captured")
+            self.staffviewUploadedImages.setText(f"{count} Captured")
+        else:
+            QtWidgets.QMessageBox.information(self, "No Images", "No images were captured.")
+
+    def view_profile_image(self):
+        if not os.path.isfile(self.profile_image_path):
+            QMessageBox.warning(self, "Not Found", "No profile image selected.")
+            return
+        os.startfile(os.path.abspath(self.profile_image_path))
+
+    def open_image_folder(self):
+        folder_type = self.staffviewUploadedImages.property("folderType")
+        folder_to_open = self.captured_folder if folder_type == "captured" else self.image_folder
+
+        if not folder_to_open or not os.path.isdir(folder_to_open):
+            QMessageBox.warning(self, "Invalid", "No folder selected or does not exist.")
+            return
+
+        subprocess.Popen(f'explorer "{os.path.abspath(folder_to_open)}"')
+    
     def load_comboboxes(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT department_name FROM Department ORDER BY department_name"
@@ -2686,8 +3273,10 @@ class AddStaffDialog(QtWidgets.QDialog):
             "gender": self.genderComboBox.currentText(),
             "department": self.departmentComboBox.currentText(),
             "image_folder": self.image_folder,
+            "captured_folder": self.captured_folder,
             "profile_image": self.profile_image_path,
         }
+
 
 
 class UpdateStudentDialog(QtWidgets.QDialog):
@@ -2746,6 +3335,7 @@ class UpdateStudentDialog(QtWidgets.QDialog):
 
     def populate_grade_combobox(self, current_value):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT grade_level FROM GradeLevel ORDER BY grade_level ASC")
         grades = [str(row[0]) for row in cursor.fetchall()]
@@ -2756,6 +3346,7 @@ class UpdateStudentDialog(QtWidgets.QDialog):
 
     def populate_strand_combobox(self, current_value):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT strand_name FROM Strand ORDER BY strand_name ASC")
         strands = [row[0] for row in cursor.fetchall()]
@@ -2809,6 +3400,7 @@ class UpdateStaffDialog(QtWidgets.QDialog):
 
     def load_departments(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT department_name FROM Department ORDER BY department_name"
@@ -2873,6 +3465,7 @@ class AddAdminDialog(QtWidgets.QDialog):
             return
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT 1 FROM Admin WHERE username = ?", (username,))
         if cursor.fetchone():
@@ -2926,6 +3519,7 @@ class UnrecognizeModule(QtWidgets.QDialog):
         self.move(qr.topLeft())
         try:
             conn = sqlite3.connect("recognition.db")
+            conn.execute("PRAGMA journal_mode=WAL;")
             cursor = conn.cursor()
             cursor.execute("SELECT grade_level FROM GradeLevel")
             self.gradeComboBox.addItems([str(row[0]) for row in cursor.fetchall()])
@@ -3079,6 +3673,7 @@ class UnrecognizeModule(QtWidgets.QDialog):
         cv2.imwrite(profile_path, face_img)
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         cursor.execute(
@@ -3129,6 +3724,7 @@ class UnrecognizeModule(QtWidgets.QDialog):
         embedder = InceptionResnetV1(pretrained="vggface2").eval()
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         cursor.execute("DELETE FROM FaceEmbeddings WHERE person_id = ?", (person_id,))
@@ -3176,18 +3772,24 @@ class UnrecognizeModule(QtWidgets.QDialog):
         def augment(img):
             augmented = []
             img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+            # Define transformation pipeline using torchvision
+            transform = transforms.Compose([
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2),
+                transforms.RandomRotation(degrees=10),
+                transforms.RandomResizedCrop(size=img_pil.size[0], scale=(0.9, 1.0), ratio=(0.95, 1.05)),
+            ])
+
             for i in range(9):
-                aug = img_pil.copy()
-                if random.random() > 0.5:
-                    aug = ImageOps.mirror(aug)
-                aug = ImageEnhance.Brightness(aug).enhance(random.uniform(0.8, 1.2))
-                aug = ImageEnhance.Contrast(aug).enhance(random.uniform(0.8, 1.2))
-                aug = aug.rotate(random.uniform(-10, 10))
+                aug = transform(img_pil)
                 aug_cv = cv2.cvtColor(np.array(aug), cv2.COLOR_RGB2BGR)
                 augmented.append(aug_cv)
+
             return augmented
 
         augmented_faces = augment(base_image)
+
         for i, aug_img in enumerate(augmented_faces):
             filename = os.path.join(folder_path, f"augmented_{i+1}.jpg")
             cv2.imwrite(filename, aug_img)
@@ -3267,14 +3869,35 @@ class AttendanceApp(QtWidgets.QMainWindow):
     def __init__(self):
         super(AttendanceApp, self).__init__()
 
-        RECOGNITION_THRESHOLD = 0.7
-        DETECTION_THRESHOLD = 0.95
+        # ⏱️ For performance evaluation
+        self.recognized_ids = set()             
+        self.false_recognized_ids = set()        
+        self.missed_attempts = set()             
+        self.total_recognitions = 0
+        self.correct_recognitions = 0
+        self.false_recognitions = 0
+        self.missed_recognitions = 0
+        self.response_times = []
+        self.min_dist_threshold = 0.6       
+
 
         # Load the Main UI
         uic.loadUi(MAIN_UI_PATH, self)
+        # Setup dynamic attendees scroll area
+        scroll_area_widget = QtWidgets.QWidget()
+        self.attendee_layout = QtWidgets.QVBoxLayout(scroll_area_widget)
+        self.attendee_layout.setContentsMargins(5, 5, 5, 5)
+        self.attendee_layout.setSpacing(10)
+        self.attendeeScrollArea.setWidget(scroll_area_widget)
+
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.last_unrecognized_time = None
+        self.last_unrecognized_box = None
 
         self.Down_Menu_Num = 0
+
+        self.admin_btn.clicked.connect(self.open_admin_login)
+        self.superAdmin_btn.clicked.connect(self.open_superadmin_login)
 
         self.toolMenu_btn.clicked.connect(lambda: self.Down_Menu_Num_0())
         self.logout_btn.clicked.connect(self.logout)
@@ -3341,6 +3964,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.move(qr.topLeft())
 
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         cursor.execute(
@@ -3354,20 +3978,34 @@ class AttendanceApp(QtWidgets.QMainWindow):
         latest = cursor.fetchone()
         conn.close()
 
-        if latest:
-            person_id, date_in, time_in = latest
-
-            self.show_profile(person_id, date_in, time_in)
-
-        # Connect login button
-        if hasattr(self, "login_btn"):
-            self.login_btn.clicked.connect(self.show_login)
-        else:
-            print("Error: 'loginButton' not found in UI!")
-
         self.dialog_shown = False
 
+    def open_admin_login(self):
+ 
+        dialog = LoginDialog()
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            role = getattr(dialog, "logged_in_role", None)
+            if role == "admin":
+                self.admin_window = AdminDashboard(return_to_start=True)
+                self.admin_window.show()
+                self.close()
+            else:
+                QtWidgets.QMessageBox.warning(self, "Login Failed", "Admin login required.")
+
+    def open_superadmin_login(self):
+
+        dialog = LoginDialog()
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            role = getattr(dialog, "logged_in_role", None)
+            if role == "super_admin":
+                self.superadmin_window = SuperAdminDashboard(current_admin_id=dialog.admin_id)
+                self.superadmin_window.show()
+                self.close()
+            else:
+                QtWidgets.QMessageBox.warning(self, "Login Failed", "Super Admin login required.")
+
     def update_frame(self):
+        start_time = datetime.datetime.now()  # ⏱️ Start timing
         ret, frame = self.camera.read()
         if not ret:
             return
@@ -3399,31 +4037,46 @@ class AttendanceApp(QtWidgets.QMainWindow):
                     min_dist = min(distances)
                     best_index = distances.index(min_dist)
 
-                    if min_dist < 0.7:  # ✅ Recognized
+                    if min_dist < self.min_dist_threshold:
                         person_id = self.known_ids[best_index]
                         if person_id not in self.recognized_ids:
+                            self.correct_recognitions += 1
+                            self.total_recognitions += 1
                             self.recognized_ids.add(person_id)
+
                             if self.mark_attendance(person_id):
-                                self.show_profile(person_id)
+                                self.display_attendee_profile(person_id)
 
                         # Reset unrecognized state
                         self.unrecognized_timer.stop()
                         self.unrecognized_detected = False
 
-                        # Draw green box and label
-                        full_name = self.get_person_name(person_id)
+                        # Compute scaled confidence: 0.5 distance = 100%, 1.2 = 0%
+                        confidence = max(0.0, min(1.0, (1.2 - min_dist) / 0.7))
+                        confidence_percent = f"{confidence * 100:.1f}%"
+
+                        if confidence <= 0.0:
+                            label_text = "Unrecognized (Low confidence)"
+                            color = (0, 0, 255)
+                        else:
+                            full_name = self.get_person_name(person_id)
+                            label_text = f"{confidence_percent} {full_name}"
+                            color = (0, 255, 0)
+
                         cv2.putText(
                             frame,
-                            full_name,
-                            (x1, y1 - 30),
+                            label_text,
+                            (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.7,
-                            (0, 255, 0),
+                            color,
                             2,
                         )
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     else:  # 🚨 Unrecognized person
+                        self.total_recognitions += 1
+                        self.missed_recognitions += 1
                         # Draw red box and label
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
                         label = "Unrecognized Person"
@@ -3453,9 +4106,24 @@ class AttendanceApp(QtWidgets.QMainWindow):
                             cv2.LINE_AA,
                         )
 
+                        now = datetime.datetime.now()
+
                         if not self.unrecognized_detected:
                             self.unrecognized_detected = True
-                            self.unrecognized_timer.start()
+                            self.last_unrecognized_time = now
+                            self.last_unrecognized_box = (x1, y1, x2, y2)
+                        else:
+                            if self._boxes_are_close((x1, y1, x2, y2), self.last_unrecognized_box):
+                                elapsed = (now - self.last_unrecognized_time).total_seconds()
+                                if elapsed >= 5 and not self.dialog_shown:
+                                    self.handle_unrecognized_timeout()
+                            else:
+                                self.unrecognized_detected = False
+                                self.last_unrecognized_time = None
+                                self.last_unrecognized_box = None
+        end_time = datetime.datetime.now()
+        elapsed = (end_time - start_time).total_seconds()
+        self.response_times.append(elapsed)
 
         # Display frame in UI
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -3472,7 +4140,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
             self.timer.stop()
             self.camera.release()
-
             dialog = UnrecognizeModule(parent=self, frame=self.last_frame)
             dialog.exec_()
 
@@ -3499,6 +4166,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
     def get_person_name(self, person_id):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT first_name || ' ' || middle_name || ' ' || last_name FROM Person WHERE person_id = ?",
@@ -3507,27 +4175,167 @@ class AttendanceApp(QtWidgets.QMainWindow):
         result = cursor.fetchone()
         conn.close()
         return result[0] if result else "Unknown"
+    
+    def display_attendee_profile(self, person_id, date_in=None, time_in=None):
+        profile_card = QtWidgets.QFrame()
+        profile_card.setFixedHeight(120)
+        profile_card.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 180);
+                border: 1px solid #aaa;
+                border-radius: 10px;
+            }
+        """)
+        layout = QtWidgets.QHBoxLayout(profile_card)
+        layout.setContentsMargins(10, 5, 10, 5)
+
+        img_label = QtWidgets.QLabel()
+        img_label.setFixedSize(80, 100)
+        img_label.setStyleSheet("border: 1px solid #ccc;")
+
+        info_label = QtWidgets.QLabel()
+        info_label.setStyleSheet("font-size: 10pt; color: #000;")
+        info_label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        info_label.setTextFormat(QtCore.Qt.RichText)
+
+        conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT first_name, middle_name, last_name, profile_image_url, role
+            FROM Person
+            WHERE person_id = ?
+        """, (person_id,))
+        person = cursor.fetchone()
+        print(f"[DEBUG] Person role: {person[4]} for ID: {person_id}")
+        if not person:
+            conn.close()
+            return
+
+        full_name = f"{person[0]} {person[1]} {person[2]}"
+        image_path = person[3]
+        role = person[4]
+
+        grade = strand = department = "N/A"
+
+        if role == "Student":
+            cursor.execute("""
+                SELECT G.grade_level, S.strand_name
+                FROM StudentDetails SD
+                LEFT JOIN GradeLevel G ON SD.grade_level_id = G.grade_level_id
+                LEFT JOIN Strand S ON SD.strand_id = S.strand_id
+                WHERE SD.person_id = ?
+            """, (person_id,))
+            details = cursor.fetchone()
+            if details:
+                grade, strand = details[0] or "N/A", details[1] or "N/A"
+
+        elif role == "Staff":
+            cursor.execute("""
+                SELECT D.department_name
+                FROM StaffDetails SD
+                LEFT JOIN Department D ON SD.department_id = D.department_id
+                WHERE SD.person_id = ?
+            """, (person_id,))
+            details = cursor.fetchone()
+            if details:
+                department = details[0] or "N/A"
+
+        conn.close()
+
+        # Format the profile display with HTML for bold and clean layout
+        date_display = date_in if date_in else datetime.datetime.now().strftime("%B %d, %Y")
+        time_display = time_in if time_in else datetime.datetime.now().strftime("%I:%M %p")
+
+        info = f"<b>{full_name}</b><br>"
+        info += f"Date: <b>{date_display}</b><br>"
+        info += f"Time: <b>{time_display}</b><br>"
+
+        if role == "Student":
+            info += f"Grade: <b>{grade}</b><br>Strand: <b>{strand}</b>"
+        elif role == "Staff":
+            info += f"Department: <b>{department}</b>"
+
+        info_label.setText(info)
+
+        # Force image to fill the label box (ignore aspect ratio to fit nicely)
+        if image_path and os.path.exists(image_path):
+            pixmap = QtGui.QPixmap(image_path).scaled(
+                img_label.width(), img_label.height(),
+                QtCore.Qt.IgnoreAspectRatio,
+                QtCore.Qt.SmoothTransformation
+            )
+            img_label.setPixmap(pixmap)
+
+        layout.addWidget(img_label)
+        layout.addWidget(info_label)
+
+        # Make sure all profile cards align to the top
+        self.attendee_layout.setAlignment(QtCore.Qt.AlignTop)
+        self.attendee_layout.insertWidget(0, profile_card)
+
+    def compute_accuracy_metrics(self):
+        precision = (
+            self.correct_recognitions / (self.correct_recognitions + self.false_recognitions)
+            if (self.correct_recognitions + self.false_recognitions) > 0 else 0
+        )
+        recall = (
+            self.correct_recognitions / (self.correct_recognitions + self.missed_recognitions)
+            if (self.correct_recognitions + self.missed_recognitions) > 0 else 0
+        )
+        f1_score = (
+            2 * precision * recall / (precision + recall)
+            if (precision + recall) > 0 else 0
+        )
+        accuracy = (
+            self.correct_recognitions / self.total_recognitions
+            if self.total_recognitions > 0 else 0
+        )
+
+        print("📊 Performance Evaluation Metrics:")
+        print(f"   Precision:       {precision:.2f}")
+        print(f"   Recall:          {recall:.2f}")
+        print(f"   F1 Score:        {f1_score:.2f}")
+        print(f"   Accuracy Rate:   {accuracy:.2f}")
+
+    def compute_average_response_time(self):
+        if self.response_times:
+            avg_time = sum(self.response_times) / len(self.response_times)
+            print(f"⏱️ Average Response Time: {avg_time:.3f} seconds")
+        else:
+            print("⏱️ No response times recorded yet.")
 
     def populate_attendance_data(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
-        cursor.execute("""
+
+        show_archived = (
+        hasattr(self, "showArchivedCheckBox")
+        and self.showArchivedCheckBox.isChecked()
+        )
+        where_clause = "a.archived = 1" if show_archived else "a.archived = 0"
+
+        query = f"""
             SELECT 
                 COALESCE(a.full_name, p.first_name || ' ' || p.middle_name || ' ' || p.last_name) AS full_name,
-                COALESCE(a.grade_level, g.grade_level, '') AS grade,
-                COALESCE(a.strand_name, s.strand_name, '') AS strand,
-                COALESCE(a.department_name, d.department_name, '') AS department,
+                COALESCE(a.grade_level, g.grade_level) AS grade,
+                COALESCE(a.strand_name, s.strand_name) AS strand,
+                COALESCE(a.department_name, d.department_name) AS department,
                 a.date_in,
                 a.time_in
             FROM AttendanceRecords a
             LEFT JOIN Person p ON a.person_id = p.person_id
-            LEFT JOIN StudentDetails sd ON sd.person_id = p.person_id
+            LEFT JOIN StudentDetails sd ON sd.person_id = a.person_id
             LEFT JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
             LEFT JOIN Strand s ON s.strand_id = sd.strand_id
-            LEFT JOIN StaffDetails st ON st.person_id = p.person_id
+            LEFT JOIN StaffDetails st ON st.person_id = a.person_id
             LEFT JOIN Department d ON d.department_id = st.department_id
+            WHERE {where_clause}
             ORDER BY a.attendance_id DESC
-        """)
+            """
+        cursor.execute(query)
         data = cursor.fetchall()
         conn.close()
 
@@ -3645,6 +4453,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
     def load_embeddings_from_db(self):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
         cursor.execute("SELECT person_id, embedding_vector FROM FaceEmbeddings")
         data = cursor.fetchall()
@@ -3666,6 +4475,7 @@ class AttendanceApp(QtWidgets.QMainWindow):
 
     def mark_attendance(self, person_id):
         conn = sqlite3.connect("recognition.db")
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
         now = datetime.datetime.now()
@@ -3707,85 +4517,6 @@ class AttendanceApp(QtWidgets.QMainWindow):
         self.populate_attendance_data()
         return True
 
-    def show_profile(self, person_id, date_in=None, time_in=None):
-        conn = sqlite3.connect("recognition.db")
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            SELECT first_name, middle_name, last_name, profile_image_url
-            FROM Person WHERE person_id = ?
-        """,
-            (person_id,),
-        )
-        person = cursor.fetchone()
-
-        if person:
-            full_name = f"{person[0]} {person[1]} {person[2]}"
-            profile_path = person[3]
-
-            # Default values
-            strand = "N/A"
-            grade = "N/A"
-            department = "N/A"
-
-            # Try fetching student details
-            cursor.execute(
-                """
-                SELECT s.strand_name, g.grade_level
-                FROM StudentDetails sd
-                JOIN Strand s ON s.strand_id = sd.strand_id
-                JOIN GradeLevel g ON g.grade_level_id = sd.grade_level_id
-                WHERE sd.person_id = ?
-            """,
-                (person_id,),
-            )
-            student_info = cursor.fetchone()
-
-            if student_info:
-                strand, grade = student_info
-            else:
-                # Try fetching staff department
-                cursor.execute(
-                    """
-                    SELECT d.department_name
-                    FROM StaffDetails st
-                    JOIN Department d ON d.department_id = st.department_id
-                    WHERE st.person_id = ?
-                """,
-                    (person_id,),
-                )
-                staff_info = cursor.fetchone()
-                if staff_info:
-                    department = staff_info[0]
-
-            # Determine display date and time
-            display_date = (
-                date_in if date_in else datetime.datetime.now().strftime("%B %d, %Y")
-            )
-            display_time = (
-                time_in if time_in else datetime.datetime.now().strftime("%I:%M %p")
-            )
-
-            # Update UI Labels
-            self.nameLabel.setText(f"{full_name}")
-            self.dateLabel.setText(f"{display_date}")
-            self.timeLabel.setText(f"{display_time}")
-            self.strandLabel.setText(f"{strand}")
-            self.gradeLabel.setText(f"{grade}")
-            self.departmentLabel.setText(f"{department}")
-
-            # Load profile image
-            if profile_path and os.path.exists(profile_path):
-                pixmap = QPixmap(profile_path).scaled(
-                    291, 369, QtCore.Qt.KeepAspectRatio
-                )
-                self.image.setPixmap(pixmap)
-            else:
-                self.image.clear()
-
-        conn.close()
-
     def show_unrecognize_person_dialog(self):
         dialog = UnrecognizeModule(self)
         dialog.exec_()
@@ -3799,6 +4530,8 @@ class AttendanceApp(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         """Stop the camera when closing the application."""
         self.camera.release()
+        self.compute_accuracy_metrics()  # 🟢 Add this
+        self.compute_average_response_time()  # (if you also want time stats)
         event.accept()
 
     def Down_Menu_Num_0(self):
@@ -3835,6 +4568,14 @@ class AttendanceApp(QtWidgets.QMainWindow):
             self.animation2.start()
 
             self.Down_Menu_Num = 0
+    def _boxes_are_close(self, box1, box2, threshold=50):
+        """Check if two face boxes are close enough to be considered the same face."""
+        cx1 = (box1[0] + box1[2]) / 2
+        cy1 = (box1[1] + box1[3]) / 2
+        cx2 = (box2[0] + box2[2]) / 2
+        cy2 = (box2[1] + box2[3]) / 2
+        distance = ((cx1 - cx2) ** 2 + (cy1 - cy2) ** 2) ** 0.5
+        return distance < threshold
 
     def logout(self):
         reply = QMessageBox.question(

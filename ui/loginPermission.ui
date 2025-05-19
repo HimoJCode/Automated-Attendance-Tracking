@@ -34,12 +34,12 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QLabel" name="noteLabel_2">
+   <widget class="QLabel" name="adminLoginrRequired_label">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>210</x>
       <y>50</y>
-      <width>221</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -48,15 +48,15 @@
 font: 75 13pt;</string>
     </property>
     <property name="text">
-     <string>Admin Login Required</string>
+     <string>Login Required</string>
     </property>
    </widget>
-   <widget class="QLabel" name="noteLabel">
+   <widget class="QLabel" name="adminLoginRequiredDescription_label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>80</x>
       <y>100</y>
-      <width>511</width>
+      <width>411</width>
       <height>41</height>
      </rect>
     </property>
@@ -65,8 +65,7 @@ font: 75 13pt;</string>
 font: 10pt;</string>
     </property>
     <property name="text">
-     <string>This system requires admin access to run and save attendance logs.
-Please have the admin login to enable attendance recording.</string>
+     <string>You need to log in first to access attendance tracking.</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -133,7 +132,7 @@ font: 14pt &quot;MS Shell Dlg 2&quot;;
 border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>LOGIN</string>
+     <string>Login</string>
     </property>
    </widget>
    <widget class="QPushButton" name="exit_btn">
@@ -152,9 +151,9 @@ border-radius: 12px;</string>
      <string/>
     </property>
     <property name="icon">
-    <iconset>
-     <normaloff>:/resources/cancel-sign.png</normaloff>:/resources/cancel-sign.png</iconset>
-   </property>
+     <iconset>
+      <normaloff>:/resources/cancel-sign.png</normaloff>:/resources/cancel-sign.png</iconset>
+    </property>
     <property name="iconSize">
      <size>
       <width>20</width>

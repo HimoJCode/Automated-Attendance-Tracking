@@ -37,5 +37,13 @@
     <file>minus.png</file>
     <file>cancel-sign.png</file>
     <file>view-image.png</file>
+    <file>icons8-camera-50.png</file>
+    <file>icons8-image-48.png</file>
+    <file>icons8-images-folder-24.png</file>
+    <file>icons8-artificial-intelligence-16.png</file>
+    <file>icons8-admin-24.png</file>
+    <file>icons8-admin-25.png</file>
+    <file>icons8-logout-30.png</file>
+    <file>navbackground.png</file>
   </qresource>
 </RCC>
